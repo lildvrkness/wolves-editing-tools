@@ -40,14 +40,19 @@
             scroll-behavior: smooth;
         }
 
+        ::selection {
+            background: rgba(155, 92, 255, .35);
+            color: #fff;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
             font-family: Inter, sans-serif;
             background:
-                radial-gradient(ellipse 720px 560px at 6% 8%, rgba(155, 92, 255, 0.22), transparent 68%),
-                radial-gradient(ellipse 720px 560px at 96% 92%, rgba(57, 255, 136, 0.14), transparent 68%),
-                radial-gradient(ellipse 480px 380px at 88% 4%, rgba(155, 92, 255, 0.07), transparent 70%),
+                radial-gradient(ellipse 720px 560px at 6% 8%, rgba(155, 92, 255, 0.24), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 96% 92%, rgba(57, 255, 136, 0.16), transparent 68%),
+                radial-gradient(ellipse 480px 380px at 88% 4%, rgba(155, 92, 255, 0.08), transparent 70%),
                 #030405;
             color: #e5e7eb;
             display: flex;
@@ -72,7 +77,7 @@
             height: 620px;
             left: -280px;
             top: -180px;
-            background: rgba(155, 92, 255, 0.14);
+            background: rgba(155, 92, 255, 0.16);
             filter: blur(100px);
         }
 
@@ -81,7 +86,7 @@
             height: 660px;
             right: -300px;
             bottom: -280px;
-            background: rgba(57, 255, 136, 0.09);
+            background: rgba(57, 255, 136, 0.1);
             filter: blur(110px);
         }
 
@@ -89,7 +94,7 @@
             position: fixed;
             inset: 0;
             pointer-events: none;
-            opacity: 0.03;
+            opacity: 0.028;
             background-image:
                 linear-gradient(rgba(255,255,255,.55) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,.55) 1px, transparent 1px);
@@ -106,15 +111,55 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
+        .heart-field {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            opacity: 0.11;
+            filter: drop-shadow(0 0 10px currentColor);
+            animation: heartDrift 18s ease-in-out infinite;
+        }
+
+        .heart svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .heart.purple { color: #9b5cff; }
+        .heart.green { color: #39ff88; }
+
+        .heart.h1 { width: 86px; left: 4%; top: 12%; animation-delay: 0s; opacity: .13; }
+        .heart.h2 { width: 46px; left: 18%; top: 68%; animation-delay: -4s; opacity: .09; }
+        .heart.h3 { width: 120px; right: 6%; top: 18%; animation-delay: -7s; opacity: .08; }
+        .heart.h4 { width: 34px; right: 16%; top: 58%; animation-delay: -2s; opacity: .14; }
+        .heart.h5 { width: 58px; left: 8%; bottom: 10%; animation-delay: -11s; opacity: .1; }
+        .heart.h6 { width: 28px; left: 46%; top: 8%; animation-delay: -9s; opacity: .07; }
+        .heart.h7 { width: 72px; right: 28%; bottom: 14%; animation-delay: -5s; opacity: .09; }
+        .heart.h8 { width: 22px; right: 8%; bottom: 28%; animation-delay: -13s; opacity: .16; }
+        .heart.h9 { width: 40px; left: 30%; top: 28%; animation-delay: -15s; opacity: .06; }
+        .heart.h10 { width: 96px; left: -10px; top: 42%; animation-delay: -6s; opacity: .07; }
+
+        @keyframes heartDrift {
+            0%, 100% { transform: translateY(0) rotate(-8deg) scale(1); }
+            50% { transform: translateY(-18px) rotate(8deg) scale(1.06); }
+        }
+
         .watermark {
             position: fixed;
             right: -40px;
             bottom: -50px;
             width: min(420px, 55vw);
-            opacity: 0.07;
+            opacity: 0.08;
             pointer-events: none;
             z-index: 0;
-            filter: drop-shadow(0 0 24px rgba(155, 92, 255, .25));
+            filter: drop-shadow(0 0 28px rgba(155, 92, 255, .3));
             user-select: none;
         }
 
@@ -123,7 +168,15 @@
             font-weight: 400;
             letter-spacing: .025em;
             line-height: 1.02;
-            text-shadow: 0 0 22px rgba(155, 92, 255, .2);
+            text-shadow:
+                0 0 18px rgba(155, 92, 255, .28),
+                0 0 40px rgba(155, 92, 255, .12);
+        }
+
+        .wolves-title .text-purple {
+            text-shadow:
+                0 0 16px rgba(155, 92, 255, .55),
+                0 0 36px rgba(155, 92, 255, .25);
         }
 
         .card {
@@ -133,10 +186,72 @@
         }
 
         .shell {
+            position: relative;
             box-shadow:
                 0 30px 80px rgba(0, 0, 0, .45),
-                0 0 0 1px rgba(155, 92, 255, .06),
-                inset 0 1px 0 rgba(255,255,255,.03);
+                0 0 0 1px rgba(155, 92, 255, .08),
+                0 0 40px rgba(155, 92, 255, .05),
+                inset 0 1px 0 rgba(255,255,255,.04);
+        }
+
+        .shell::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background: linear-gradient(120deg, transparent 20%, rgba(155,92,255,.07) 45%, rgba(57,255,136,.06) 55%, transparent 80%);
+            opacity: 0;
+            transition: opacity .4s ease;
+        }
+
+        .shell:hover::before { opacity: 1; }
+
+        .glow-card {
+            position: relative;
+            overflow: hidden;
+            transition:
+                border-color .25s ease,
+                box-shadow .3s ease,
+                transform .25s ease;
+        }
+
+        .glow-card::after {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
+
+        .glow-purple:hover {
+            border-color: rgba(155, 92, 255, .45);
+            transform: translateY(-2px);
+            box-shadow:
+                0 0 0 1px rgba(155, 92, 255, .16),
+                0 0 24px rgba(155, 92, 255, .16),
+                0 12px 40px rgba(0, 0, 0, .25);
+        }
+
+        .glow-purple:hover::after {
+            opacity: 1;
+            box-shadow: inset 0 0 28px rgba(155, 92, 255, .08);
+        }
+
+        .glow-green:hover {
+            border-color: rgba(57, 255, 136, .38);
+            transform: translateY(-2px);
+            box-shadow:
+                0 0 0 1px rgba(57, 255, 136, .12),
+                0 0 24px rgba(57, 255, 136, .14),
+                0 12px 40px rgba(0, 0, 0, .25);
+        }
+
+        .glow-green:hover::after {
+            opacity: 1;
+            box-shadow: inset 0 0 28px rgba(57, 255, 136, .07);
         }
 
         .logo-ring {
@@ -144,12 +259,22 @@
             height: 72px;
             border-radius: 18px;
             padding: 3px;
-            background: linear-gradient(145deg, rgba(155,92,255,.85), rgba(57,255,136,.55));
+            background: linear-gradient(145deg, rgba(155,92,255,.9), rgba(57,255,136,.6));
             box-shadow:
-                0 0 0 1px rgba(155, 92, 255, .25),
-                0 0 28px rgba(155, 92, 255, .28),
-                0 0 42px rgba(57, 255, 136, .12);
+                0 0 0 1px rgba(155, 92, 255, .28),
+                0 0 22px rgba(155, 92, 255, .32),
+                0 0 42px rgba(57, 255, 136, .14);
             flex-shrink: 0;
+            transition: transform .3s ease, box-shadow .3s ease, filter .3s ease;
+        }
+
+        .logo-ring:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow:
+                0 0 0 1px rgba(57, 255, 136, .35),
+                0 0 28px rgba(155, 92, 255, .5),
+                0 0 48px rgba(57, 255, 136, .22);
+            filter: saturate(1.15);
         }
 
         .logo-ring img {
@@ -175,9 +300,11 @@
         }
 
         .input:hover {
-            border-color: #41434d;
+            border-color: rgba(155, 92, 255, .55);
             background: rgba(8, 7, 12, .95);
-            box-shadow: 0 0 12px rgba(155, 92, 255, .08);
+            box-shadow:
+                0 0 0 1px rgba(155, 92, 255, .12),
+                0 0 16px rgba(155, 92, 255, .18);
         }
 
         .input:focus {
@@ -185,15 +312,17 @@
             border-color: #9b5cff;
             transform: translateY(-1px);
             box-shadow:
-                0 0 0 2px rgba(155, 92, 255, .06),
-                0 0 12px rgba(155, 92, 255, .18),
-                0 0 30px rgba(155, 92, 255, .10);
+                0 0 0 2px rgba(155, 92, 255, .08),
+                0 0 16px rgba(155, 92, 255, .28),
+                0 0 36px rgba(155, 92, 255, .14);
         }
 
         .input.optional:hover {
-            border-color: #3b8f61;
+            border-color: rgba(57, 255, 136, .55);
             background: rgba(5, 10, 7, .95);
-            box-shadow: 0 0 12px rgba(57, 255, 136, .07);
+            box-shadow:
+                0 0 0 1px rgba(57, 255, 136, .1),
+                0 0 16px rgba(57, 255, 136, .16);
         }
 
         .input.optional:focus {
@@ -201,15 +330,18 @@
             border-color: #39ff88;
             transform: translateY(-1px);
             box-shadow:
-                0 0 0 2px rgba(57, 255, 136, .05),
-                0 0 12px rgba(57, 255, 136, .16),
-                0 0 30px rgba(57, 255, 136, .08);
+                0 0 0 2px rgba(57, 255, 136, .08),
+                0 0 16px rgba(57, 255, 136, .24),
+                0 0 36px rgba(57, 255, 136, .12);
         }
 
         .output-number {
             font-variant-numeric: tabular-nums;
             letter-spacing: -.055em;
-            text-shadow: 0 0 25px rgba(155, 92, 255, .18);
+            text-shadow:
+                0 0 18px rgba(155, 92, 255, .35),
+                0 0 34px rgba(155, 92, 255, .16);
+            transition: text-shadow .25s ease, transform .25s ease;
         }
 
         .result-box,
@@ -217,13 +349,21 @@
         .ghost-btn,
         .copy-button,
         .preview {
-            transition: border-color .2s ease, box-shadow .25s ease, transform .2s ease, background .2s ease;
+            transition: border-color .2s ease, box-shadow .25s ease, transform .2s ease, background .2s ease, color .2s ease;
         }
 
         .result-box:hover {
-            border-color: rgba(155, 92, 255, .35);
-            transform: translateY(-1px);
-            box-shadow: 0 0 18px rgba(155, 92, 255, .08);
+            border-color: rgba(155, 92, 255, .5);
+            transform: translateY(-2px);
+            box-shadow:
+                0 0 0 1px rgba(155, 92, 255, .14),
+                0 0 26px rgba(155, 92, 255, .18);
+        }
+
+        .result-box:hover .output-number {
+            text-shadow:
+                0 0 16px rgba(155, 92, 255, .7),
+                0 0 36px rgba(155, 92, 255, .28);
         }
 
         .chip {
@@ -239,11 +379,19 @@
             text-transform: uppercase;
         }
 
-        .chip:hover { border-color: rgba(155,92,255,.4); color: #fff; }
-        .chip.active {
-            border-color: rgba(155,92,255,.55);
+        .chip:hover {
+            border-color: rgba(155,92,255,.7);
+            color: #fff;
             background: rgba(155,92,255,.12);
-            color: #d6c4ff;
+            box-shadow: 0 0 16px rgba(155,92,255,.22);
+            transform: translateY(-1px);
+        }
+
+        .chip.active {
+            border-color: rgba(155,92,255,.7);
+            background: rgba(155,92,255,.16);
+            color: #e4d6ff;
+            box-shadow: 0 0 14px rgba(155,92,255,.18);
         }
 
         .ghost-btn {
@@ -260,9 +408,17 @@
         }
 
         .ghost-btn:hover {
-            border-color: rgba(155,92,255,.4);
+            border-color: rgba(155,92,255,.65);
             color: #fff;
+            background: rgba(155,92,255,.1);
             transform: translateY(-1px);
+            box-shadow: 0 0 18px rgba(155,92,255,.2);
+        }
+
+        .ghost-btn.green-hover:hover {
+            border-color: rgba(57,255,136,.65);
+            background: rgba(57,255,136,.08);
+            box-shadow: 0 0 18px rgba(57,255,136,.18);
         }
 
         .copy-button {
@@ -272,12 +428,23 @@
 
         .copy-button:hover {
             transform: translateY(-1px);
-            box-shadow: 0 0 28px rgba(57, 255, 136, .22);
+            box-shadow:
+                0 0 18px rgba(57, 255, 136, .35),
+                0 0 36px rgba(57, 255, 136, .16);
         }
 
         .copy-button:active { transform: translateY(0); }
 
-        .preview:hover { box-shadow: 0 0 35px rgba(155, 92, 255, .12); }
+        .preview {
+            box-shadow: 0 0 25px rgba(155,92,255,.06);
+        }
+
+        .preview:hover {
+            border-color: rgba(155, 92, 255, .9);
+            box-shadow:
+                0 0 20px rgba(155, 92, 255, .28),
+                0 0 40px rgba(57, 255, 136, .1);
+        }
 
         input[type="range"] {
             -webkit-appearance: none;
@@ -285,8 +452,9 @@
             width: 100%;
             height: 4px;
             border-radius: 999px;
-            background: linear-gradient(90deg, rgba(155,92,255,.7), rgba(57,255,136,.55));
+            background: linear-gradient(90deg, rgba(155,92,255,.8), rgba(57,255,136,.6));
             outline: none;
+            box-shadow: 0 0 10px rgba(155,92,255,.2);
         }
 
         input[type="range"]::-webkit-slider-thumb {
@@ -296,8 +464,16 @@
             border-radius: 50%;
             background: #fff;
             border: 2px solid #9b5cff;
-            box-shadow: 0 0 12px rgba(155,92,255,.45);
+            box-shadow: 0 0 12px rgba(155,92,255,.55);
             cursor: pointer;
+            transition: box-shadow .2s ease, transform .2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+            box-shadow:
+                0 0 0 4px rgba(155,92,255,.12),
+                0 0 16px rgba(155,92,255,.7);
         }
 
         .tile-grid {
@@ -319,6 +495,7 @@
             pointer-events: none;
             z-index: 50;
             transition: opacity .25s ease, transform .25s ease;
+            box-shadow: 0 0 24px rgba(57,255,136,.2);
         }
 
         .toast.show {
@@ -326,10 +503,15 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        .stat-box:hover {
+            border-color: rgba(57, 255, 136, .35);
+            box-shadow: 0 0 16px rgba(57, 255, 136, .1);
+        }
+
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #0a0b0e; }
         ::-webkit-scrollbar-thumb {
-            background: #2a2d35;
+            background: linear-gradient(#5b3aa0, #2a2d35);
             border-radius: 999px;
             border: 2px solid #0a0b0e;
         }
@@ -338,6 +520,7 @@
             body { padding: 16px 12px 36px; }
             .wolves-title { font-size: 2.15rem; }
             .logo-ring { width: 58px; height: 58px; border-radius: 15px; }
+            .heart.h3, .heart.h10 { display: none; }
         }
     </style>
 </head>
@@ -345,6 +528,20 @@
 <body>
     <div class="background-grid"></div>
     <div class="noise"></div>
+
+    <div class="heart-field" aria-hidden="true">
+        <div class="heart purple h1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart green h2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart purple h3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart green h4"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart purple h5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart green h6"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart purple h7"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart green h8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart purple h9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+        <div class="heart green h10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/></svg></div>
+    </div>
+
     <img
         class="watermark"
         src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
@@ -367,7 +564,7 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 mb-1.5">
                             <span class="text-[9px] uppercase tracking-[0.22em] font-bold text-purple">Wolves Tools</span>
-                            <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                            <span class="h-1 w-1 rounded-full bg-green/70 shadow-[0_0_8px_#39ff88]"></span>
                             <span class="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-600">Albedo</span>
                         </div>
 
@@ -388,15 +585,14 @@
             <section class="p-4 md:p-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-                    <!-- INPUT -->
-                    <div class="card p-4 md:p-5">
+                    <div class="card glow-card glow-purple p-4 md:p-5">
                         <div class="flex items-start justify-between mb-4">
                             <div>
                                 <div class="text-[9px] uppercase tracking-[0.22em] font-bold text-purple mb-1">Input</div>
                                 <h2 class="text-lg font-bold text-white">Wall Size</h2>
                                 <p class="text-[11px] text-slate-500 mt-0.5">World units for the surface you are texturing.</p>
                             </div>
-                            <div class="w-7 h-7 rounded-md bg-purple/10 border border-purple/20 flex items-center justify-center text-purple text-[10px] font-bold">01</div>
+                            <div class="w-7 h-7 rounded-md bg-purple/10 border border-purple/20 flex items-center justify-center text-purple text-[10px] font-bold shadow-[0_0_12px_rgba(155,92,255,.15)]">01</div>
                         </div>
 
                         <div class="flex flex-wrap gap-1.5 mb-4" id="presetRow"></div>
@@ -450,13 +646,12 @@
 
                             <div class="flex flex-wrap gap-2">
                                 <button type="button" id="swapBtn" class="ghost-btn">Swap X / Y</button>
-                                <button type="button" id="resetBtn" class="ghost-btn">Reset</button>
+                                <button type="button" id="resetBtn" class="ghost-btn green-hover">Reset</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- RESULT -->
-                    <div class="card p-4 md:p-5 relative overflow-hidden">
+                    <div class="card glow-card glow-green p-4 md:p-5 relative overflow-hidden">
                         <div class="absolute -right-20 -top-20 w-44 h-44 rounded-full bg-purple/5 blur-3xl"></div>
 
                         <div class="relative">
@@ -466,7 +661,7 @@
                                     <h2 class="text-lg font-bold text-white">Albedo Tile</h2>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Texture tiling, offsets, and copy formats.</p>
                                 </div>
-                                <div class="w-7 h-7 rounded-md bg-green/10 border border-green/20 flex items-center justify-center text-green text-[10px] font-bold">02</div>
+                                <div class="w-7 h-7 rounded-md bg-green/10 border border-green/20 flex items-center justify-center text-green text-[10px] font-bold shadow-[0_0_12px_rgba(57,255,136,.15)]">02</div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3">
@@ -480,7 +675,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-3 rounded-lg border border-[#292c33] bg-black/20 px-3.5 py-2.5 flex items-center justify-between">
+                            <div class="mt-3 rounded-lg border border-[#292c33] bg-black/20 px-3.5 py-2.5 flex items-center justify-between result-box">
                                 <div>
                                     <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Tile Z</div>
                                     <div id="outputZ" class="text-sm font-bold text-green mt-0.5">—</div>
@@ -489,26 +684,26 @@
                             </div>
 
                             <div class="mt-3 grid grid-cols-3 gap-2">
-                                <div class="rounded-lg border border-[#292c33] bg-black/20 px-3 py-2">
+                                <div class="stat-box rounded-lg border border-[#292c33] bg-black/20 px-3 py-2 transition">
                                     <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Area</div>
                                     <div id="areaOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">18.00</div>
                                 </div>
-                                <div class="rounded-lg border border-[#292c33] bg-black/20 px-3 py-2">
+                                <div class="stat-box rounded-lg border border-[#292c33] bg-black/20 px-3 py-2 transition">
                                     <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Aspect</div>
                                     <div id="aspectOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">2.00 : 1</div>
                                 </div>
-                                <div class="rounded-lg border border-[#292c33] bg-black/20 px-3 py-2">
+                                <div class="stat-box rounded-lg border border-[#292c33] bg-black/20 px-3 py-2 transition">
                                     <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Repeats</div>
                                     <div id="repeatOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">3 × 1.5</div>
                                 </div>
                             </div>
 
-                            <div class="mt-3 rounded-lg border border-green/10 bg-green/[0.025] px-3.5 py-2.5">
+                            <div class="mt-3 rounded-lg border border-green/10 bg-green/[0.025] px-3.5 py-2.5 result-box">
                                 <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Vector</div>
                                 <div id="vectorOutput" class="text-xs font-bold text-green mt-0.5 break-all">3.00, 1.50</div>
                             </div>
 
-                            <div class="mt-3 rounded-lg border border-[#292c33] bg-black/20 px-3.5 py-2.5">
+                            <div class="mt-3 rounded-lg border border-[#292c33] bg-black/20 px-3.5 py-2.5 result-box">
                                 <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Offset</div>
                                 <div id="offsetOutput" class="text-xs font-bold text-slate-300 mt-0.5">0.00, 0.00</div>
                             </div>
@@ -517,12 +712,12 @@
                                 <button id="copyButton" class="copy-button bg-green hover:bg-[#4dffa0] text-black font-black text-[10px] uppercase tracking-[0.18em] rounded-lg">
                                     Copy Vector
                                 </button>
-                                <button id="copyAllButton" class="ghost-btn h-[42px]">Copy All</button>
+                                <button id="copyAllButton" class="ghost-btn green-hover h-[42px]">Copy All</button>
                             </div>
 
                             <div class="grid grid-cols-3 gap-2 mt-2">
                                 <button data-format="unity" class="format-btn ghost-btn w-full px-2">Unity</button>
-                                <button data-format="shader" class="format-btn ghost-btn w-full px-2">Shader</button>
+                                <button data-format="shader" class="format-btn ghost-btn green-hover w-full px-2">Shader</button>
                                 <button data-format="json" class="format-btn ghost-btn w-full px-2">JSON</button>
                             </div>
 
@@ -531,8 +726,7 @@
                     </div>
                 </div>
 
-                <!-- PREVIEW -->
-                <div class="card mt-4 overflow-hidden">
+                <div class="card glow-card glow-purple mt-4 overflow-hidden">
                     <div class="px-4 md:px-5 py-3 border-b border-[#1c1e24] flex items-center justify-between gap-3">
                         <div>
                             <div class="text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600">Preview</div>
@@ -544,7 +738,7 @@
                     <div class="h-[210px] flex items-center justify-center p-6 bg-black/20">
                         <div
                             id="preview"
-                            class="preview tile-grid flex items-end justify-start rounded-md border border-purple/60 shadow-[0_0_25px_rgba(155,92,255,.06)] relative overflow-hidden"
+                            class="preview tile-grid flex items-end justify-start rounded-md border border-purple/60 relative overflow-hidden"
                             style="width:210px;height:105px;"
                         >
                             <div class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_30%_20%,rgba(155,92,255,.45),transparent_55%)]"></div>
@@ -556,19 +750,19 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
-                    <div class="card px-4 py-3">
+                    <div class="card glow-card glow-purple px-4 py-3">
                         <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Formula</div>
                         <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
                             <span class="text-purple font-semibold">tile</span> = wall ÷ units-per-tile
                         </div>
                     </div>
-                    <div class="card px-4 py-3">
+                    <div class="card glow-card glow-green px-4 py-3">
                         <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Best use</div>
                         <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
                             Keep tiling consistent across connected walls so albedo seams stay aligned.
                         </div>
                     </div>
-                    <div class="card px-4 py-3">
+                    <div class="card glow-card glow-purple px-4 py-3">
                         <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Tip</div>
                         <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
                             Copy Unity format into the material Tiling / Offset fields, then nudge offset if the pattern is off-center.
