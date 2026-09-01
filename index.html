@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Wolves Albedo Tile Calculator</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        purple: "#9b5cff",
+                        green: "#39ff88"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            background: #030405;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, sans-serif;
+
+            background:
+                radial-gradient(
+                    ellipse 700px 550px at 5% 10%,
+                    rgba(155, 92, 255, 0.20),
+                    transparent 68%
+                ),
+                radial-gradient(
+                    ellipse 700px 550px at 95% 90%,
+                    rgba(57, 255, 136, 0.13),
+                    transparent 68%
+                ),
+                radial-gradient(
+                    ellipse 500px 400px at 90% 5%,
+                    rgba(155, 92, 255, 0.06),
+                    transparent 70%
+                ),
+                #030405;
+
+            color: #e5e7eb;
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+
+            padding: 28px 18px 40px;
+
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient purple glow */
+        body::before {
+            content: "";
+            position: fixed;
+
+            width: 600px;
+            height: 600px;
+
+            left: -280px;
+            top: -180px;
+
+            border-radius: 50%;
+
+            background: rgba(155, 92, 255, 0.13);
+
+            filter: blur(100px);
+
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Ambient green glow */
+        body::after {
+            content: "";
+            position: fixed;
+
+            width: 650px;
+            height: 650px;
+
+            right: -300px;
+            bottom: -280px;
+
+            border-radius: 50%;
+
+            background: rgba(57, 255, 136, 0.085);
+
+            filter: blur(110px);
+
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Subtle background grid */
+        .background-grid {
+            position: fixed;
+            inset: 0;
+
+            pointer-events: none;
+
+            opacity: 0.028;
+
+            background-image:
+                linear-gradient(
+                    rgba(255,255,255,.5) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.5) 1px,
+                    transparent 1px
+                );
+
+            background-size: 42px 42px;
+
+            z-index: 0;
+        }
+
+        /* Title */
+        .wolves-title {
+            font-family: "New Rocker", cursive;
+            font-weight: 400;
+
+            letter-spacing: .025em;
+            line-height: 1.02;
+
+            text-shadow:
+                0 0 20px rgba(155, 92, 255, .15);
+        }
+
+        /* Main cards */
+        .card {
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(17, 18, 22, .96),
+                    rgba(8, 9, 11, .97)
+                );
+
+            border: 1px solid #202229;
+            border-radius: 12px;
+        }
+
+        /* Inputs */
+        .input {
+            width: 100%;
+            height: 42px;
+
+            background: rgba(3, 4, 5, .88);
+
+            border: 1px solid #292c34;
+            border-radius: 7px;
+
+            padding: 9px 11px;
+
+            color: white;
+            font-size: 13px;
+
+            outline: none;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .25s ease,
+                background .2s ease,
+                transform .2s ease;
+        }
+
+        /* Input hover */
+        .input:hover {
+            border-color: #41434d;
+
+            background: rgba(8, 7, 12, .95);
+
+            box-shadow:
+                0 0 12px rgba(155, 92, 255, .08);
+        }
+
+        /* X / Y focus */
+        .input:focus {
+            background: rgba(10, 8, 15, .98);
+
+            border-color: #9b5cff;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 0 0 2px rgba(155, 92, 255, .06),
+                0 0 12px rgba(155, 92, 255, .18),
+                0 0 30px rgba(155, 92, 255, .10),
+                inset 0 0 18px rgba(155, 92, 255, .025);
+        }
+
+        /* Z hover */
+        .input.optional:hover {
+            border-color: #3b8f61;
+
+            background: rgba(5, 10, 7, .95);
+
+            box-shadow:
+                0 0 12px rgba(57, 255, 136, .07);
+        }
+
+        /* Z focus */
+        .input.optional:focus {
+            background: rgba(5, 12, 8, .98);
+
+            border-color: #39ff88;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 0 0 2px rgba(57, 255, 136, .05),
+                0 0 12px rgba(57, 255, 136, .16),
+                0 0 30px rgba(57, 255, 136, .08),
+                inset 0 0 18px rgba(57, 255, 136, .025);
+        }
+
+        /* Output numbers */
+        .output-number {
+            font-variant-numeric: tabular-nums;
+
+            letter-spacing: -.055em;
+
+            text-shadow:
+                0 0 25px rgba(155, 92, 255, .18);
+        }
+
+        /* Result boxes */
+        .result-box {
+            transition:
+                border-color .2s ease,
+                box-shadow .25s ease,
+                transform .2s ease;
+        }
+
+        .result-box:hover {
+            border-color: rgba(155, 92, 255, .35);
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 0 18px rgba(155, 92, 255, .08),
+                inset 0 0 20px rgba(155, 92, 255, .02);
+        }
+
+        /* Copy button */
+        .copy-button {
+            height: 40px;
+
+            transition:
+                transform .18s ease,
+                box-shadow .2s ease,
+                background .18s ease;
+        }
+
+        .copy-button:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 0 28px rgba(57, 255, 136, .20);
+        }
+
+        .copy-button:active {
+            transform: translateY(0);
+        }
+
+        /* Preview */
+        .preview {
+            transition:
+                width .25s ease,
+                height .25s ease,
+                box-shadow .25s ease;
+        }
+
+        .preview:hover {
+            box-shadow:
+                0 0 35px rgba(155, 92, 255, .10);
+        }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+            body {
+                padding: 18px 12px 30px;
+            }
+
+            .wolves-title {
+                font-size: 2.35rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background-grid"></div>
+
+    <main class="relative z-10 w-full max-w-4xl">
+
+        <div class="card overflow-hidden shadow-2xl">
+
+            <!-- HEADER -->
+            <header class="px-6 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+
+                <h1 class="wolves-title text-4xl md:text-[3.15rem] text-white">
+                    Wolves
+                    <span class="text-purple">Albedo</span>
+                    Tile Calculator
+                </h1>
+
+                <p class="text-xs text-slate-500 mt-3 max-w-xl">
+                    Enter your wall dimensions to automatically calculate
+                    the matching albedo tile values.
+                </p>
+
+            </header>
+
+
+            <!-- CALCULATOR -->
+            <section class="p-5 md:p-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+
+                    <!-- INPUT CARD -->
+                    <div class="card p-4.5 md:p-5">
+
+                        <div class="flex items-start justify-between mb-5">
+
+                            <div>
+
+                                <div class="text-[9px]
+                                            uppercase
+                                            tracking-[0.22em]
+                                            font-bold
+                                            text-purple
+                                            mb-1">
+                                    INPUT
+                                </div>
+
+                                <h2 class="text-lg font-bold text-white">
+                                    Wall Size
+                                </h2>
+
+                                <p class="text-[11px] text-slate-500 mt-0.5">
+                                    Enter your wall dimensions.
+                                </p>
+
+                            </div>
+
+                            <div class="w-7 h-7
+                                        rounded-md
+                                        bg-purple/10
+                                        border border-purple/20
+                                        flex items-center
+                                        justify-center
+                                        text-purple
+                                        text-[10px]
+                                        font-bold">
+                                01
+                            </div>
+
+                        </div>
+
+
+                        <div class="space-y-3.5">
+
+                            <!-- X -->
+                            <div>
+
+                                <label class="block
+                                              text-[9px]
+                                              uppercase
+                                              tracking-[0.15em]
+                                              font-bold
+                                              text-slate-500
+                                              mb-1.5">
+                                    X — Width
+                                </label>
+
+                                <input
+                                    id="wallX"
+                                    type="number"
+                                    value="6"
+                                    step="any"
+                                    placeholder="Enter X"
+                                    class="input"
+                                >
+
+                            </div>
+
+
+                            <!-- Y -->
+                            <div>
+
+                                <label class="block
+                                              text-[9px]
+                                              uppercase
+                                              tracking-[0.15em]
+                                              font-bold
+                                              text-slate-500
+                                              mb-1.5">
+                                    Y — Height
+                                </label>
+
+                                <input
+                                    id="wallY"
+                                    type="number"
+                                    value="3"
+                                    step="any"
+                                    placeholder="Enter Y"
+                                    class="input"
+                                >
+
+                            </div>
+
+
+                            <!-- Z -->
+                            <div>
+
+                                <div class="flex items-center justify-between mb-1.5">
+
+                                    <label class="text-[9px]
+                                                  uppercase
+                                                  tracking-[0.15em]
+                                                  font-bold
+                                                  text-slate-500">
+                                        Z — Depth
+                                    </label>
+
+                                    <span class="text-[8px]
+                                                 uppercase
+                                                 tracking-[0.15em]
+                                                 text-green
+                                                 font-bold">
+                                        OPTIONAL
+                                    </span>
+
+                                </div>
+
+                                <input
+                                    id="wallZ"
+                                    type="number"
+                                    step="any"
+                                    placeholder="Optional"
+                                    class="input optional"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RESULT CARD -->
+                    <div class="card p-4.5 md:p-5 relative overflow-hidden">
+
+                        <!-- Card glow -->
+                        <div class="absolute
+                                    -right-20
+                                    -top-20
+                                    w-44
+                                    h-44
+                                    rounded-full
+                                    bg-purple/5
+                                    blur-3xl">
+                        </div>
+
+                        <div class="relative">
+
+                            <div class="flex items-start justify-between mb-5">
+
+                                <div>
+
+                                    <div class="text-[9px]
+                                                uppercase
+                                                tracking-[0.22em]
+                                                font-bold
+                                                text-green
+                                                mb-1">
+                                        RESULT
+                                    </div>
+
+                                    <h2 class="text-lg font-bold text-white">
+                                        Albedo Tile
+                                    </h2>
+
+                                    <p class="text-[11px] text-slate-500 mt-0.5">
+                                        Your calculated texture values.
+                                    </p>
+
+                                </div>
+
+                                <div class="w-7 h-7
+                                            rounded-md
+                                            bg-green/10
+                                            border border-green/20
+                                            flex items-center
+                                            justify-center
+                                            text-green
+                                            text-[10px]
+                                            font-bold">
+                                    02
+                                </div>
+
+                            </div>
+
+
+                            <!-- X / Y OUTPUT -->
+                            <div class="grid grid-cols-2 gap-3">
+
+                                <div class="result-box
+                                            rounded-lg
+                                            border border-[#292c33]
+                                            bg-black/35
+                                            py-4
+                                            text-center">
+
+                                    <div class="text-[8px]
+                                                uppercase
+                                                tracking-[0.2em]
+                                                font-bold
+                                                text-slate-600">
+                                        TILE X
+                                    </div>
+
+                                    <div
+                                        id="outputX"
+                                        class="output-number
+                                               text-4xl
+                                               md:text-5xl
+                                               font-black
+                                               text-purple
+                                               mt-1">
+                                        3.00
+                                    </div>
+
+                                </div>
+
+
+                                <div class="result-box
+                                            rounded-lg
+                                            border border-[#292c33]
+                                            bg-black/35
+                                            py-4
+                                            text-center">
+
+                                    <div class="text-[8px]
+                                                uppercase
+                                                tracking-[0.2em]
+                                                font-bold
+                                                text-slate-600">
+                                        TILE Y
+                                    </div>
+
+                                    <div
+                                        id="outputY"
+                                        class="output-number
+                                               text-4xl
+                                               md:text-5xl
+                                               font-black
+                                               text-purple
+                                               mt-1">
+                                        1.50
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Z -->
+                            <div class="mt-3
+                                        rounded-lg
+                                        border border-[#292c33]
+                                        bg-black/20
+                                        px-3.5
+                                        py-2.5
+                                        flex
+                                        items-center
+                                        justify-between">
+
+                                <div>
+
+                                    <div class="text-[8px]
+                                                uppercase
+                                                tracking-[0.18em]
+                                                font-bold
+                                                text-slate-600">
+                                        TILE Z
+                                    </div>
+
+                                    <div
+                                        id="outputZ"
+                                        class="text-sm
+                                               font-bold
+                                               text-green
+                                               mt-0.5">
+                                        —
+                                    </div>
+
+                                </div>
+
+                                <span class="text-[8px]
+                                             uppercase
+                                             tracking-wider
+                                             text-slate-700">
+                                    OPTIONAL
+                                </span>
+
+                            </div>
+
+
+                            <!-- VECTOR -->
+                            <div class="mt-3
+                                        rounded-lg
+                                        border border-green/10
+                                        bg-green/[0.025]
+                                        px-3.5
+                                        py-2.5">
+
+                                <div class="text-[8px]
+                                            uppercase
+                                            tracking-[0.18em]
+                                            font-bold
+                                            text-slate-600">
+                                    VECTOR
+                                </div>
+
+                                <div
+                                    id="vectorOutput"
+                                    class="text-xs
+                                           font-bold
+                                           text-green
+                                           mt-0.5">
+                                    3.00, 1.50
+                                </div>
+
+                            </div>
+
+
+                            <!-- COPY -->
+                            <button
+                                id="copyButton"
+                                class="copy-button
+                                       w-full
+                                       mt-3
+                                       bg-green
+                                       hover:bg-[#4dffa0]
+                                       text-black
+                                       font-black
+                                       text-[10px]
+                                       uppercase
+                                       tracking-[0.18em]
+                                       rounded-lg">
+                                Copy Values
+                            </button>
+
+                            <div
+                                id="copyStatus"
+                                class="text-center
+                                       text-[9px]
+                                       text-slate-600
+                                       mt-2
+                                       h-3">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PREVIEW -->
+                <div class="card mt-4 overflow-hidden">
+
+                    <div class="px-4.5 md:px-5 py-3
+                                border-b
+                                border-[#1c1e24]
+                                flex
+                                items-center
+                                justify-between">
+
+                        <div>
+
+                            <div class="text-[9px]
+                                        uppercase
+                                        tracking-[0.2em]
+                                        font-bold
+                                        text-slate-600">
+                                PREVIEW
+                            </div>
+
+                            <h3 class="text-xs
+                                       font-bold
+                                       text-white
+                                       mt-0.5">
+                                Wall Proportion
+                            </h3>
+
+                        </div>
+
+                        <div
+                            id="previewDimensions"
+                            class="text-[9px]
+                                   text-slate-600">
+                            6 × 3
+                        </div>
+
+                    </div>
+
+
+                    <div class="h-[175px]
+                                flex
+                                items-center
+                                justify-center
+                                p-6
+                                bg-black/20">
+
+                        <div
+                            id="preview"
+                            class="preview
+                                   flex
+                                   items-center
+                                   justify-center
+                                   rounded-md
+                                   border
+                                   border-purple/60
+                                   bg-purple/[0.045]
+                                   shadow-[0_0_25px_rgba(155,92,255,.06)]"
+                            style="width:210px;height:105px;">
+
+                            <span class="text-[8px]
+                                         uppercase
+                                         tracking-[0.16em]
+                                         font-bold
+                                         text-purple/50">
+                                WALL PREVIEW
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+            <footer class="px-5 md:px-6
+                           py-3
+                           border-t
+                           border-[#1c1e24]
+                           flex
+                           justify-end
+                           text-[8px]
+                           uppercase
+                           tracking-[0.18em]
+                           text-slate-700">
+
+                <span>
+                    WOLVES
+                </span>
+
+            </footer>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        // =========================================
+        // ELEMENTS
+        // =========================================
+
+        const wallX =
+            document.getElementById("wallX");
+
+        const wallY =
+            document.getElementById("wallY");
+
+        const wallZ =
+            document.getElementById("wallZ");
+
+
+        const outputX =
+            document.getElementById("outputX");
+
+        const outputY =
+            document.getElementById("outputY");
+
+        const outputZ =
+            document.getElementById("outputZ");
+
+
+        const vectorOutput =
+            document.getElementById("vectorOutput");
+
+
+        const preview =
+            document.getElementById("preview");
+
+        const previewDimensions =
+            document.getElementById("previewDimensions");
+
+
+        const copyButton =
+            document.getElementById("copyButton");
+
+        const copyStatus =
+            document.getElementById("copyStatus");
+
+
+        // =========================================
+        // CALCULATE
+        // =========================================
+
+        function calculate() {
+
+            const x = parseFloat(wallX.value);
+
+            const y = parseFloat(wallY.value);
+
+            const z = parseFloat(wallZ.value);
+
+
+            // Each wall dimension is divided by 2.
+
+            const tileX =
+                Number.isFinite(x)
+                    ? x / 2
+                    : 0;
+
+
+            const tileY =
+                Number.isFinite(y)
+                    ? y / 2
+                    : 0;
+
+
+            const hasZ =
+                Number.isFinite(z);
+
+
+            const tileZ =
+                hasZ
+                    ? z / 2
+                    : null;
+
+
+            // =====================================
+            // OUTPUT
+            // =====================================
+
+            outputX.textContent =
+                tileX.toFixed(2);
+
+
+            outputY.textContent =
+                tileY.toFixed(2);
+
+
+            outputZ.textContent =
+                hasZ
+                    ? tileZ.toFixed(2)
+                    : "—";
+
+
+            // =====================================
+            // VECTOR
+            // =====================================
+
+            vectorOutput.textContent =
+                hasZ
+                    ? `${tileX.toFixed(2)}, ${tileY.toFixed(2)}, ${tileZ.toFixed(2)}`
+                    : `${tileX.toFixed(2)}, ${tileY.toFixed(2)}`;
+
+
+            // =====================================
+            // PREVIEW
+            // =====================================
+
+            updatePreview(x, y);
+
+        }
+
+
+        // =========================================
+        // PREVIEW
+        // =========================================
+
+        function updatePreview(x, y) {
+
+            if (
+                !Number.isFinite(x) ||
+                !Number.isFinite(y)
+            ) {
+                return;
+            }
+
+
+            const maxSize = 200;
+
+
+            const maxDimension =
+                Math.max(x, y, 1);
+
+
+            const width =
+                Math.max(
+                    (x / maxDimension) * maxSize,
+                    45
+                );
+
+
+            const height =
+                Math.max(
+                    (y / maxDimension) * maxSize,
+                    40
+                );
+
+
+            preview.style.width =
+                `${width}px`;
+
+
+            preview.style.height =
+                `${height}px`;
+
+
+            previewDimensions.textContent =
+                `${x} × ${y}`;
+
+        }
+
+
+        // =========================================
+        // COPY
+        // =========================================
+
+        copyButton.addEventListener(
+            "click",
+            async () => {
+
+                const value =
+                    vectorOutput.textContent;
+
+
+                try {
+
+                    await navigator.clipboard.writeText(value);
+
+
+                    copyButton.textContent =
+                        "Copied ✓";
+
+
+                    copyStatus.textContent =
+                        `Copied: (${value})`;
+
+
+                    setTimeout(() => {
+
+                        copyButton.textContent =
+                            "Copy Values";
+
+                        copyStatus.textContent =
+                            "";
+
+                    }, 1800);
+
+
+                } catch {
+
+                    copyStatus.textContent =
+                        "Clipboard unavailable — copy manually.";
+
+                }
+
+            }
+        );
+
+
+        // =========================================
+        // LIVE UPDATE
+        // =========================================
+
+        document
+            .querySelectorAll("input")
+            .forEach(input => {
+
+                input.addEventListener(
+                    "input",
+                    calculate
+                );
+
+            });
+
+
+        // =========================================
+        // INITIALIZE
+        // =========================================
+
+        calculate();
+
+    </script>
+
+</body>
+</html>
