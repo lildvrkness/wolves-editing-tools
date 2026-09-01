@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Wolves Albedo Tile Calculator</title>
+    <meta name="description" content="Calculate matching albedo tile and offset values from wall dimensions.">
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
@@ -26,1009 +26,798 @@
     </script>
 
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --purple: #9b5cff;
+            --green: #39ff88;
+            --ink: #030405;
         }
+
+        * { box-sizing: border-box; }
 
         html {
             min-height: 100%;
-            background: #030405;
+            background: var(--ink);
+            scroll-behavior: smooth;
         }
 
         body {
             margin: 0;
             min-height: 100vh;
             font-family: Inter, sans-serif;
-
             background:
-                radial-gradient(
-                    ellipse 700px 550px at 5% 10%,
-                    rgba(155, 92, 255, 0.20),
-                    transparent 68%
-                ),
-                radial-gradient(
-                    ellipse 700px 550px at 95% 90%,
-                    rgba(57, 255, 136, 0.13),
-                    transparent 68%
-                ),
-                radial-gradient(
-                    ellipse 500px 400px at 90% 5%,
-                    rgba(155, 92, 255, 0.06),
-                    transparent 70%
-                ),
+                radial-gradient(ellipse 720px 560px at 6% 8%, rgba(155, 92, 255, 0.22), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 96% 92%, rgba(57, 255, 136, 0.14), transparent 68%),
+                radial-gradient(ellipse 480px 380px at 88% 4%, rgba(155, 92, 255, 0.07), transparent 70%),
                 #030405;
-
             color: #e5e7eb;
-
             display: flex;
             justify-content: center;
             align-items: flex-start;
-
-            padding: 28px 18px 40px;
-
+            padding: 28px 18px 48px;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Ambient purple glow */
-        body::before {
-            content: "";
-            position: fixed;
-
-            width: 600px;
-            height: 600px;
-
-            left: -280px;
-            top: -180px;
-
-            border-radius: 50%;
-
-            background: rgba(155, 92, 255, 0.13);
-
-            filter: blur(100px);
-
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Ambient green glow */
+        body::before,
         body::after {
             content: "";
             position: fixed;
-
-            width: 650px;
-            height: 650px;
-
-            right: -300px;
-            bottom: -280px;
-
             border-radius: 50%;
-
-            background: rgba(57, 255, 136, 0.085);
-
-            filter: blur(110px);
-
             pointer-events: none;
             z-index: 0;
         }
 
-        /* Subtle background grid */
+        body::before {
+            width: 620px;
+            height: 620px;
+            left: -280px;
+            top: -180px;
+            background: rgba(155, 92, 255, 0.14);
+            filter: blur(100px);
+        }
+
+        body::after {
+            width: 660px;
+            height: 660px;
+            right: -300px;
+            bottom: -280px;
+            background: rgba(57, 255, 136, 0.09);
+            filter: blur(110px);
+        }
+
         .background-grid {
             position: fixed;
             inset: 0;
-
             pointer-events: none;
-
-            opacity: 0.028;
-
+            opacity: 0.03;
             background-image:
-                linear-gradient(
-                    rgba(255,255,255,.5) 1px,
-                    transparent 1px
-                ),
-                linear-gradient(
-                    90deg,
-                    rgba(255,255,255,.5) 1px,
-                    transparent 1px
-                );
-
+                linear-gradient(rgba(255,255,255,.55) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.55) 1px, transparent 1px);
             background-size: 42px 42px;
-
             z-index: 0;
         }
 
-        /* Title */
+        .noise {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        .watermark {
+            position: fixed;
+            right: -40px;
+            bottom: -50px;
+            width: min(420px, 55vw);
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 0;
+            filter: drop-shadow(0 0 24px rgba(155, 92, 255, .25));
+            user-select: none;
+        }
+
         .wolves-title {
             font-family: "New Rocker", cursive;
             font-weight: 400;
-
             letter-spacing: .025em;
             line-height: 1.02;
-
-            text-shadow:
-                0 0 20px rgba(155, 92, 255, .15);
+            text-shadow: 0 0 22px rgba(155, 92, 255, .2);
         }
 
-        /* Main cards */
         .card {
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(17, 18, 22, .96),
-                    rgba(8, 9, 11, .97)
-                );
-
+            background: linear-gradient(145deg, rgba(17, 18, 22, .96), rgba(8, 9, 11, .97));
             border: 1px solid #202229;
-            border-radius: 12px;
+            border-radius: 14px;
         }
 
-        /* Inputs */
+        .shell {
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, .45),
+                0 0 0 1px rgba(155, 92, 255, .06),
+                inset 0 1px 0 rgba(255,255,255,.03);
+        }
+
+        .logo-ring {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            padding: 3px;
+            background: linear-gradient(145deg, rgba(155,92,255,.85), rgba(57,255,136,.55));
+            box-shadow:
+                0 0 0 1px rgba(155, 92, 255, .25),
+                0 0 28px rgba(155, 92, 255, .28),
+                0 0 42px rgba(57, 255, 136, .12);
+            flex-shrink: 0;
+        }
+
+        .logo-ring img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            background: #0b0c10;
+            display: block;
+        }
+
         .input {
             width: 100%;
             height: 42px;
-
             background: rgba(3, 4, 5, .88);
-
             border: 1px solid #292c34;
-            border-radius: 7px;
-
+            border-radius: 8px;
             padding: 9px 11px;
-
             color: white;
             font-size: 13px;
-
             outline: none;
-
-            transition:
-                border-color .2s ease,
-                box-shadow .25s ease,
-                background .2s ease,
-                transform .2s ease;
+            transition: border-color .2s ease, box-shadow .25s ease, background .2s ease, transform .2s ease;
         }
 
-        /* Input hover */
         .input:hover {
             border-color: #41434d;
-
             background: rgba(8, 7, 12, .95);
-
-            box-shadow:
-                0 0 12px rgba(155, 92, 255, .08);
+            box-shadow: 0 0 12px rgba(155, 92, 255, .08);
         }
 
-        /* X / Y focus */
         .input:focus {
             background: rgba(10, 8, 15, .98);
-
             border-color: #9b5cff;
-
             transform: translateY(-1px);
-
             box-shadow:
                 0 0 0 2px rgba(155, 92, 255, .06),
                 0 0 12px rgba(155, 92, 255, .18),
-                0 0 30px rgba(155, 92, 255, .10),
-                inset 0 0 18px rgba(155, 92, 255, .025);
+                0 0 30px rgba(155, 92, 255, .10);
         }
 
-        /* Z hover */
         .input.optional:hover {
             border-color: #3b8f61;
-
             background: rgba(5, 10, 7, .95);
-
-            box-shadow:
-                0 0 12px rgba(57, 255, 136, .07);
+            box-shadow: 0 0 12px rgba(57, 255, 136, .07);
         }
 
-        /* Z focus */
         .input.optional:focus {
             background: rgba(5, 12, 8, .98);
-
             border-color: #39ff88;
-
             transform: translateY(-1px);
-
             box-shadow:
                 0 0 0 2px rgba(57, 255, 136, .05),
                 0 0 12px rgba(57, 255, 136, .16),
-                0 0 30px rgba(57, 255, 136, .08),
-                inset 0 0 18px rgba(57, 255, 136, .025);
+                0 0 30px rgba(57, 255, 136, .08);
         }
 
-        /* Output numbers */
         .output-number {
             font-variant-numeric: tabular-nums;
-
             letter-spacing: -.055em;
-
-            text-shadow:
-                0 0 25px rgba(155, 92, 255, .18);
+            text-shadow: 0 0 25px rgba(155, 92, 255, .18);
         }
 
-        /* Result boxes */
-        .result-box {
-            transition:
-                border-color .2s ease,
-                box-shadow .25s ease,
-                transform .2s ease;
+        .result-box,
+        .chip,
+        .ghost-btn,
+        .copy-button,
+        .preview {
+            transition: border-color .2s ease, box-shadow .25s ease, transform .2s ease, background .2s ease;
         }
 
         .result-box:hover {
             border-color: rgba(155, 92, 255, .35);
-
             transform: translateY(-1px);
-
-            box-shadow:
-                0 0 18px rgba(155, 92, 255, .08),
-                inset 0 0 20px rgba(155, 92, 255, .02);
+            box-shadow: 0 0 18px rgba(155, 92, 255, .08);
         }
 
-        /* Copy button */
-        .copy-button {
-            height: 40px;
+        .chip {
+            height: 30px;
+            padding: 0 10px;
+            border-radius: 999px;
+            border: 1px solid #2a2d35;
+            background: rgba(0,0,0,.35);
+            color: #9ca3af;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
 
-            transition:
-                transform .18s ease,
-                box-shadow .2s ease,
-                background .18s ease;
+        .chip:hover { border-color: rgba(155,92,255,.4); color: #fff; }
+        .chip.active {
+            border-color: rgba(155,92,255,.55);
+            background: rgba(155,92,255,.12);
+            color: #d6c4ff;
+        }
+
+        .ghost-btn {
+            height: 36px;
+            padding: 0 12px;
+            border-radius: 8px;
+            border: 1px solid #2a2d35;
+            background: rgba(0,0,0,.28);
+            color: #cbd5e1;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .ghost-btn:hover {
+            border-color: rgba(155,92,255,.4);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .copy-button {
+            height: 42px;
+            box-shadow: 0 0 0 rgba(57,255,136,0);
         }
 
         .copy-button:hover {
             transform: translateY(-1px);
-
-            box-shadow:
-                0 0 28px rgba(57, 255, 136, .20);
+            box-shadow: 0 0 28px rgba(57, 255, 136, .22);
         }
 
-        .copy-button:active {
-            transform: translateY(0);
+        .copy-button:active { transform: translateY(0); }
+
+        .preview:hover { box-shadow: 0 0 35px rgba(155, 92, 255, .12); }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(155,92,255,.7), rgba(57,255,136,.55));
+            outline: none;
         }
 
-        /* Preview */
-        .preview {
-            transition:
-                width .25s ease,
-                height .25s ease,
-                box-shadow .25s ease;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #9b5cff;
+            box-shadow: 0 0 12px rgba(155,92,255,.45);
+            cursor: pointer;
         }
 
-        .preview:hover {
-            box-shadow:
-                0 0 35px rgba(155, 92, 255, .10);
+        .tile-grid {
+            background-color: rgba(155, 92, 255, 0.05);
+            background-image:
+                linear-gradient(rgba(155,92,255,.22) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(155,92,255,.22) 1px, transparent 1px),
+                linear-gradient(rgba(57,255,136,.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(57,255,136,.08) 1px, transparent 1px);
+            background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px;
         }
 
-        /* Mobile */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%) translateY(16px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+            transition: opacity .25s ease, transform .25s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0a0b0e; }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2d35;
+            border-radius: 999px;
+            border: 2px solid #0a0b0e;
+        }
+
         @media (max-width: 640px) {
-            body {
-                padding: 18px 12px 30px;
-            }
-
-            .wolves-title {
-                font-size: 2.35rem;
-            }
+            body { padding: 16px 12px 36px; }
+            .wolves-title { font-size: 2.15rem; }
+            .logo-ring { width: 58px; height: 58px; border-radius: 15px; }
         }
     </style>
 </head>
 
 <body>
-
     <div class="background-grid"></div>
+    <div class="noise"></div>
+    <img
+        class="watermark"
+        src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
+        alt=""
+        aria-hidden="true"
+    >
 
-    <main class="relative z-10 w-full max-w-4xl">
+    <main class="relative z-10 w-full max-w-5xl">
+        <div class="card shell overflow-hidden">
 
-        <div class="card overflow-hidden shadow-2xl">
+            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-start gap-4">
+                    <div class="logo-ring">
+                        <img
+                            src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
+                            alt="Wolves emblem"
+                        >
+                    </div>
 
-            <!-- HEADER -->
-            <header class="px-6 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="text-[9px] uppercase tracking-[0.22em] font-bold text-purple">Wolves Tools</span>
+                            <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                            <span class="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-600">Albedo</span>
+                        </div>
 
-                <h1 class="wolves-title text-4xl md:text-[3.15rem] text-white">
-                    Wolves
-                    <span class="text-purple">Albedo</span>
-                    Tile Calculator
-                </h1>
+                        <h1 class="wolves-title text-[2.35rem] md:text-[3.15rem] text-white">
+                            Wolves
+                            <span class="text-purple">Albedo</span>
+                            Tile Calculator
+                        </h1>
 
-                <p class="text-xs text-slate-500 mt-3 max-w-xl">
-                    Enter your wall dimensions to automatically calculate
-                    the matching albedo tile values.
-                </p>
-
+                        <p class="text-xs text-slate-500 mt-2 max-w-2xl leading-relaxed">
+                            Convert wall size into matching albedo tiling. Adjust units-per-tile, add offsets,
+                            preview repeats, and copy Unity-ready vectors.
+                        </p>
+                    </div>
+                </div>
             </header>
 
+            <section class="p-4 md:p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-            <!-- CALCULATOR -->
-            <section class="p-5 md:p-6">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-
-                    <!-- INPUT CARD -->
-                    <div class="card p-4.5 md:p-5">
-
-                        <div class="flex items-start justify-between mb-5">
-
+                    <!-- INPUT -->
+                    <div class="card p-4 md:p-5">
+                        <div class="flex items-start justify-between mb-4">
                             <div>
-
-                                <div class="text-[9px]
-                                            uppercase
-                                            tracking-[0.22em]
-                                            font-bold
-                                            text-purple
-                                            mb-1">
-                                    INPUT
-                                </div>
-
-                                <h2 class="text-lg font-bold text-white">
-                                    Wall Size
-                                </h2>
-
-                                <p class="text-[11px] text-slate-500 mt-0.5">
-                                    Enter your wall dimensions.
-                                </p>
-
+                                <div class="text-[9px] uppercase tracking-[0.22em] font-bold text-purple mb-1">Input</div>
+                                <h2 class="text-lg font-bold text-white">Wall Size</h2>
+                                <p class="text-[11px] text-slate-500 mt-0.5">World units for the surface you are texturing.</p>
                             </div>
-
-                            <div class="w-7 h-7
-                                        rounded-md
-                                        bg-purple/10
-                                        border border-purple/20
-                                        flex items-center
-                                        justify-center
-                                        text-purple
-                                        text-[10px]
-                                        font-bold">
-                                01
-                            </div>
-
+                            <div class="w-7 h-7 rounded-md bg-purple/10 border border-purple/20 flex items-center justify-center text-purple text-[10px] font-bold">01</div>
                         </div>
 
+                        <div class="flex flex-wrap gap-1.5 mb-4" id="presetRow"></div>
 
                         <div class="space-y-3.5">
-
-                            <!-- X -->
                             <div>
-
-                                <label class="block
-                                              text-[9px]
-                                              uppercase
-                                              tracking-[0.15em]
-                                              font-bold
-                                              text-slate-500
-                                              mb-1.5">
-                                    X — Width
-                                </label>
-
-                                <input
-                                    id="wallX"
-                                    type="number"
-                                    value="6"
-                                    step="any"
-                                    placeholder="Enter X"
-                                    class="input"
-                                >
-
+                                <label class="block text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500 mb-1.5">X — Width</label>
+                                <input id="wallX" type="number" value="6" step="any" placeholder="Enter X" class="input">
                             </div>
 
-
-                            <!-- Y -->
                             <div>
-
-                                <label class="block
-                                              text-[9px]
-                                              uppercase
-                                              tracking-[0.15em]
-                                              font-bold
-                                              text-slate-500
-                                              mb-1.5">
-                                    Y — Height
-                                </label>
-
-                                <input
-                                    id="wallY"
-                                    type="number"
-                                    value="3"
-                                    step="any"
-                                    placeholder="Enter Y"
-                                    class="input"
-                                >
-
+                                <label class="block text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500 mb-1.5">Y — Height</label>
+                                <input id="wallY" type="number" value="3" step="any" placeholder="Enter Y" class="input">
                             </div>
 
-
-                            <!-- Z -->
                             <div>
-
                                 <div class="flex items-center justify-between mb-1.5">
-
-                                    <label class="text-[9px]
-                                                  uppercase
-                                                  tracking-[0.15em]
-                                                  font-bold
-                                                  text-slate-500">
-                                        Z — Depth
-                                    </label>
-
-                                    <span class="text-[8px]
-                                                 uppercase
-                                                 tracking-[0.15em]
-                                                 text-green
-                                                 font-bold">
-                                        OPTIONAL
-                                    </span>
-
+                                    <label class="text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500">Z — Depth</label>
+                                    <span class="text-[8px] uppercase tracking-[0.15em] text-green font-bold">Optional</span>
                                 </div>
-
-                                <input
-                                    id="wallZ"
-                                    type="number"
-                                    step="any"
-                                    placeholder="Optional"
-                                    class="input optional"
-                                >
-
+                                <input id="wallZ" type="number" step="any" placeholder="Optional" class="input optional">
                             </div>
-
                         </div>
 
+                        <div class="mt-5 pt-4 border-t border-[#1c1e24] space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500">Units per tile</label>
+                                    <span id="divisorLabel" class="text-[11px] font-bold text-purple tabular-nums">2.00</span>
+                                </div>
+                                <input id="divisor" type="range" min="0.25" max="8" step="0.25" value="2">
+                                <p class="text-[10px] text-slate-600 mt-2 leading-relaxed">
+                                    Tile = wall ÷ units-per-tile. Default 2 matches the original Wolves formula.
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-[8px] uppercase tracking-[0.14em] font-bold text-slate-600 mb-1.5">Offset X</label>
+                                    <input id="offX" type="number" value="0" step="any" class="input">
+                                </div>
+                                <div>
+                                    <label class="block text-[8px] uppercase tracking-[0.14em] font-bold text-slate-600 mb-1.5">Offset Y</label>
+                                    <input id="offY" type="number" value="0" step="any" class="input">
+                                </div>
+                                <div>
+                                    <label class="block text-[8px] uppercase tracking-[0.14em] font-bold text-slate-600 mb-1.5">Offset Z</label>
+                                    <input id="offZ" type="number" value="0" step="any" class="input optional">
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" id="swapBtn" class="ghost-btn">Swap X / Y</button>
+                                <button type="button" id="resetBtn" class="ghost-btn">Reset</button>
+                            </div>
+                        </div>
                     </div>
 
-
-                    <!-- RESULT CARD -->
-                    <div class="card p-4.5 md:p-5 relative overflow-hidden">
-
-                        <!-- Card glow -->
-                        <div class="absolute
-                                    -right-20
-                                    -top-20
-                                    w-44
-                                    h-44
-                                    rounded-full
-                                    bg-purple/5
-                                    blur-3xl">
-                        </div>
+                    <!-- RESULT -->
+                    <div class="card p-4 md:p-5 relative overflow-hidden">
+                        <div class="absolute -right-20 -top-20 w-44 h-44 rounded-full bg-purple/5 blur-3xl"></div>
 
                         <div class="relative">
-
-                            <div class="flex items-start justify-between mb-5">
-
+                            <div class="flex items-start justify-between mb-4">
                                 <div>
-
-                                    <div class="text-[9px]
-                                                uppercase
-                                                tracking-[0.22em]
-                                                font-bold
-                                                text-green
-                                                mb-1">
-                                        RESULT
-                                    </div>
-
-                                    <h2 class="text-lg font-bold text-white">
-                                        Albedo Tile
-                                    </h2>
-
-                                    <p class="text-[11px] text-slate-500 mt-0.5">
-                                        Your calculated texture values.
-                                    </p>
-
+                                    <div class="text-[9px] uppercase tracking-[0.22em] font-bold text-green mb-1">Result</div>
+                                    <h2 class="text-lg font-bold text-white">Albedo Tile</h2>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Texture tiling, offsets, and copy formats.</p>
                                 </div>
-
-                                <div class="w-7 h-7
-                                            rounded-md
-                                            bg-green/10
-                                            border border-green/20
-                                            flex items-center
-                                            justify-center
-                                            text-green
-                                            text-[10px]
-                                            font-bold">
-                                    02
-                                </div>
-
+                                <div class="w-7 h-7 rounded-md bg-green/10 border border-green/20 flex items-center justify-center text-green text-[10px] font-bold">02</div>
                             </div>
 
-
-                            <!-- X / Y OUTPUT -->
                             <div class="grid grid-cols-2 gap-3">
-
-                                <div class="result-box
-                                            rounded-lg
-                                            border border-[#292c33]
-                                            bg-black/35
-                                            py-4
-                                            text-center">
-
-                                    <div class="text-[8px]
-                                                uppercase
-                                                tracking-[0.2em]
-                                                font-bold
-                                                text-slate-600">
-                                        TILE X
-                                    </div>
-
-                                    <div
-                                        id="outputX"
-                                        class="output-number
-                                               text-4xl
-                                               md:text-5xl
-                                               font-black
-                                               text-purple
-                                               mt-1">
-                                        3.00
-                                    </div>
-
+                                <div class="result-box rounded-lg border border-[#292c33] bg-black/35 py-4 text-center">
+                                    <div class="text-[8px] uppercase tracking-[0.2em] font-bold text-slate-600">Tile X</div>
+                                    <div id="outputX" class="output-number text-4xl md:text-5xl font-black text-purple mt-1">3.00</div>
                                 </div>
-
-
-                                <div class="result-box
-                                            rounded-lg
-                                            border border-[#292c33]
-                                            bg-black/35
-                                            py-4
-                                            text-center">
-
-                                    <div class="text-[8px]
-                                                uppercase
-                                                tracking-[0.2em]
-                                                font-bold
-                                                text-slate-600">
-                                        TILE Y
-                                    </div>
-
-                                    <div
-                                        id="outputY"
-                                        class="output-number
-                                               text-4xl
-                                               md:text-5xl
-                                               font-black
-                                               text-purple
-                                               mt-1">
-                                        1.50
-                                    </div>
-
+                                <div class="result-box rounded-lg border border-[#292c33] bg-black/35 py-4 text-center">
+                                    <div class="text-[8px] uppercase tracking-[0.2em] font-bold text-slate-600">Tile Y</div>
+                                    <div id="outputY" class="output-number text-4xl md:text-5xl font-black text-purple mt-1">1.50</div>
                                 </div>
-
                             </div>
 
-
-                            <!-- Z -->
-                            <div class="mt-3
-                                        rounded-lg
-                                        border border-[#292c33]
-                                        bg-black/20
-                                        px-3.5
-                                        py-2.5
-                                        flex
-                                        items-center
-                                        justify-between">
-
+                            <div class="mt-3 rounded-lg border border-[#292c33] bg-black/20 px-3.5 py-2.5 flex items-center justify-between">
                                 <div>
-
-                                    <div class="text-[8px]
-                                                uppercase
-                                                tracking-[0.18em]
-                                                font-bold
-                                                text-slate-600">
-                                        TILE Z
-                                    </div>
-
-                                    <div
-                                        id="outputZ"
-                                        class="text-sm
-                                               font-bold
-                                               text-green
-                                               mt-0.5">
-                                        —
-                                    </div>
-
+                                    <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Tile Z</div>
+                                    <div id="outputZ" class="text-sm font-bold text-green mt-0.5">—</div>
                                 </div>
-
-                                <span class="text-[8px]
-                                             uppercase
-                                             tracking-wider
-                                             text-slate-700">
-                                    OPTIONAL
-                                </span>
-
+                                <span class="text-[8px] uppercase tracking-wider text-slate-700">Optional</span>
                             </div>
 
-
-                            <!-- VECTOR -->
-                            <div class="mt-3
-                                        rounded-lg
-                                        border border-green/10
-                                        bg-green/[0.025]
-                                        px-3.5
-                                        py-2.5">
-
-                                <div class="text-[8px]
-                                            uppercase
-                                            tracking-[0.18em]
-                                            font-bold
-                                            text-slate-600">
-                                    VECTOR
+                            <div class="mt-3 grid grid-cols-3 gap-2">
+                                <div class="rounded-lg border border-[#292c33] bg-black/20 px-3 py-2">
+                                    <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Area</div>
+                                    <div id="areaOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">18.00</div>
                                 </div>
-
-                                <div
-                                    id="vectorOutput"
-                                    class="text-xs
-                                           font-bold
-                                           text-green
-                                           mt-0.5">
-                                    3.00, 1.50
+                                <div class="rounded-lg border border-[#292c33] bg-black/20 px-3 py-2">
+                                    <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Aspect</div>
+                                    <div id="aspectOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">2.00 : 1</div>
                                 </div>
-
+                                <div class="rounded-lg border border-[#292c33] bg-black/20 px-3 py-2">
+                                    <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Repeats</div>
+                                    <div id="repeatOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">3 × 1.5</div>
+                                </div>
                             </div>
 
-
-                            <!-- COPY -->
-                            <button
-                                id="copyButton"
-                                class="copy-button
-                                       w-full
-                                       mt-3
-                                       bg-green
-                                       hover:bg-[#4dffa0]
-                                       text-black
-                                       font-black
-                                       text-[10px]
-                                       uppercase
-                                       tracking-[0.18em]
-                                       rounded-lg">
-                                Copy Values
-                            </button>
-
-                            <div
-                                id="copyStatus"
-                                class="text-center
-                                       text-[9px]
-                                       text-slate-600
-                                       mt-2
-                                       h-3">
+                            <div class="mt-3 rounded-lg border border-green/10 bg-green/[0.025] px-3.5 py-2.5">
+                                <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Vector</div>
+                                <div id="vectorOutput" class="text-xs font-bold text-green mt-0.5 break-all">3.00, 1.50</div>
                             </div>
 
+                            <div class="mt-3 rounded-lg border border-[#292c33] bg-black/20 px-3.5 py-2.5">
+                                <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Offset</div>
+                                <div id="offsetOutput" class="text-xs font-bold text-slate-300 mt-0.5">0.00, 0.00</div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 mt-3">
+                                <button id="copyButton" class="copy-button bg-green hover:bg-[#4dffa0] text-black font-black text-[10px] uppercase tracking-[0.18em] rounded-lg">
+                                    Copy Vector
+                                </button>
+                                <button id="copyAllButton" class="ghost-btn h-[42px]">Copy All</button>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 mt-2">
+                                <button data-format="unity" class="format-btn ghost-btn w-full px-2">Unity</button>
+                                <button data-format="shader" class="format-btn ghost-btn w-full px-2">Shader</button>
+                                <button data-format="json" class="format-btn ghost-btn w-full px-2">JSON</button>
+                            </div>
+
+                            <div id="copyStatus" class="text-center text-[9px] text-slate-600 mt-2 h-3"></div>
                         </div>
-
                     </div>
-
                 </div>
-
 
                 <!-- PREVIEW -->
                 <div class="card mt-4 overflow-hidden">
-
-                    <div class="px-4.5 md:px-5 py-3
-                                border-b
-                                border-[#1c1e24]
-                                flex
-                                items-center
-                                justify-between">
-
+                    <div class="px-4 md:px-5 py-3 border-b border-[#1c1e24] flex items-center justify-between gap-3">
                         <div>
-
-                            <div class="text-[9px]
-                                        uppercase
-                                        tracking-[0.2em]
-                                        font-bold
-                                        text-slate-600">
-                                PREVIEW
-                            </div>
-
-                            <h3 class="text-xs
-                                       font-bold
-                                       text-white
-                                       mt-0.5">
-                                Wall Proportion
-                            </h3>
-
+                            <div class="text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600">Preview</div>
+                            <h3 class="text-xs font-bold text-white mt-0.5">Wall Proportion + Tile Repeats</h3>
                         </div>
-
-                        <div
-                            id="previewDimensions"
-                            class="text-[9px]
-                                   text-slate-600">
-                            6 × 3
-                        </div>
-
+                        <div id="previewDimensions" class="text-[9px] text-slate-600 whitespace-nowrap">6 × 3</div>
                     </div>
 
-
-                    <div class="h-[175px]
-                                flex
-                                items-center
-                                justify-center
-                                p-6
-                                bg-black/20">
-
+                    <div class="h-[210px] flex items-center justify-center p-6 bg-black/20">
                         <div
                             id="preview"
-                            class="preview
-                                   flex
-                                   items-center
-                                   justify-center
-                                   rounded-md
-                                   border
-                                   border-purple/60
-                                   bg-purple/[0.045]
-                                   shadow-[0_0_25px_rgba(155,92,255,.06)]"
-                            style="width:210px;height:105px;">
-
-                            <span class="text-[8px]
-                                         uppercase
-                                         tracking-[0.16em]
-                                         font-bold
-                                         text-purple/50">
-                                WALL PREVIEW
+                            class="preview tile-grid flex items-end justify-start rounded-md border border-purple/60 shadow-[0_0_25px_rgba(155,92,255,.06)] relative overflow-hidden"
+                            style="width:210px;height:105px;"
+                        >
+                            <div class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_30%_20%,rgba(155,92,255,.45),transparent_55%)]"></div>
+                            <span class="relative z-10 m-2 text-[8px] uppercase tracking-[0.16em] font-bold text-purple/70 bg-black/40 rounded px-1.5 py-0.5">
+                                Wall Preview
                             </span>
-
                         </div>
-
                     </div>
-
                 </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+                    <div class="card px-4 py-3">
+                        <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Formula</div>
+                        <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                            <span class="text-purple font-semibold">tile</span> = wall ÷ units-per-tile
+                        </div>
+                    </div>
+                    <div class="card px-4 py-3">
+                        <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Best use</div>
+                        <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                            Keep tiling consistent across connected walls so albedo seams stay aligned.
+                        </div>
+                    </div>
+                    <div class="card px-4 py-3">
+                        <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Tip</div>
+                        <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                            Copy Unity format into the material Tiling / Offset fields, then nudge offset if the pattern is off-center.
+                        </div>
+                    </div>
+                </div>
             </section>
 
-
-            <!-- FOOTER -->
-            <footer class="px-5 md:px-6
-                           py-3
-                           border-t
-                           border-[#1c1e24]
-                           flex
-                           justify-end
-                           text-[8px]
-                           uppercase
-                           tracking-[0.18em]
-                           text-slate-700">
-
-                <span>
-                    WOLVES
+            <footer class="px-5 md:px-6 py-3 border-t border-[#1c1e24] flex items-center justify-between text-[8px] uppercase tracking-[0.18em] text-slate-700">
+                <span class="flex items-center gap-2">
+                    <img
+                        src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
+                        alt=""
+                        class="w-4 h-4 rounded-sm opacity-70"
+                    >
+                    Wolves
                 </span>
-
+                <span>Albedo Tile Lab</span>
             </footer>
-
         </div>
-
     </main>
 
+    <div id="toast" class="toast card px-4 py-2 text-[11px] font-bold text-green border-green/20">Copied</div>
 
     <script>
+        const wallX = document.getElementById("wallX");
+        const wallY = document.getElementById("wallY");
+        const wallZ = document.getElementById("wallZ");
+        const offX = document.getElementById("offX");
+        const offY = document.getElementById("offY");
+        const offZ = document.getElementById("offZ");
+        const divisor = document.getElementById("divisor");
+        const divisorLabel = document.getElementById("divisorLabel");
 
-        // =========================================
-        // ELEMENTS
-        // =========================================
+        const outputX = document.getElementById("outputX");
+        const outputY = document.getElementById("outputY");
+        const outputZ = document.getElementById("outputZ");
+        const vectorOutput = document.getElementById("vectorOutput");
+        const offsetOutput = document.getElementById("offsetOutput");
+        const areaOut = document.getElementById("areaOut");
+        const aspectOut = document.getElementById("aspectOut");
+        const repeatOut = document.getElementById("repeatOut");
 
-        const wallX =
-            document.getElementById("wallX");
+        const preview = document.getElementById("preview");
+        const previewDimensions = document.getElementById("previewDimensions");
+        const copyButton = document.getElementById("copyButton");
+        const copyAllButton = document.getElementById("copyAllButton");
+        const copyStatus = document.getElementById("copyStatus");
+        const toast = document.getElementById("toast");
+        const presetRow = document.getElementById("presetRow");
 
-        const wallY =
-            document.getElementById("wallY");
+        const PRESETS = [
+            { label: "6×3", x: 6, y: 3 },
+            { label: "8×4", x: 8, y: 4 },
+            { label: "10×5", x: 10, y: 5 },
+            { label: "12×6", x: 12, y: 6 },
+            { label: "4×4", x: 4, y: 4 },
+            { label: "16×8", x: 16, y: 8 }
+        ];
 
-        const wallZ =
-            document.getElementById("wallZ");
+        let last = {
+            tileX: 3,
+            tileY: 1.5,
+            tileZ: null,
+            ox: 0,
+            oy: 0,
+            oz: 0,
+            hasZ: false
+        };
 
+        function fmt(n, digits = 2) {
+            return Number(n).toFixed(digits);
+        }
 
-        const outputX =
-            document.getElementById("outputX");
-
-        const outputY =
-            document.getElementById("outputY");
-
-        const outputZ =
-            document.getElementById("outputZ");
-
-
-        const vectorOutput =
-            document.getElementById("vectorOutput");
-
-
-        const preview =
-            document.getElementById("preview");
-
-        const previewDimensions =
-            document.getElementById("previewDimensions");
-
-
-        const copyButton =
-            document.getElementById("copyButton");
-
-        const copyStatus =
-            document.getElementById("copyStatus");
-
-
-        // =========================================
-        // CALCULATE
-        // =========================================
+        function parseOrNull(el) {
+            const n = parseFloat(el.value);
+            return Number.isFinite(n) ? n : null;
+        }
 
         function calculate() {
-
             const x = parseFloat(wallX.value);
-
             const y = parseFloat(wallY.value);
-
             const z = parseFloat(wallZ.value);
+            const d = parseFloat(divisor.value) || 2;
 
+            const tileX = Number.isFinite(x) ? x / d : 0;
+            const tileY = Number.isFinite(y) ? y / d : 0;
+            const hasZ = Number.isFinite(z);
+            const tileZ = hasZ ? z / d : null;
 
-            // Each wall dimension is divided by 2.
+            const ox = parseOrNull(offX) ?? 0;
+            const oy = parseOrNull(offY) ?? 0;
+            const oz = parseOrNull(offZ) ?? 0;
 
-            const tileX =
-                Number.isFinite(x)
-                    ? x / 2
-                    : 0;
+            last = { tileX, tileY, tileZ, ox, oy, oz, hasZ };
 
+            outputX.textContent = fmt(tileX);
+            outputY.textContent = fmt(tileY);
+            outputZ.textContent = hasZ ? fmt(tileZ) : "—";
+            divisorLabel.textContent = fmt(d);
 
-            const tileY =
-                Number.isFinite(y)
-                    ? y / 2
-                    : 0;
+            vectorOutput.textContent = hasZ
+                ? `${fmt(tileX)}, ${fmt(tileY)}, ${fmt(tileZ)}`
+                : `${fmt(tileX)}, ${fmt(tileY)}`;
 
+            offsetOutput.textContent = hasZ
+                ? `${fmt(ox)}, ${fmt(oy)}, ${fmt(oz)}`
+                : `${fmt(ox)}, ${fmt(oy)}`;
 
-            const hasZ =
-                Number.isFinite(z);
-
-
-            const tileZ =
-                hasZ
-                    ? z / 2
-                    : null;
-
-
-            // =====================================
-            // OUTPUT
-            // =====================================
-
-            outputX.textContent =
-                tileX.toFixed(2);
-
-
-            outputY.textContent =
-                tileY.toFixed(2);
-
-
-            outputZ.textContent =
-                hasZ
-                    ? tileZ.toFixed(2)
-                    : "—";
-
-
-            // =====================================
-            // VECTOR
-            // =====================================
-
-            vectorOutput.textContent =
-                hasZ
-                    ? `${tileX.toFixed(2)}, ${tileY.toFixed(2)}, ${tileZ.toFixed(2)}`
-                    : `${tileX.toFixed(2)}, ${tileY.toFixed(2)}`;
-
-
-            // =====================================
-            // PREVIEW
-            // =====================================
-
-            updatePreview(x, y);
-
-        }
-
-
-        // =========================================
-        // PREVIEW
-        // =========================================
-
-        function updatePreview(x, y) {
-
-            if (
-                !Number.isFinite(x) ||
-                !Number.isFinite(y)
-            ) {
-                return;
+            if (Number.isFinite(x) && Number.isFinite(y)) {
+                areaOut.textContent = fmt(x * y);
+                const ratio = y === 0 ? 0 : x / y;
+                aspectOut.textContent = `${fmt(ratio)} : 1`;
+                repeatOut.textContent = `${fmt(tileX, 2)} × ${fmt(tileY, 2)}`;
+            } else {
+                areaOut.textContent = "—";
+                aspectOut.textContent = "—";
+                repeatOut.textContent = "—";
             }
 
-
-            const maxSize = 200;
-
-
-            const maxDimension =
-                Math.max(x, y, 1);
-
-
-            const width =
-                Math.max(
-                    (x / maxDimension) * maxSize,
-                    45
-                );
-
-
-            const height =
-                Math.max(
-                    (y / maxDimension) * maxSize,
-                    40
-                );
-
-
-            preview.style.width =
-                `${width}px`;
-
-
-            preview.style.height =
-                `${height}px`;
-
-
-            previewDimensions.textContent =
-                `${x} × ${y}`;
-
+            updatePreview(x, y, tileX, tileY);
+            syncPresetState(x, y);
         }
 
+        function updatePreview(x, y, tileX, tileY) {
+            if (!Number.isFinite(x) || !Number.isFinite(y)) return;
 
-        // =========================================
-        // COPY
-        // =========================================
+            const maxSize = 240;
+            const maxDimension = Math.max(x, y, 1);
+            const width = Math.max((x / maxDimension) * maxSize, 56);
+            const height = Math.max((y / maxDimension) * maxSize, 44);
 
-        copyButton.addEventListener(
-            "click",
-            async () => {
+            preview.style.width = `${width}px`;
+            preview.style.height = `${height}px`;
+            previewDimensions.textContent = `${x} × ${y}`;
 
-                const value =
-                    vectorOutput.textContent;
+            const repeatsX = Math.max(Math.abs(tileX) || 1, 0.25);
+            const repeatsY = Math.max(Math.abs(tileY) || 1, 0.25);
+            const cellW = Math.max(width / repeatsX, 6);
+            const cellH = Math.max(height / repeatsY, 6);
 
+            preview.style.backgroundSize = `${cellW}px ${cellH}px, ${cellW}px ${cellH}px, ${cellW / 4}px ${cellH / 4}px, ${cellW / 4}px ${cellH / 4}px`;
+        }
 
-                try {
+        function buildFormats() {
+            const { tileX, tileY, tileZ, ox, oy, oz, hasZ } = last;
+            const tiling = hasZ
+                ? `${fmt(tileX)}, ${fmt(tileY)}, ${fmt(tileZ)}`
+                : `${fmt(tileX)}, ${fmt(tileY)}`;
+            const offset = hasZ
+                ? `${fmt(ox)}, ${fmt(oy)}, ${fmt(oz)}`
+                : `${fmt(ox)}, ${fmt(oy)}`;
 
-                    await navigator.clipboard.writeText(value);
+            return {
+                vector: tiling,
+                all: `Tiling: ${tiling}\nOffset: ${offset}`,
+                unity: hasZ
+                    ? `Tiling: ${fmt(tileX)}, ${fmt(tileY)}, ${fmt(tileZ)}\nOffset: ${fmt(ox)}, ${fmt(oy)}, ${fmt(oz)}`
+                    : `material.mainTextureScale = new Vector2(${fmt(tileX)}f, ${fmt(tileY)}f);\nmaterial.mainTextureOffset = new Vector2(${fmt(ox)}f, ${fmt(oy)}f);`,
+                shader: hasZ
+                    ? `float3 _Tiling = float3(${fmt(tileX)}, ${fmt(tileY)}, ${fmt(tileZ)});\nfloat3 _Offset = float3(${fmt(ox)}, ${fmt(oy)}, ${fmt(oz)});`
+                    : `float2 _Tiling = float2(${fmt(tileX)}, ${fmt(tileY)});\nfloat2 _Offset = float2(${fmt(ox)}, ${fmt(oy)});`,
+                json: JSON.stringify({
+                    tiling: hasZ ? [tileX, tileY, tileZ] : [tileX, tileY],
+                    offset: hasZ ? [ox, oy, oz] : [ox, oy],
+                    unitsPerTile: parseFloat(divisor.value)
+                }, null, 2)
+            };
+        }
 
-
-                    copyButton.textContent =
-                        "Copied ✓";
-
-
-                    copyStatus.textContent =
-                        `Copied: (${value})`;
-
-
-                    setTimeout(() => {
-
-                        copyButton.textContent =
-                            "Copy Values";
-
-                        copyStatus.textContent =
-                            "";
-
-                    }, 1800);
-
-
-                } catch {
-
-                    copyStatus.textContent =
-                        "Clipboard unavailable — copy manually.";
-
-                }
-
+        async function copyText(value, label) {
+            try {
+                await navigator.clipboard.writeText(value);
+                copyButton.textContent = "Copied ✓";
+                copyStatus.textContent = `Copied ${label}`;
+                toast.textContent = `Copied ${label}`;
+                toast.classList.add("show");
+                setTimeout(() => {
+                    copyButton.textContent = "Copy Vector";
+                    copyStatus.textContent = "";
+                    toast.classList.remove("show");
+                }, 1600);
+            } catch {
+                copyStatus.textContent = "Clipboard unavailable — copy manually.";
             }
-        );
+        }
 
-
-        // =========================================
-        // LIVE UPDATE
-        // =========================================
-
-        document
-            .querySelectorAll("input")
-            .forEach(input => {
-
-                input.addEventListener(
-                    "input",
-                    calculate
-                );
-
+        function renderPresets() {
+            presetRow.innerHTML = "";
+            PRESETS.forEach((p) => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "chip";
+                btn.textContent = p.label;
+                btn.dataset.x = String(p.x);
+                btn.dataset.y = String(p.y);
+                btn.addEventListener("click", () => {
+                    wallX.value = p.x;
+                    wallY.value = p.y;
+                    calculate();
+                });
+                presetRow.appendChild(btn);
             });
+        }
 
+        function syncPresetState(x, y) {
+            [...presetRow.children].forEach((btn) => {
+                const match = Number(btn.dataset.x) === x && Number(btn.dataset.y) === y;
+                btn.classList.toggle("active", match);
+            });
+        }
 
-        // =========================================
-        // INITIALIZE
-        // =========================================
+        copyButton.addEventListener("click", () => copyText(buildFormats().vector, "vector"));
+        copyAllButton.addEventListener("click", () => copyText(buildFormats().all, "tiling + offset"));
 
+        document.querySelectorAll(".format-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const key = btn.dataset.format;
+                copyText(buildFormats()[key], key);
+            });
+        });
+
+        document.getElementById("swapBtn").addEventListener("click", () => {
+            const x = wallX.value;
+            wallX.value = wallY.value;
+            wallY.value = x;
+            const ox = offX.value;
+            offX.value = offY.value;
+            offY.value = ox;
+            calculate();
+        });
+
+        document.getElementById("resetBtn").addEventListener("click", () => {
+            wallX.value = 6;
+            wallY.value = 3;
+            wallZ.value = "";
+            offX.value = 0;
+            offY.value = 0;
+            offZ.value = 0;
+            divisor.value = 2;
+            calculate();
+        });
+
+        document.querySelectorAll("input").forEach((input) => {
+            input.addEventListener("input", calculate);
+        });
+
+        renderPresets();
         calculate();
-
     </script>
-
 </body>
 </html>
