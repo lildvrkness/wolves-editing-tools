@@ -15,4 +15,4 @@ A compact utility for calculating Albedo Wall Tile dimensions.
 
 Enter the wall dimensions and the calculator automatically generates the corresponding Albedo tile values.
 
-WOLVES CLAN
+MADE FOR WOLVES CLAN <3
