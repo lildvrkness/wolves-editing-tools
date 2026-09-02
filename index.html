@@ -96,10 +96,62 @@
         .glyph.tex { color:#d6c4ff; background:rgba(155,92,255,.1); border:1px solid rgba(155,92,255,.28); box-shadow:0 0 16px rgba(155,92,255,.12); }
         .xy-mark { font-size:15px; line-height:1; }
         .xy-mark b { color:#39ff88; }
+
+        .aurora {
+            position:fixed; inset:-20%; pointer-events:none; z-index:0;
+            background:
+                conic-gradient(from 180deg at 50% 45%, transparent 0 40%, rgba(155,92,255,.08) 48%, rgba(57,255,136,.07) 52%, transparent 60% 100%);
+            animation:spin 28s linear infinite;
+            filter:blur(40px);
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .wolf-bg {
+            animation:wolfBreath 6.5s ease-in-out infinite;
+        }
+        @keyframes wolfBreath {
+            0%,100% { opacity:.18; filter: drop-shadow(0 0 28px rgba(155,92,255,.35)) drop-shadow(0 0 48px rgba(57,255,136,.18)); }
+            50% { opacity:.28; filter: drop-shadow(0 0 40px rgba(155,92,255,.5)) drop-shadow(0 0 70px rgba(57,255,136,.28)); }
+        }
+        .spark {
+            position:fixed; width:3px; height:3px; border-radius:50%; pointer-events:none; z-index:2;
+            animation:rise 9s linear infinite;
+        }
+        .spark.p { background:#9b5cff; box-shadow:0 0 8px #9b5cff; }
+        .spark.g { background:#39ff88; box-shadow:0 0 8px #39ff88; }
+        @keyframes rise {
+            0% { transform:translateY(20vh) scale(.4); opacity:0; }
+            15% { opacity:.7; }
+            100% { transform:translateY(-90vh) scale(1); opacity:0; }
+        }
+        .cursor-glow {
+            position:fixed; width:280px; height:280px; border-radius:50%; pointer-events:none; z-index:1;
+            background:radial-gradient(circle, rgba(155,92,255,.16), transparent 68%);
+            transform:translate(-50%,-50%); mix-blend-mode:screen;
+        }
+        .tool-card { overflow:hidden; animation:cardIn .7s ease both; }
+        .tool-card:nth-child(1){animation-delay:.05s} .tool-card:nth-child(2){animation-delay:.1s}
+        .tool-card:nth-child(3){animation-delay:.15s} .tool-card:nth-child(4){animation-delay:.2s}
+        .tool-card:nth-child(5){animation-delay:.25s} .tool-card:nth-child(6){animation-delay:.3s}
+        @keyframes cardIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+        .tool-card::before {
+            content:""; position:absolute; inset:0; pointer-events:none;
+            background:linear-gradient(110deg, transparent 30%, rgba(255,255,255,.08) 48%, transparent 62%);
+            transform:translateX(-120%);
+        }
+        .tool-card:hover::before { animation:shine .7s ease; }
+        @keyframes shine { to { transform:translateX(120%); } }
+        .scan {
+            position:fixed; inset:0; pointer-events:none; z-index:3; opacity:.04;
+            background:repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.6) 3px 4px);
+        }
     </style>
 </head>
 <body>
+    <div class="aurora"></div>
     <div class="background-grid"></div>
+    <div class="scan"></div>
+    <div class="cursor-glow" id="glow"></div>
+    <div id="sparks"></div>
     <div class="noise"></div>
     <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="" aria-hidden="true">
     <div class="heart-field" aria-hidden="true">
@@ -188,10 +240,27 @@
                 <div>
                     <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-green mb-1">Reference</div>
                     <div class="text-base font-bold text-white">Submeshes</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">Search available submeshes, indexes.</div>
+                    <div class="text-[11px] text-slate-500 mt-0.5">Shop items, indexes, and texture notes.</div>
                 </div>
             </a>
         </div>
     </main>
+
+<script>
+const glow = document.getElementById('glow');
+window.addEventListener('pointermove', (e) => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+});
+const box = document.getElementById('sparks');
+for (let i = 0; i < 18; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark ' + (i % 2 ? 'p' : 'g');
+    s.style.left = (4 + Math.random() * 92) + '%';
+    s.style.animationDuration = (7 + Math.random() * 8) + 's';
+    s.style.animationDelay = (-Math.random() * 9) + 's';
+    box.appendChild(s);
+}
+</script>
 </body>
 </html>
