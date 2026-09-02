@@ -15,7 +15,7 @@ Everything runs locally in the browser. No costs, no accounts, no uploads.
 | **Name Tag Gradients** | Build smooth `[color=#hex]` codes for in-game name tags |
 | **Fancy Text** | Unicode font styles plus click-to-copy text symbols |
 | **Color Codes** | Color picker with hex, RGB, HSL, Unity, and tag copy |
-| **Submeshes** | Searchable shop / editor / submesh / texture reference |
+| **Submeshes** | Searchable submesh / index / prop reference |
 
 ## Usage
 
