@@ -168,15 +168,60 @@
             font-weight: 400;
             letter-spacing: .025em;
             line-height: 1.02;
-            text-shadow:
-                0 0 18px rgba(155, 92, 255, .28),
-                0 0 40px rgba(155, 92, 255, .12);
         }
 
-        .wolves-title .text-purple {
+        .title-wolves {
+            color: #39ff88;
+            display: inline-block;
             text-shadow:
-                0 0 16px rgba(155, 92, 255, .55),
-                0 0 36px rgba(155, 92, 255, .25);
+                0 0 10px rgba(57, 255, 136, .55),
+                0 0 24px rgba(57, 255, 136, .28),
+                0 0 42px rgba(57, 255, 136, .12);
+            animation: wolvesPulse 2.8s ease-in-out infinite;
+        }
+
+        .title-albedo {
+            color: #9b5cff;
+            display: inline-block;
+            text-shadow:
+                0 0 12px rgba(155, 92, 255, .6),
+                0 0 28px rgba(155, 92, 255, .28);
+            animation: albedoShimmer 4.2s ease-in-out infinite;
+        }
+
+        .title-rest {
+            color: #ffffff;
+            text-shadow: 0 0 18px rgba(155, 92, 255, .18);
+        }
+
+        @keyframes wolvesPulse {
+            0%, 100% {
+                text-shadow:
+                    0 0 8px rgba(57, 255, 136, .4),
+                    0 0 18px rgba(57, 255, 136, .18);
+                filter: brightness(1);
+            }
+            50% {
+                text-shadow:
+                    0 0 16px rgba(57, 255, 136, .85),
+                    0 0 32px rgba(57, 255, 136, .4),
+                    0 0 54px rgba(57, 255, 136, .18);
+                filter: brightness(1.12);
+            }
+        }
+
+        @keyframes albedoShimmer {
+            0%, 100% {
+                text-shadow:
+                    0 0 10px rgba(155, 92, 255, .45),
+                    0 0 22px rgba(155, 92, 255, .2);
+            }
+            50% {
+                text-shadow:
+                    0 0 18px rgba(155, 92, 255, .85),
+                    0 0 36px rgba(155, 92, 255, .35),
+                    0 0 20px rgba(57, 255, 136, .12);
+            }
         }
 
         .card {
@@ -317,24 +362,6 @@
                 0 0 36px rgba(155, 92, 255, .14);
         }
 
-        .input.optional:hover {
-            border-color: rgba(57, 255, 136, .55);
-            background: rgba(5, 10, 7, .95);
-            box-shadow:
-                0 0 0 1px rgba(57, 255, 136, .1),
-                0 0 16px rgba(57, 255, 136, .16);
-        }
-
-        .input.optional:focus {
-            background: rgba(5, 12, 8, .98);
-            border-color: #39ff88;
-            transform: translateY(-1px);
-            box-shadow:
-                0 0 0 2px rgba(57, 255, 136, .08),
-                0 0 16px rgba(57, 255, 136, .24),
-                0 0 36px rgba(57, 255, 136, .12);
-        }
-
         .output-number {
             font-variant-numeric: tabular-nums;
             letter-spacing: -.055em;
@@ -345,7 +372,6 @@
         }
 
         .result-box,
-        .chip,
         .ghost-btn,
         .copy-button,
         .preview {
@@ -364,34 +390,6 @@
             text-shadow:
                 0 0 16px rgba(155, 92, 255, .7),
                 0 0 36px rgba(155, 92, 255, .28);
-        }
-
-        .chip {
-            height: 30px;
-            padding: 0 10px;
-            border-radius: 999px;
-            border: 1px solid #2a2d35;
-            background: rgba(0,0,0,.35);
-            color: #9ca3af;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-
-        .chip:hover {
-            border-color: rgba(155,92,255,.7);
-            color: #fff;
-            background: rgba(155,92,255,.12);
-            box-shadow: 0 0 16px rgba(155,92,255,.22);
-            transform: translateY(-1px);
-        }
-
-        .chip.active {
-            border-color: rgba(155,92,255,.7);
-            background: rgba(155,92,255,.16);
-            color: #e4d6ff;
-            box-shadow: 0 0 14px rgba(155,92,255,.18);
         }
 
         .ghost-btn {
@@ -568,15 +566,15 @@
                             <span class="text-[9px] uppercase tracking-[0.18em] font-bold text-slate-600">Albedo</span>
                         </div>
 
-                        <h1 class="wolves-title text-[2.35rem] md:text-[3.15rem] text-white">
-                            Wolves
-                            <span class="text-purple">Albedo</span>
-                            Tile Calculator
+                        <h1 class="wolves-title text-[2.35rem] md:text-[3.15rem]">
+                            <span class="title-wolves">Wolves</span>
+                            <span class="title-albedo">Albedo</span>
+                            <span class="title-rest">Tile Calculator</span>
                         </h1>
 
                         <p class="text-xs text-slate-500 mt-2 max-w-2xl leading-relaxed">
-                            Convert wall size into matching albedo tiling. Adjust units-per-tile, add offsets,
-                            preview repeats, and copy Unity-ready vectors.
+                            Convert wall size into matching albedo tiling. Adjust units-per-tile,
+                            preview repeats, and copy each tile value.
                         </p>
                     </div>
                 </div>
@@ -595,25 +593,15 @@
                             <div class="w-7 h-7 rounded-md bg-purple/10 border border-purple/20 flex items-center justify-center text-purple text-[10px] font-bold shadow-[0_0_12px_rgba(155,92,255,.15)]">01</div>
                         </div>
 
-                        <div class="flex flex-wrap gap-1.5 mb-4" id="presetRow"></div>
-
                         <div class="space-y-3.5">
                             <div>
                                 <label class="block text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500 mb-1.5">X — Width</label>
-                                <input id="wallX" type="number" value="6" step="any" placeholder="Enter X" class="input">
+                                <input id="wallX" type="number" value="0" step="any" placeholder="Enter X" class="input">
                             </div>
 
                             <div>
                                 <label class="block text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500 mb-1.5">Y — Height</label>
-                                <input id="wallY" type="number" value="3" step="any" placeholder="Enter Y" class="input">
-                            </div>
-
-                            <div>
-                                <div class="flex items-center justify-between mb-1.5">
-                                    <label class="text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500">Z — Depth</label>
-                                    <span class="text-[8px] uppercase tracking-[0.15em] text-green font-bold">Optional</span>
-                                </div>
-                                <input id="wallZ" type="number" step="any" placeholder="Optional" class="input optional">
+                                <input id="wallY" type="number" value="0" step="any" placeholder="Enter Y" class="input">
                             </div>
                         </div>
 
@@ -627,21 +615,6 @@
                                 <p class="text-[10px] text-slate-600 mt-2 leading-relaxed">
                                     Tile = wall ÷ units-per-tile. Default 2 is a good starting point. (THIS IS THE DIVIDING NUMBER)
                                 </p>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-2">
-                                <div>
-                                    <label class="block text-[8px] uppercase tracking-[0.14em] font-bold text-slate-600 mb-1.5">Offset X</label>
-                                    <input id="offX" type="number" value="0" step="any" class="input">
-                                </div>
-                                <div>
-                                    <label class="block text-[8px] uppercase tracking-[0.14em] font-bold text-slate-600 mb-1.5">Offset Y</label>
-                                    <input id="offY" type="number" value="0" step="any" class="input">
-                                </div>
-                                <div>
-                                    <label class="block text-[8px] uppercase tracking-[0.14em] font-bold text-slate-600 mb-1.5">Offset Z</label>
-                                    <input id="offZ" type="number" value="0" step="any" class="input optional">
-                                </div>
                             </div>
 
                             <div class="flex flex-wrap gap-2">
@@ -659,66 +632,41 @@
                                 <div>
                                     <div class="text-[9px] uppercase tracking-[0.22em] font-bold text-green mb-1">Result</div>
                                     <h2 class="text-lg font-bold text-white">Albedo Tile</h2>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">Texture tiling, offsets, and copy formats.</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Texture tiling values for X and Y.</p>
                                 </div>
                                 <div class="w-7 h-7 rounded-md bg-green/10 border border-green/20 flex items-center justify-center text-green text-[10px] font-bold shadow-[0_0_12px_rgba(57,255,136,.15)]">02</div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3">
-                                <div class="result-box rounded-lg border border-[#292c33] bg-black/35 py-4 text-center">
+                                <div class="result-box rounded-lg border border-[#292c33] bg-black/35 py-4 px-3 text-center">
                                     <div class="text-[8px] uppercase tracking-[0.2em] font-bold text-slate-600">Tile X</div>
-                                    <div id="outputX" class="output-number text-4xl md:text-5xl font-black text-purple mt-1">3.00</div>
+                                    <div id="outputX" class="output-number text-4xl md:text-5xl font-black text-purple mt-1">0.00</div>
+                                    <button type="button" data-copy="x" class="axis-copy copy-button w-full mt-3 bg-green hover:bg-[#4dffa0] text-black font-black text-[9px] uppercase tracking-[0.16em] rounded-lg">
+                                        Copy Tile X
+                                    </button>
                                 </div>
-                                <div class="result-box rounded-lg border border-[#292c33] bg-black/35 py-4 text-center">
+                                <div class="result-box rounded-lg border border-[#292c33] bg-black/35 py-4 px-3 text-center">
                                     <div class="text-[8px] uppercase tracking-[0.2em] font-bold text-slate-600">Tile Y</div>
-                                    <div id="outputY" class="output-number text-4xl md:text-5xl font-black text-purple mt-1">1.50</div>
+                                    <div id="outputY" class="output-number text-4xl md:text-5xl font-black text-purple mt-1">0.00</div>
+                                    <button type="button" data-copy="y" class="axis-copy copy-button w-full mt-3 bg-green hover:bg-[#4dffa0] text-black font-black text-[9px] uppercase tracking-[0.16em] rounded-lg">
+                                        Copy Tile Y
+                                    </button>
                                 </div>
-                            </div>
-
-                            <div class="mt-3 rounded-lg border border-[#292c33] bg-black/20 px-3.5 py-2.5 flex items-center justify-between result-box">
-                                <div>
-                                    <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Tile Z</div>
-                                    <div id="outputZ" class="text-sm font-bold text-green mt-0.5">—</div>
-                                </div>
-                                <span class="text-[8px] uppercase tracking-wider text-slate-700">Optional</span>
                             </div>
 
                             <div class="mt-3 grid grid-cols-3 gap-2">
                                 <div class="stat-box rounded-lg border border-[#292c33] bg-black/20 px-3 py-2 transition">
                                     <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Area</div>
-                                    <div id="areaOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">18.00</div>
+                                    <div id="areaOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">0.00</div>
                                 </div>
                                 <div class="stat-box rounded-lg border border-[#292c33] bg-black/20 px-3 py-2 transition">
                                     <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Aspect</div>
-                                    <div id="aspectOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">2.00 : 1</div>
+                                    <div id="aspectOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">—</div>
                                 </div>
                                 <div class="stat-box rounded-lg border border-[#292c33] bg-black/20 px-3 py-2 transition">
                                     <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Repeats</div>
-                                    <div id="repeatOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">3 × 1.5</div>
+                                    <div id="repeatOut" class="text-xs font-bold text-white mt-0.5 tabular-nums">0 × 0</div>
                                 </div>
-                            </div>
-
-                            <div class="mt-3 rounded-lg border border-green/10 bg-green/[0.025] px-3.5 py-2.5 result-box">
-                                <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Vector</div>
-                                <div id="vectorOutput" class="text-xs font-bold text-green mt-0.5 break-all">3.00, 1.50</div>
-                            </div>
-
-                            <div class="mt-3 rounded-lg border border-[#292c33] bg-black/20 px-3.5 py-2.5 result-box">
-                                <div class="text-[8px] uppercase tracking-[0.18em] font-bold text-slate-600">Offset</div>
-                                <div id="offsetOutput" class="text-xs font-bold text-slate-300 mt-0.5">0.00, 0.00</div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-2 mt-3">
-                                <button id="copyButton" class="copy-button bg-green hover:bg-[#4dffa0] text-black font-black text-[10px] uppercase tracking-[0.18em] rounded-lg">
-                                    Copy Vector
-                                </button>
-                                <button id="copyAllButton" class="ghost-btn green-hover h-[42px]">Copy All</button>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-2 mt-2">
-                                <button data-format="unity" class="format-btn ghost-btn w-full px-2">Unity</button>
-                                <button data-format="shader" class="format-btn ghost-btn green-hover w-full px-2">Shader</button>
-                                <button data-format="json" class="format-btn ghost-btn w-full px-2">JSON</button>
                             </div>
 
                             <div id="copyStatus" class="text-center text-[9px] text-slate-600 mt-2 h-3"></div>
@@ -732,7 +680,7 @@
                             <div class="text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600">Preview</div>
                             <h3 class="text-xs font-bold text-white mt-0.5">Wall Proportion + Tile Repeats</h3>
                         </div>
-                        <div id="previewDimensions" class="text-[9px] text-slate-600 whitespace-nowrap">6 × 3</div>
+                        <div id="previewDimensions" class="text-[9px] text-slate-600 whitespace-nowrap">0 × 0</div>
                     </div>
 
                     <div class="h-[210px] flex items-center justify-center p-6 bg-black/20">
@@ -765,7 +713,7 @@
                     <div class="card glow-card glow-purple px-4 py-3">
                         <div class="text-[8px] uppercase tracking-[0.16em] font-bold text-slate-600">Tip</div>
                         <div class="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                            Copy Unity format into the material Tiling / Offset fields, then nudge offset if the pattern is off-center.
+                            Copy Tile X or Tile Y on its own, then paste that value into the matching tiling field.
                         </div>
                     </div>
                 </div>
@@ -790,92 +738,46 @@
     <script>
         const wallX = document.getElementById("wallX");
         const wallY = document.getElementById("wallY");
-        const wallZ = document.getElementById("wallZ");
-        const offX = document.getElementById("offX");
-        const offY = document.getElementById("offY");
-        const offZ = document.getElementById("offZ");
         const divisor = document.getElementById("divisor");
         const divisorLabel = document.getElementById("divisorLabel");
 
         const outputX = document.getElementById("outputX");
         const outputY = document.getElementById("outputY");
-        const outputZ = document.getElementById("outputZ");
-        const vectorOutput = document.getElementById("vectorOutput");
-        const offsetOutput = document.getElementById("offsetOutput");
         const areaOut = document.getElementById("areaOut");
         const aspectOut = document.getElementById("aspectOut");
         const repeatOut = document.getElementById("repeatOut");
 
         const preview = document.getElementById("preview");
         const previewDimensions = document.getElementById("previewDimensions");
-        const copyButton = document.getElementById("copyButton");
-        const copyAllButton = document.getElementById("copyAllButton");
         const copyStatus = document.getElementById("copyStatus");
         const toast = document.getElementById("toast");
-        const presetRow = document.getElementById("presetRow");
-
-        const PRESETS = [
-            { label: "6×3", x: 6, y: 3 },
-            { label: "8×4", x: 8, y: 4 },
-            { label: "10×5", x: 10, y: 5 },
-            { label: "12×6", x: 12, y: 6 },
-            { label: "4×4", x: 4, y: 4 },
-            { label: "16×8", x: 16, y: 8 }
-        ];
 
         let last = {
-            tileX: 3,
-            tileY: 1.5,
-            tileZ: null,
-            ox: 0,
-            oy: 0,
-            oz: 0,
-            hasZ: false
+            tileX: 0,
+            tileY: 0
         };
 
         function fmt(n, digits = 2) {
             return Number(n).toFixed(digits);
         }
 
-        function parseOrNull(el) {
-            const n = parseFloat(el.value);
-            return Number.isFinite(n) ? n : null;
-        }
-
         function calculate() {
             const x = parseFloat(wallX.value);
             const y = parseFloat(wallY.value);
-            const z = parseFloat(wallZ.value);
             const d = parseFloat(divisor.value) || 2;
 
             const tileX = Number.isFinite(x) ? x / d : 0;
             const tileY = Number.isFinite(y) ? y / d : 0;
-            const hasZ = Number.isFinite(z);
-            const tileZ = hasZ ? z / d : null;
 
-            const ox = parseOrNull(offX) ?? 0;
-            const oy = parseOrNull(offY) ?? 0;
-            const oz = parseOrNull(offZ) ?? 0;
-
-            last = { tileX, tileY, tileZ, ox, oy, oz, hasZ };
+            last = { tileX, tileY };
 
             outputX.textContent = fmt(tileX);
             outputY.textContent = fmt(tileY);
-            outputZ.textContent = hasZ ? fmt(tileZ) : "—";
             divisorLabel.textContent = fmt(d);
-
-            vectorOutput.textContent = hasZ
-                ? `${fmt(tileX)}, ${fmt(tileY)}, ${fmt(tileZ)}`
-                : `${fmt(tileX)}, ${fmt(tileY)}`;
-
-            offsetOutput.textContent = hasZ
-                ? `${fmt(ox)}, ${fmt(oy)}, ${fmt(oz)}`
-                : `${fmt(ox)}, ${fmt(oy)}`;
 
             if (Number.isFinite(x) && Number.isFinite(y)) {
                 areaOut.textContent = fmt(x * y);
-                const ratio = y === 0 ? 0 : x / y;
-                aspectOut.textContent = `${fmt(ratio)} : 1`;
+                aspectOut.textContent = y === 0 ? "—" : `${fmt(x / y)} : 1`;
                 repeatOut.textContent = `${fmt(tileX, 2)} × ${fmt(tileY, 2)}`;
             } else {
                 areaOut.textContent = "—";
@@ -884,7 +786,6 @@
             }
 
             updatePreview(x, y, tileX, tileY);
-            syncPresetState(x, y);
         }
 
         function updatePreview(x, y, tileX, tileY) {
@@ -907,41 +808,16 @@
             preview.style.backgroundSize = `${cellW}px ${cellH}px, ${cellW}px ${cellH}px, ${cellW / 4}px ${cellH / 4}px, ${cellW / 4}px ${cellH / 4}px`;
         }
 
-        function buildFormats() {
-            const { tileX, tileY, tileZ, ox, oy, oz, hasZ } = last;
-            const tiling = hasZ
-                ? `${fmt(tileX)}, ${fmt(tileY)}, ${fmt(tileZ)}`
-                : `${fmt(tileX)}, ${fmt(tileY)}`;
-            const offset = hasZ
-                ? `${fmt(ox)}, ${fmt(oy)}, ${fmt(oz)}`
-                : `${fmt(ox)}, ${fmt(oy)}`;
-
-            return {
-                vector: tiling,
-                all: `Tiling: ${tiling}\nOffset: ${offset}`,
-                unity: hasZ
-                    ? `Tiling: ${fmt(tileX)}, ${fmt(tileY)}, ${fmt(tileZ)}\nOffset: ${fmt(ox)}, ${fmt(oy)}, ${fmt(oz)}`
-                    : `material.mainTextureScale = new Vector2(${fmt(tileX)}f, ${fmt(tileY)}f);\nmaterial.mainTextureOffset = new Vector2(${fmt(ox)}f, ${fmt(oy)}f);`,
-                shader: hasZ
-                    ? `float3 _Tiling = float3(${fmt(tileX)}, ${fmt(tileY)}, ${fmt(tileZ)});\nfloat3 _Offset = float3(${fmt(ox)}, ${fmt(oy)}, ${fmt(oz)});`
-                    : `float2 _Tiling = float2(${fmt(tileX)}, ${fmt(tileY)});\nfloat2 _Offset = float2(${fmt(ox)}, ${fmt(oy)});`,
-                json: JSON.stringify({
-                    tiling: hasZ ? [tileX, tileY, tileZ] : [tileX, tileY],
-                    offset: hasZ ? [ox, oy, oz] : [ox, oy],
-                    unitsPerTile: parseFloat(divisor.value)
-                }, null, 2)
-            };
-        }
-
-        async function copyText(value, label) {
+        async function copyText(value, label, button) {
             try {
                 await navigator.clipboard.writeText(value);
-                copyButton.textContent = "Copied ✓";
+                const original = button ? button.textContent : "";
+                if (button) button.textContent = "Copied ✓";
                 copyStatus.textContent = `Copied ${label}`;
                 toast.textContent = `Copied ${label}`;
                 toast.classList.add("show");
                 setTimeout(() => {
-                    copyButton.textContent = "Copy Vector";
+                    if (button) button.textContent = original;
                     copyStatus.textContent = "";
                     toast.classList.remove("show");
                 }, 1600);
@@ -950,38 +826,11 @@
             }
         }
 
-        function renderPresets() {
-            presetRow.innerHTML = "";
-            PRESETS.forEach((p) => {
-                const btn = document.createElement("button");
-                btn.type = "button";
-                btn.className = "chip";
-                btn.textContent = p.label;
-                btn.dataset.x = String(p.x);
-                btn.dataset.y = String(p.y);
-                btn.addEventListener("click", () => {
-                    wallX.value = p.x;
-                    wallY.value = p.y;
-                    calculate();
-                });
-                presetRow.appendChild(btn);
-            });
-        }
-
-        function syncPresetState(x, y) {
-            [...presetRow.children].forEach((btn) => {
-                const match = Number(btn.dataset.x) === x && Number(btn.dataset.y) === y;
-                btn.classList.toggle("active", match);
-            });
-        }
-
-        copyButton.addEventListener("click", () => copyText(buildFormats().vector, "vector"));
-        copyAllButton.addEventListener("click", () => copyText(buildFormats().all, "tiling + offset"));
-
-        document.querySelectorAll(".format-btn").forEach((btn) => {
+        document.querySelectorAll(".axis-copy").forEach((btn) => {
             btn.addEventListener("click", () => {
-                const key = btn.dataset.format;
-                copyText(buildFormats()[key], key);
+                const axis = btn.dataset.copy;
+                const value = axis === "x" ? fmt(last.tileX) : fmt(last.tileY);
+                copyText(value, `Tile ${axis.toUpperCase()}`, btn);
             });
         });
 
@@ -989,19 +838,12 @@
             const x = wallX.value;
             wallX.value = wallY.value;
             wallY.value = x;
-            const ox = offX.value;
-            offX.value = offY.value;
-            offY.value = ox;
             calculate();
         });
 
         document.getElementById("resetBtn").addEventListener("click", () => {
-            wallX.value = 6;
-            wallY.value = 3;
-            wallZ.value = "";
-            offX.value = 0;
-            offY.value = 0;
-            offZ.value = 0;
+            wallX.value = 0;
+            wallY.value = 0;
             divisor.value = 2;
             calculate();
         });
@@ -1010,7 +852,6 @@
             input.addEventListener("input", calculate);
         });
 
-        renderPresets();
         calculate();
     </script>
 </body>
