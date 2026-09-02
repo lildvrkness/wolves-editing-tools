@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fancy Text — Wolves Editing Tools</title>
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+    <script>tailwind.config={theme:{extend:{colors:{purple:"#9b5cff",green:"#39ff88"}}}}</script>
+    <style>
+        :root { --purple:#9b5cff; --green:#39ff88; --ink:#030405; }
+        * { box-sizing:border-box; }
+        html { min-height:100%; background:var(--ink); }
+        body {
+            margin:0; min-height:100vh; font-family:Inter,sans-serif; color:#e5e7eb;
+            background:
+                radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%),
+                #030405;
+            padding:28px 16px 48px;
+        }
+        .background-grid {
+            position:fixed; inset:0; pointer-events:none; opacity:.028; z-index:0;
+            background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
+            background-size:42px 42px;
+        }
+        .wolf-bg { position:fixed; right:-60px; bottom:-80px; width:min(420px,55vw); opacity:.07; pointer-events:none; z-index:0; }
+        .wolves-title { font-family:"New Rocker",cursive; letter-spacing:.025em; line-height:1.02; }
+        .title-wolves { color:#39ff88; display:inline-block; text-shadow:0 0 10px rgba(57,255,136,.55),0 0 24px rgba(57,255,136,.28); animation:wolvesPulse 2.8s ease-in-out infinite; }
+        .title-rest { color:#9b5cff; display:inline-block; text-shadow:0 0 12px rgba(155,92,255,.55),0 0 24px rgba(155,92,255,.22); animation:albedoShimmer 4.2s ease-in-out infinite; }
+        @keyframes wolvesPulse { 0%,100%{text-shadow:0 0 8px rgba(57,255,136,.4),0 0 18px rgba(57,255,136,.18)} 50%{text-shadow:0 0 16px rgba(57,255,136,.85),0 0 32px rgba(57,255,136,.4)} }
+        @keyframes albedoShimmer { 0%,100%{text-shadow:0 0 10px rgba(155,92,255,.4),0 0 20px rgba(155,92,255,.18)} 50%{text-shadow:0 0 18px rgba(155,92,255,.8),0 0 32px rgba(155,92,255,.3)} }
+        .card { background:linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97)); border:1px solid #202229; border-radius:14px; }
+        .shell { box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(155,92,255,.08); }
+        .input { width:100%; height:52px; background:rgba(3,4,5,.88); border:1px solid #292c34; border-radius:8px; padding:10px 14px; color:white; font-size:16px; outline:none; }
+        .input:focus { border-color:#9b5cff; box-shadow:0 0 16px rgba(155,92,255,.22); }
+        .panel-title { font-size:15px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; margin-bottom:12px; }
+        .btn { height:40px; padding:0 12px; border-radius:8px; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; border:0; background:#39ff88; color:#000; flex-shrink:0; }
+        .btn:hover { box-shadow:0 0 18px rgba(57,255,136,.28); }
+        .style-row {
+            display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid #262830;
+            border-radius:10px; background:rgba(0,0,0,.28); margin-bottom:8px;
+        }
+        .style-name { width:110px; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#9b5cff; flex-shrink:0; }
+        .style-out { flex:1; font-size:18px; color:#fff; overflow-x:auto; white-space:nowrap; }
+        .combo {
+            display:inline-flex; align-items:center; justify-content:center;
+            padding:10px 12px; margin:0 8px 8px 0; border:1px solid #2a2d35; border-radius:10px;
+            background:rgba(0,0,0,.35); cursor:pointer; font-size:18px; line-height:1.3; color:#fff;
+            transition:border-color .2s, box-shadow .2s, transform .15s;
+        }
+        .combo:hover { border-color:rgba(155,92,255,.7); box-shadow:0 0 16px rgba(155,92,255,.18); transform:translateY(-1px); }
+        .cat { font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:800; color:#39ff88; margin:16px 0 8px; }
+        .toast {
+            position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(12px);
+            opacity:0; transition:.25s ease; z-index:20; pointer-events:none;
+            background:#0b0c10; border:1px solid rgba(57,255,136,.3); color:#39ff88;
+            padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700;
+        }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
+    <main class="relative z-10 w-full max-w-5xl mx-auto">
+        <div class="card shell overflow-hidden">
+            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="index.html" class="text-sm uppercase tracking-[0.18em] font-bold text-green hover:text-white">← Tools</a>
+                    <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                    <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Text</span>
+                </div>
+                <h1 class="wolves-title text-4xl md:text-5xl">
+                    <span class="title-wolves">Wolves</span>
+                    <span class="title-rest">Fancy Text</span>
+                </h1>
+                <p class="text-sm text-slate-300 mt-3">Convert a name into unicode styles, then tap any symbol combo to copy it.</p>
+            </header>
+
+            <section class="p-4 md:p-6">
+                <div class="panel-title text-purple">Font styles</div>
+                <input id="src" class="input mb-4" value="WOLFY" placeholder="Type here">
+                <div id="styles"></div>
+
+                <div class="panel-title text-green mt-8">Symbol combos</div>
+                <p class="text-sm text-slate-400 mb-2">Click a combo to copy. Text symbols only.</p>
+                <div id="combos"></div>
+            </section>
+        </div>
+    </main>
+    <div id="toast" class="toast">Copied</div>
+
+<script>
+const AZ = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const az = 'abcdefghijklmnopqrstuvwxyz';
+const D = '0123456789';
+
+const fonts = {
+    Bold:        ['𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙','𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳','𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗'],
+    Italic:      ['𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍','𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧','0123456789'],
+    'Bold italic':['𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁','𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛','0123456789'],
+    Script:      ['𝒜𝐵𝒞𝒟𝐸𝐹𝒢𝐻𝐼𝒥𝒦𝐿𝑀𝒩𝒪𝒫𝒬𝑅𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵','𝒶𝒷𝒸𝒹𝑒𝒻𝑔𝒽𝒾𝒿𝓀𝓁𝓂𝓃𝑜𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏','0123456789'],
+    'Bold script':['𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩','𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃','0123456789'],
+    Fraktur:     ['𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ','𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷','0123456789'],
+    'Bold fraktur':['𝕬𝕭𝕮𝕯𝕰𝕱𝕲𝕳𝕴𝕵𝕶𝕷𝕸𝕹𝕺𝕻𝕼𝕽𝕾𝕿𝖀𝖁𝖂𝖃𝖄𝖅','𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟','0123456789'],
+    Double:      ['𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ','𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫','𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡'],
+    Mono:        ['𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉','𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣','𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿'],
+    Circled:     ['ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ','ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ','⓪①②③④⑤⑥⑦⑧⑨'],
+    Squared:     ['🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉','abcdefghijklmnopqrstuvwxyz','0123456789'],
+    Fullwidth:   ['ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ','ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ','０１２３４５６７８９'],
+    Smallcaps:   ['ABCDEFGHIJKLMNOPQRSTUVWXYZ','ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ','0123456789'],
+    Tiny:        ['ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾQᴿˢᵀᵁⱽᵂˣʸᶻ','ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖqʳˢᵗᵘᵛʷˣʸᶻ','⁰¹²³⁴⁵⁶⁷⁸⁹'],
+};
+
+const flip = {
+    a:'ɐ',b:'q',c:'ɔ',d:'p',e:'ǝ',f:'ɟ',g:'ƃ',h:'ɥ',i:'ᴉ',j:'ɾ',k:'ʞ',l:'l',m:'ɯ',n:'u',o:'o',p:'d',q:'b',r:'ɹ',s:'s',t:'ʇ',u:'n',v:'ʌ',w:'ʍ',x:'x',y:'ʎ',z:'z',
+    A:'∀',B:'ᗺ',C:'Ɔ',D:'ᗡ',E:'Ǝ',F:'Ⅎ',G:'⅁',H:'H',I:'I',J:'ſ',K:'ʞ',L:'˥',M:'W',N:'N',O:'O',P:'Ԁ',Q:'Ό',R:'ᴚ',S:'S',T:'┴',U:'∩',V:'Λ',W:'M',X:'X',Y:'⅄',Z:'Z',
+    '0':'0','1':'Ɩ','2':'ᄅ','3':'Ɛ','4':'ㄣ','5':'ϛ','6':'9','7':'ㄥ','8':'8','9':'6','?':'¿','!':'¡','.':'˙'
+};
+
+function mapFont(text, pack){
+    const [U,L,N] = pack;
+    return [...text].map(ch=>{
+        const iu = AZ.indexOf(ch); if(iu>=0) return [...U][iu] || ch;
+        const il = az.indexOf(ch); if(il>=0) return [...L][il] || ch;
+        const id = D.indexOf(ch); if(id>=0) return [...N][id] || ch;
+        return ch;
+    }).join('');
+}
+function mapFlip(text){
+    return [...text].reverse().map(ch=>flip[ch]||ch).join('');
+}
+function wrap(text, l, r){ return [...text].map(ch=> (ch===' '? ' ' : l+ch+r)).join(''); }
+
+async function copy(text){
+    try{
+        await navigator.clipboard.writeText(text);
+        const t=document.getElementById('toast');
+        t.textContent='Copied';
+        t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'),1200);
+    }catch{}
+}
+
+function renderStyles(){
+    const src=document.getElementById('src').value || ' ';
+    const box=document.getElementById('styles');
+    box.innerHTML='';
+    const rows = Object.entries(fonts).map(([name,pack])=>({name, out:mapFont(src,pack)}));
+    rows.push({name:'Upside down', out:mapFlip(src)});
+    rows.push({name:'Bubbles', out:wrap(src,'','⃝')});
+    rows.push({name:'Slash', out:wrap(src,'','̷')});
+    rows.push({name:'Strike', out:wrap(src,'','̶')});
+    rows.push({name:'Underline', out:wrap(src,'','̲')});
+    rows.forEach(row=>{
+        const el=document.createElement('div');
+        el.className='style-row';
+        el.innerHTML=`<div class="style-name">${row.name}</div><div class="style-out"></div>`;
+        el.querySelector('.style-out').textContent=row.out;
+        const btn=document.createElement('button');
+        btn.className='btn';
+        btn.textContent='Copy';
+        btn.addEventListener('click',()=>copy(row.out));
+        el.appendChild(btn);
+        box.appendChild(el);
+    });
+}
+
+const combos = {
+    Dance: [
+        '♩¨̮(ง ˙˘˙ )ว♩¨̮',
+        '♪┏(・o･)┛♪┗ ( ･o･) ┓♪',
+        '┌(・。・)┘♪',
+        'ᕕ( ᐛ )ᕗ',
+        'ヾ(⌐■_■)ノ♪',
+        '♪(´ε｀ )',
+        '(ﾉ´ヮ`)ﾉ*:･ﾟ✧',
+        '乁( •_• )ㄏ',
+        '(〜￣▽￣)〜',
+        'ヘ(￣ω￣ヘ)',
+        'ᕕ(⌐■_■)ᕗ ♪',
+        '(づ￣ ³￣)づ',
+        '┗(＾0＾)┓',
+        '┏(＾0＾)┛'
+    ],
+    Music: [
+        '♪ ♫ ♩ ♬',
+        '♬♩♫♪♬',
+        '♫´•.¸¸.•´¯`•.¸¸.♫',
+        '♪ ヽ( ⌒o⌒)人(⌒-⌒ )v ♪',
+        '♬\(≧▽≦)/♬',
+        '♪(★ω★)♪'
+    ],
+    Faces: [
+        '( ͡° ͜ʖ ͡°)',
+        '(ಠ_ಠ)',
+        '(¬‿¬)',
+        '(╯°□°）╯︵ ┻━┻',
+        '┬─┬ノ( º _ ºノ)',
+        '(｡♥‿♥｡)',
+        '(≧◡≦)',
+        '(；一_一)',
+        '눈_눈',
+        '(￣▽￣)ノ',
+        'ʕ•ᴥ•ʔ',
+        '(◕‿◕✿)',
+        'ಥ_ಥ',
+        '(☞ﾟヮﾟ)☞',
+        '☜(ﾟヮﾟ☜)'
+    ],
+    Guns: [
+        '︻デ═一',
+        '▄︻̷̿┻̿═━一',
+        '⌐╦╦═─',
+        '¤=[]::::>',
+        '———–>',
+        '(」°ロ°)」',
+        '(ง ͠° ͟ل͜ ͡°)ง',
+        '(ง’̀-‘́)ง'
+    ],
+    Extra: [
+        '¯\\_(ツ)_/¯',
+        '( ͡° ͜ʖ ͡°)つ──☆*:・ﾟ',
+        '★彡',
+        '✧･ﾟ: *✧･ﾟ:*',
+        '†',
+        '☯',
+        '☠',
+        '♛',
+        '★ ☆ ✦ ✧',
+        '∞',
+        '▼・ᴥ・▼',
+        '( ˘ ³˘)♥'
+    ]
+};
+
+function renderCombos(){
+    const box=document.getElementById('combos');
+    box.innerHTML='';
+    Object.entries(combos).forEach(([cat, items])=>{
+        const h=document.createElement('div');
+        h.className='cat';
+        h.textContent=cat;
+        box.appendChild(h);
+        items.forEach(txt=>{
+            const b=document.createElement('button');
+            b.type='button';
+            b.className='combo';
+            b.textContent=txt;
+            b.addEventListener('click',()=>copy(txt));
+            box.appendChild(b);
+        });
+    });
+}
+
+document.getElementById('src').addEventListener('input', renderStyles);
+renderStyles();
+renderCombos();
+</script>
+</body>
+</html>
