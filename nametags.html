@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name Tag Gradients — Wolves Editing Tools</title>
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+    <script>tailwind.config={theme:{extend:{colors:{purple:"#9b5cff",green:"#39ff88"}}}}</script>
+    <style>
+        :root { --purple:#9b5cff; --green:#39ff88; --ink:#030405; }
+        * { box-sizing:border-box; }
+        html { min-height:100%; background:var(--ink); }
+        ::selection { background:rgba(155,92,255,.35); color:#fff; }
+        body {
+            margin:0; min-height:100vh; font-family:Inter,sans-serif; color:#e5e7eb;
+            background:
+                radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%),
+                #030405;
+            padding:28px 16px 48px;
+        }
+        .background-grid {
+            position:fixed; inset:0; pointer-events:none; opacity:.028; z-index:0;
+            background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
+            background-size:42px 42px;
+        }
+        .wolf-bg {
+            position:fixed; right:-60px; bottom:-80px; width:min(420px,55vw); opacity:.07; pointer-events:none; z-index:0;
+        }
+        .wolves-title { font-family:"New Rocker",cursive; letter-spacing:.025em; line-height:1.02; }
+        .title-wolves { color:#39ff88; display:inline-block; text-shadow:0 0 10px rgba(57,255,136,.55),0 0 24px rgba(57,255,136,.28); animation:wolvesPulse 2.8s ease-in-out infinite; }
+        .title-rest { color:#9b5cff; display:inline-block; text-shadow:0 0 12px rgba(155,92,255,.55),0 0 24px rgba(155,92,255,.22); animation:albedoShimmer 4.2s ease-in-out infinite; }
+        @keyframes wolvesPulse { 0%,100%{text-shadow:0 0 8px rgba(57,255,136,.4),0 0 18px rgba(57,255,136,.18)} 50%{text-shadow:0 0 16px rgba(57,255,136,.85),0 0 32px rgba(57,255,136,.4)} }
+        @keyframes albedoShimmer { 0%,100%{text-shadow:0 0 10px rgba(155,92,255,.4),0 0 20px rgba(155,92,255,.18)} 50%{text-shadow:0 0 18px rgba(155,92,255,.8),0 0 32px rgba(155,92,255,.3)} }
+        .card { background:linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97)); border:1px solid #202229; border-radius:14px; }
+        .shell { box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(155,92,255,.08); }
+        .input, textarea.input {
+            width:100%; background:rgba(3,4,5,.88); border:1px solid #292c34; border-radius:8px;
+            padding:10px 12px; color:white; font-size:15px; outline:none;
+        }
+        .input { height:46px; }
+        textarea.input { min-height:140px; font-family:ui-monospace,Menlo,monospace; font-size:13px; line-height:1.45; resize:vertical; }
+        .input:focus, textarea.input:focus { border-color:#9b5cff; box-shadow:0 0 0 2px rgba(155,92,255,.08), 0 0 16px rgba(155,92,255,.22); }
+        .label { font-size:13px; color:#e2e8f0; font-weight:600; display:block; margin-bottom:6px; }
+        .panel-title { font-size:15px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; margin-bottom:12px; }
+        .btn { height:46px; padding:0 14px; border-radius:8px; font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; border:0; }
+        .btn-green { background:#39ff88; color:#000; }
+        .btn-green:hover { box-shadow:0 0 22px rgba(57,255,136,.28); }
+        .btn-ghost { background:rgba(0,0,0,.28); color:#e2e8f0; border:1px solid #2a2d35; }
+        .preview {
+            min-height:84px; border:1px solid #262830; border-radius:12px; background:#0a0b0e;
+            display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; letter-spacing:.04em;
+            padding:16px; text-align:center; flex-wrap:wrap;
+        }
+        .stop { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+        .stop input[type=color] { width:46px; height:46px; border:0; background:none; padding:0; cursor:pointer; }
+        .swatch { width:100%; height:18px; border-radius:999px; border:1px solid #2a2d35; }
+    </style>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
+
+    <main class="relative z-10 w-full max-w-5xl mx-auto">
+        <div class="card shell overflow-hidden">
+            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="index.html" class="text-sm uppercase tracking-[0.18em] font-bold text-green hover:text-white">← Tools</a>
+                    <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                    <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Name Tags</span>
+                </div>
+                <h1 class="wolves-title text-4xl md:text-5xl">
+                    <span class="title-wolves">Wolves</span>
+                    <span class="title-rest">Name Tag Gradients</span>
+                </h1>
+                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Build a smooth color gradient and get the exact <span class="text-white">[color=#hex]</span> code to paste in-game.</p>
+            </header>
+
+            <section class="p-4 md:p-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="card p-4">
+                        <div class="panel-title text-purple">Text</div>
+                        <label class="label">Name</label>
+                        <input id="name" class="input" value="MAMI">
+                        <div class="grid grid-cols-2 gap-2 mt-3">
+                            <div>
+                                <label class="label">Prefix</label>
+                                <input id="prefix" class="input" value="♥">
+                            </div>
+                            <div>
+                                <label class="label">Suffix</label>
+                                <input id="suffix" class="input" value="♥">
+                            </div>
+                        </div>
+                        <label class="flex items-center gap-2 mt-3 text-sm text-slate-300">
+                            <input id="spaced" type="checkbox" checked> Space between letters
+                        </label>
+                    </div>
+
+                    <div class="card p-4">
+                        <div class="panel-title text-green">Gradient</div>
+                        <div id="stops"></div>
+                        <div class="flex gap-2 mt-2">
+                            <button id="addStop" type="button" class="btn btn-ghost">Add color</button>
+                            <button id="removeStop" type="button" class="btn btn-ghost">Remove</button>
+                        </div>
+                        <div id="swatch" class="swatch mt-3"></div>
+                        <label class="flex items-center gap-2 mt-3 text-sm text-slate-300">
+                            <input id="hsl" type="checkbox" checked> Smooth blend (HSL)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card p-4">
+                    <div class="panel-title text-purple">Preview</div>
+                    <div id="preview" class="preview"></div>
+                </div>
+
+                <div class="card p-4">
+                    <div class="panel-title text-green">In-game code</div>
+                    <textarea id="code" class="input" readonly></textarea>
+                    <button id="copyBtn" class="btn btn-green w-full mt-3">Copy code</button>
+                    <div id="status" class="text-sm text-slate-400 mt-2 h-5"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+<script>
+const stopsBox = document.getElementById('stops');
+let stops = ['#8f00ff', '#c77dff', '#39ff88'];
+
+function hexNorm(h) {
+    h = (h || '#ffffff').trim();
+    if (!h.startsWith('#')) h = '#' + h;
+    if (h.length === 4) h = '#' + h[1]+h[1]+h[2]+h[2]+h[3]+h[3];
+    return h.slice(0,7).toLowerCase();
+}
+function hexToRgb(h) {
+    h = hexNorm(h).slice(1);
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function rgbToHex(r,g,b) {
+    return '#' + [r,g,b].map(v => Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
+}
+function rgbToHsl(r,g,b) {
+    r/=255; g/=255; b/=255;
+    const max=Math.max(r,g,b), min=Math.min(r,g,b);
+    let h=0,s=0,l=(max+min)/2;
+    if (max!==min) {
+        const d=max-min;
+        s=l>0.5?d/(2-max-min):d/(max+min);
+        if (max===r) h=((g-b)/d+(g<b?6:0))/6;
+        else if (max===g) h=((b-r)/d+2)/6;
+        else h=((r-g)/d+4)/6;
+    }
+    return [h,s,l];
+}
+function hslToRgb(h,s,l) {
+    const hue2rgb=(p,q,t)=>{
+        if(t<0)t+=1; if(t>1)t-=1;
+        if(t<1/6)return p+(q-p)*6*t;
+        if(t<1/2)return q;
+        if(t<2/3)return p+(q-p)*(2/3-t)*6;
+        return p;
+    };
+    let r,g,b;
+    if(s===0) r=g=b=l;
+    else {
+        const q=l<0.5?l*(1+s):l+s-l*s;
+        const p=2*l-q;
+        r=hue2rgb(p,q,h+1/3); g=hue2rgb(p,q,h); b=hue2rgb(p,q,h-1/3);
+    }
+    return [r*255,g*255,b*255];
+}
+function lerp(a,b,t){ return a+(b-a)*t; }
+function lerpHue(a,b,t){
+    let d=b-a;
+    if(d>0.5)d-=1;
+    if(d<-0.5)d+=1;
+    return (a+d*t+1)%1;
+}
+function mix(a,b,t,hsl){
+    const A=hexToRgb(a), B=hexToRgb(b);
+    if(!hsl) return rgbToHex(lerp(A[0],B[0],t), lerp(A[1],B[1],t), lerp(A[2],B[2],t));
+    const ha=rgbToHsl(...A), hb=rgbToHsl(...B);
+    return rgbToHex(...hslToRgb(lerpHue(ha[0],hb[0],t), lerp(ha[1],hb[1],t), lerp(ha[2],hb[2],t)));
+}
+function colorAt(t, colors, hsl){
+    if(colors.length===1) return hexNorm(colors[0]);
+    const x=t*(colors.length-1);
+    const i=Math.min(colors.length-2, Math.floor(x));
+    return mix(colors[i], colors[i+1], x-i, hsl);
+}
+
+function renderStops(){
+    stopsBox.innerHTML='';
+    stops.forEach((c,i)=>{
+        const row=document.createElement('div');
+        row.className='stop';
+        row.innerHTML=`<input type="color" value="${hexNorm(c)}"><input class="input" value="${hexNorm(c)}">`;
+        const col=row.querySelector('input[type=color]');
+        const txt=row.querySelector('.input');
+        col.addEventListener('input',()=>{ stops[i]=col.value; txt.value=col.value; build(); });
+        txt.addEventListener('input',()=>{ stops[i]=hexNorm(txt.value); col.value=stops[i]; build(); });
+        stopsBox.appendChild(row);
+    });
+}
+
+function buildDisplay(){
+    const name=document.getElementById('name').value;
+    const prefix=document.getElementById('prefix').value;
+    const suffix=document.getElementById('suffix').value;
+    const spaced=document.getElementById('spaced').checked;
+    const letters=[...name];
+    const mid=spaced? letters.join(' ') : name;
+    return `${prefix}${prefix&&mid?' ':''}${mid}${mid&&suffix?' ':''}${suffix}`;
+}
+
+function build(){
+    const hsl=document.getElementById('hsl').checked;
+    const display=buildDisplay();
+    const chars=[...display];
+    const colors=stops.map(hexNorm);
+    document.getElementById('swatch').style.background=`linear-gradient(90deg, ${colors.join(',')})`;
+    const preview=document.getElementById('preview');
+    preview.innerHTML='';
+    const pieces=[];
+    chars.forEach((ch,i)=>{
+        const t=chars.length===1?0:i/(chars.length-1);
+        const hex=colorAt(t, colors, hsl);
+        const span=document.createElement('span');
+        span.style.color=hex;
+        span.textContent=ch===' '?' ':'';
+        if(ch!==' ') span.textContent=ch;
+        else span.innerHTML='&nbsp;';
+        preview.appendChild(span);
+        if(ch===' ') pieces.push(' ');
+        else pieces.push(`[color=${hex}]${ch}[/color]`);
+    });
+    document.getElementById('code').value=pieces.join(' ');
+}
+
+['name','prefix','suffix','spaced','hsl'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', build);
+    document.getElementById(id).addEventListener('change', build);
+});
+document.getElementById('addStop').addEventListener('click',()=>{
+    stops.push(stops[stops.length-1]||'#ffffff');
+    renderStops(); build();
+});
+document.getElementById('removeStop').addEventListener('click',()=>{
+    if(stops.length>2){ stops.pop(); renderStops(); build(); }
+});
+document.getElementById('copyBtn').addEventListener('click', async()=>{
+    const status=document.getElementById('status');
+    try{
+        await navigator.clipboard.writeText(document.getElementById('code').value);
+        status.textContent='Copied — paste this into the name tag field.';
+        setTimeout(()=>status.textContent='',1800);
+    }catch{ status.textContent='Copy failed — select the code manually.'; }
+});
+
+renderStops();
+build();
+</script>
+</body>
+</html>
