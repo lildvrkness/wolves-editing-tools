@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submeshes — Wolves Editing Tools</title>
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+    <script>tailwind.config={theme:{extend:{colors:{purple:"#9b5cff",green:"#39ff88"}}}}</script>
+    <style>
+        :root { --purple:#9b5cff; --green:#39ff88; --ink:#030405; }
+        * { box-sizing:border-box; }
+        html { min-height:100%; background:var(--ink); }
+        ::selection { background:rgba(155,92,255,.35); color:#fff; }
+        body {
+            margin:0; min-height:100vh; font-family:Inter,sans-serif; color:#e5e7eb;
+            background:
+                radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%),
+                #030405;
+            padding:28px 16px 48px;
+        }
+        .background-grid {
+            position:fixed; inset:0; pointer-events:none; opacity:.028; z-index:0;
+            background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
+            background-size:42px 42px;
+        }
+        .wolf-bg {
+            position:fixed; right:-60px; bottom:-80px; width:min(420px,55vw); opacity:.07; pointer-events:none; z-index:0;
+            filter:drop-shadow(0 0 24px rgba(155,92,255,.3));
+        }
+        .wolves-title { font-family:"New Rocker",cursive; letter-spacing:.025em; line-height:1.02; }
+        .title-wolves {
+            color:#39ff88; display:inline-block;
+            text-shadow:0 0 10px rgba(57,255,136,.55),0 0 24px rgba(57,255,136,.28);
+            animation:wolvesPulse 2.8s ease-in-out infinite;
+        }
+        .title-rest {
+            color:#9b5cff; display:inline-block;
+            text-shadow:0 0 12px rgba(155,92,255,.55),0 0 24px rgba(155,92,255,.22);
+            animation:albedoShimmer 4.2s ease-in-out infinite;
+        }
+        @keyframes wolvesPulse {
+            0%,100% { text-shadow:0 0 8px rgba(57,255,136,.4),0 0 18px rgba(57,255,136,.18); }
+            50% { text-shadow:0 0 16px rgba(57,255,136,.85),0 0 32px rgba(57,255,136,.4); }
+        }
+        @keyframes albedoShimmer {
+            0%,100% { text-shadow:0 0 10px rgba(155,92,255,.4),0 0 20px rgba(155,92,255,.18); }
+            50% { text-shadow:0 0 18px rgba(155,92,255,.8),0 0 32px rgba(155,92,255,.3); }
+        }
+        .card {
+            background:linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97));
+            border:1px solid #202229; border-radius:14px;
+        }
+        .shell { box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(155,92,255,.08); }
+        .input {
+            width:100%; height:42px; background:rgba(3,4,5,.88); border:1px solid #292c34;
+            border-radius:8px; padding:9px 12px; color:white; font-size:13px; outline:none;
+            transition:border-color .2s ease, box-shadow .25s ease;
+        }
+        .input:focus {
+            border-color:#9b5cff;
+            box-shadow:0 0 0 2px rgba(155,92,255,.08), 0 0 16px rgba(155,92,255,.22);
+        }
+        .shop-card { border:1px solid #262830; border-radius:12px; background:rgba(0,0,0,.28); overflow:hidden; }
+        .shop-card + .shop-card { margin-top:12px; }
+        .shop-head {
+            width:100%; text-align:left; padding:14px 16px; background:transparent; border:0; color:inherit; cursor:pointer;
+            display:flex; align-items:center; justify-content:space-between; gap:12px;
+        }
+        .shop-head:hover { background:rgba(155,92,255,.05); }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:8px 10px; text-align:left; font-size:12px; border-top:1px solid #1d2026; vertical-align:top; }
+        th { color:#94a3b8; font-size:9px; letter-spacing:.14em; text-transform:uppercase; font-weight:800; }
+        .copy-mini {
+            border:1px solid #2a2d35; background:rgba(57,255,136,.08); color:#39ff88;
+            border-radius:6px; font-size:9px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
+            padding:4px 7px; cursor:pointer;
+        }
+        .copy-mini:hover { box-shadow:0 0 12px rgba(57,255,136,.2); }
+        .mono { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; color:#d6c4ff; }
+        a.tex { color:#39ff88; text-decoration:underline; text-underline-offset:2px; }
+    </style>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="" aria-hidden="true">
+
+    <main class="relative z-10 w-full max-w-6xl mx-auto">
+        <div class="card shell overflow-hidden">
+            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="index.html" class="text-[9px] uppercase tracking-[0.22em] font-bold text-green hover:text-white transition">← Tools</a>
+                    <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                    <span class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple">Reference</span>
+                </div>
+                <h1 class="wolves-title text-4xl md:text-5xl">
+                    <span class="title-wolves">Wolves</span>
+                    <span class="title-rest">Submeshes</span>
+                </h1>
+                <p class="text-xs text-slate-500 mt-2 max-w-2xl">Shop objects, editor names, submesh indexes, and texture notes.</p>
+            </header>
+
+            <section class="p-4 md:p-6">
+                <div class="flex flex-col md:flex-row gap-3 md:items-center mb-4">
+                    <input id="search" class="input" type="search" placeholder="Search shop, editor, submesh, notes...">
+                    <div id="counts" class="text-[11px] text-slate-500 whitespace-nowrap"></div>
+                </div>
+                <div id="list"></div>
+                <div id="empty" class="hidden text-center text-slate-500 text-sm py-10">No matches.</div>
+            </section>
+        </div>
+    </main>
+
+<script>
+const DATA = [{"shop": "Addon NavigateTo Portal", "editor": "[Action] NavToUrl", "section": "", "index": "0", "submesh": "circle", "notes": "Texture Blue Circle", "texture": ""}, {"shop": "Materials needs to add on", "editor": "DOMRenderable", "section": "", "index": "0", "submesh": "Signal", "notes": "Texture Blue Door Icon", "texture": ""}, {"shop": "Ashtray", "editor": "SERV_Kuba", "section": "", "index": "1", "submesh": "Particle System", "notes": "Texture Smoke", "texture": ""}, {"shop": "Bat", "editor": "NPC Bat", "section": "Body", "index": "0", "submesh": "body_mesh_Cylinder.001", "notes": "", "texture": ""}, {"shop": "Bat", "editor": "NPC Bat", "section": "Wings", "index": "0", "submesh": "wing_mesh_Plane.001", "notes": "", "texture": ""}, {"shop": "Bat", "editor": "NPC Bat", "section": "Eyes", "index": "0", "submesh": "Sphere.001", "notes": "", "texture": ""}, {"shop": "Black Wolf", "editor": "", "section": "Body", "index": "0", "submesh": "Wolf_Body", "notes": "", "texture": ""}, {"shop": "Black Wolf", "editor": "", "section": "Eyes", "index": "0", "submesh": "Wolf_Eyes", "notes": "", "texture": ""}, {"shop": "Black Wolf", "editor": "", "section": "Tongue", "index": "0", "submesh": "Wolf_Tongue", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "0", "submesh": "Base_group", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "1", "submesh": "Base_group", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "0", "submesh": "Cake_group", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "1", "submesh": "Cake_group", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "0", "submesh": "EMISS", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "0", "submesh": "GLITTER_01", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "1", "submesh": "GLITTER_01", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "0", "submesh": "GLITTER_02", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "1", "submesh": "GLITTER_02", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "0", "submesh": "Line_group", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "1", "submesh": "Line_group", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "0", "submesh": "Lovecraft_group", "notes": "", "texture": ""}, {"shop": "Birthday cake", "editor": "Birthday cake", "section": "", "index": "0", "submesh": "Mask_group", "notes": "", "texture": ""}, {"shop": "Bonfire", "editor": "Koster748t", "section": "", "index": "0", "submesh": "Fire_house_SparksBig", "notes": "", "texture": ""}, {"shop": "Bonfire", "editor": "Koster748t", "section": "", "index": "0", "submesh": "Fire_house_Glow", "notes": "", "texture": ""}, {"shop": "Bonfire", "editor": "Koster748t", "section": "", "index": "0", "submesh": "Fire_house_Sparks", "notes": "", "texture": ""}, {"shop": "Bonfire", "editor": "Koster748t", "section": "", "index": "0", "submesh": "Fire_house_Smoke", "notes": "Texture Smoke", "texture": ""}, {"shop": "Bonfire", "editor": "Koster748t", "section": "", "index": "0", "submesh": "fire_house_big_mob", "notes": "Texture Flames", "texture": ""}, {"shop": "Bra gold", "editor": "AngLightBar3", "section": "Body", "index": "0", "submesh": "light_for_bed", "notes": "Texture Outside", "texture": ""}, {"shop": "Bra gold", "editor": "AngLightBar3", "section": "Body", "index": "0", "submesh": "light_for_bed 1", "notes": "Texture Cord", "texture": ""}, {"shop": "Bra gold", "editor": "AngLightBar3", "section": "Body", "index": "0", "submesh": "Object001", "notes": "Texture Inner", "texture": ""}, {"shop": "Camp Fire", "editor": "EXT_Camplnd", "section": "", "index": "0", "submesh": "Flames", "notes": "Texture Flames", "texture": ""}, {"shop": "Camp Fire", "editor": "EXT_Camplnd", "section": "", "index": "0", "submesh": "SparksRising", "notes": "", "texture": ""}, {"shop": "Camp Fire", "editor": "EXT_Camplnd", "section": "", "index": "1", "submesh": "Steam", "notes": "Texture Steam", "texture": ""}, {"shop": "Cart", "editor": "WestCart2684t", "section": "", "index": "0", "submesh": "WestCartFabric", "notes": "", "texture": ""}, {"shop": "Chandelier 03", "editor": "Lighting_Chandelier 04", "section": "", "index": "1", "submesh": "light2", "notes": "", "texture": ""}, {"shop": "Chandelier 03", "editor": "Lighting_Chandelier 04", "section": "", "index": "2", "submesh": "light2", "notes": "", "texture": ""}, {"shop": "Coffee Table", "editor": "Table600", "section": "Table", "index": "0", "submesh": "Object_6", "notes": "Texture Table", "texture": ""}, {"shop": "Coffee Table", "editor": "Table600", "section": "", "index": "0", "submesh": "Lamp", "notes": "Texture Lamp", "texture": ""}, {"shop": "Clock \"\"Monolith", "editor": "BoxTime", "section": "Body", "index": "0", "submesh": "BoxTime", "notes": "", "texture": ""}, {"shop": "Clock \"\"Monolith", "editor": "BoxTime", "section": "Clock", "index": "0", "submesh": "BoxTimeA", "notes": "Texture Clock Hands", "texture": ""}, {"shop": "Crocodile", "editor": "NPC Crocodile", "section": "Body", "index": "0", "submesh": "crocodile_mesh", "notes": "", "texture": ""}, {"shop": "Crystal Tease (Both)", "editor": "", "section": "Glass", "index": "0", "submesh": "CrystalTease_Glass", "notes": "Texture Glass", "texture": ""}, {"shop": "Crystal Tease (Both)", "editor": "", "section": "Stand", "index": "0", "submesh": "CrystalTease_Stem", "notes": "Texture Stand", "texture": ""}, {"shop": "Crystal Tease (Both)", "editor": "", "section": "Water", "index": "0", "submesh": "Water in a glass", "notes": "Texture Water", "texture": ""}, {"shop": "Disco Ball", "editor": "DiscoBall", "section": "Body", "index": "0", "submesh": "DJSphere", "notes": "Texture Black Body", "texture": ""}, {"shop": "Disco Ball", "editor": "DiscoBall", "section": "Body", "index": "0", "submesh": "DJSphere1", "notes": "Texture Yellow Tiles", "texture": ""}, {"shop": "Disco Ball", "editor": "DiscoBall", "section": "Body", "index": "0", "submesh": "DJSphere2", "notes": "Texture Red Tiles", "texture": ""}, {"shop": "Disco Ball", "editor": "DiscoBall", "section": "Body", "index": "0", "submesh": "DJSphere3", "notes": "Texture Blue Tiles", "texture": ""}, {"shop": "Disco Ball", "editor": "DiscoBall", "section": "Body", "index": "0", "submesh": "DJSphere4", "notes": "Texture Green Tiles", "texture": ""}, {"shop": "Dynamite", "editor": "Dinamit944t", "section": "", "index": "0", "submesh": "Particle System", "notes": "Texture Flames", "texture": ""}, {"shop": "Glory hole (Female bot)", "editor": "", "section": "Wooden Body", "index": "0", "submesh": "Table", "notes": "Texture Wooden Body", "texture": ""}, {"shop": "Glory hole (Female bot)", "editor": "", "section": "Pillows", "index": "0", "submesh": "Detal", "notes": "Texture Pillows", "texture": ""}, {"shop": "Glory hole (Female bot)", "editor": "", "section": "Neon", "index": "0", "submesh": "Arrow", "notes": "Texture Neon", "texture": ""}, {"shop": "Glory hole (Female bot)", "editor": "", "section": "Neon Holders", "index": "1", "submesh": "Arrow", "notes": "Texture Neon Holders", "texture": ""}, {"shop": "Glory hole (Female bot)", "editor": "", "section": "Decals", "index": "0", "submesh": "Sex_stand_Decal", "notes": "Texture Decals", "texture": ""}, {"shop": "Gothic urn (wood)", "editor": "GotTrashWood", "section": "", "index": "0", "submesh": "FlyBug", "notes": "Texture Flies", "texture": ""}, {"shop": "Hibara", "editor": "Hibara1208t", "section": "", "index": "0", "submesh": "HibaraRoof", "notes": "Texture Roof", "texture": ""}, {"shop": "Hibara", "editor": "Hibara1208t", "section": "", "index": "0", "submesh": "HibaraRope", "notes": "", "texture": ""}, {"shop": "Hibara", "editor": "Hibara1208t", "section": "", "index": "0", "submesh": "HibaraWall", "notes": "Texture Walls", "texture": ""}, {"shop": "Hibara", "editor": "Hibara1208t", "section": "", "index": "0", "submesh": "HibaraWood", "notes": "", "texture": ""}, {"shop": "Labkhoy Table Chan", "editor": "FoodTaz_Wok", "section": "", "index": "0", "submesh": "Particle System", "notes": "Texture Steam", "texture": "https://i.ibb.co/4w8rmLxp/Steam2.png"}, {"shop": "Lamp gold drop1", "editor": "AngLightBar1", "section": "", "index": "0", "submesh": "lamp", "notes": "Texture Outside", "texture": ""}, {"shop": "Lamp gold drop1", "editor": "AngLightBar1", "section": "", "index": "0", "submesh": "wire", "notes": "Texture Cord", "texture": ""}, {"shop": "Lamp gold drop1", "editor": "AngLightBar1", "section": "", "index": "0", "submesh": "light", "notes": "Texture Inner", "texture": ""}, {"shop": "Lamp gold drop2", "editor": "AngLightBar2", "section": "", "index": "0", "submesh": "lamp", "notes": "Texture Outside", "texture": ""}, {"shop": "Lamp gold drop2", "editor": "AngLightBar2", "section": "", "index": "0", "submesh": "wire", "notes": "Texture Cord", "texture": ""}, {"shop": "Lamp gold drop2", "editor": "AngLightBar2", "section": "", "index": "0", "submesh": "light", "notes": "Texture Inner", "texture": ""}, {"shop": "Levitative sphere", "editor": "LevitativeSphere", "section": "Base", "index": "0", "submesh": "LevitationSphere", "notes": "Texture Base", "texture": ""}, {"shop": "Levitative sphere", "editor": "LevitativeSphere", "section": "Ball", "index": "0", "submesh": "GeoSphere001", "notes": "Texture Ball", "texture": ""}, {"shop": "Levitative sphere", "editor": "LevitativeSphere", "section": "Lighting", "index": "0", "submesh": "GeoSphere002", "notes": "Texture Lightings", "texture": ""}, {"shop": "Light Oldskul", "editor": "AngLampFloor", "section": "", "index": "0", "submesh": "Line004", "notes": "Texture Stand", "texture": ""}, {"shop": "Light Oldskul", "editor": "AngLampFloor", "section": "", "index": "0", "submesh": "Object001", "notes": "Texture Outside", "texture": ""}, {"shop": "Light Oldskul", "editor": "AngLampFloor", "section": "", "index": "0", "submesh": "Object002", "notes": "Texture Inner", "texture": ""}, {"shop": "Mini Fountain", "editor": "FontanMini_", "section": "", "index": "1", "submesh": "FontanMini96t", "notes": "Texture Water", "texture": "https://i.ibb.co/mVd3P2Y1/Part15.png"}, {"shop": "Music column 04", "editor": "Music column 04", "section": "", "index": "0", "submesh": "Colonka", "notes": "", "texture": ""}, {"shop": "Music column 04", "editor": "Music column 04", "section": "", "index": "0", "submesh": "Colonka (1)", "notes": "", "texture": ""}, {"shop": "Music column 04", "editor": "Music column 04", "section": "", "index": "0", "submesh": "Colonka (2)", "notes": "", "texture": ""}, {"shop": "Radioactive grenade", "editor": "Grenade612t", "section": "", "index": "0", "submesh": "Particle System", "notes": "Texture Smoke", "texture": "https://i.ibb.co/qzQ1cxL/Steam4.png"}, {"shop": "Radial ramp 90 (clear)", "editor": "RampRadial90degCl", "section": "", "index": "0", "submesh": "RampRadial90deg", "notes": "", "texture": ""}, {"shop": "Radial ramp high (clear)", "editor": "RampRadialSmoothCl", "section": "", "index": "0", "submesh": "RampRadialSmooth", "notes": "", "texture": ""}, {"shop": "Radial ramp (clear)", "editor": "RampRadialCl", "section": "", "index": "0", "submesh": "RampRadial", "notes": "", "texture": ""}, {"shop": "Ramen", "editor": "Serv_ramen", "section": "", "index": "0", "submesh": "ramen", "notes": "Removes noodles", "texture": ""}, {"shop": "Ramen", "editor": "Serv_ramen", "section": "", "index": "0", "submesh": "P_Steam", "notes": "Add texture to steam", "texture": "https://i.ibb.co/DfrLWr9P/Steam1-copy.png"}, {"shop": "Sex Cars (Commons for All)", "editor": "", "section": "Glass", "index": "0", "submesh": "GlassCar", "notes": "Texture Glass", "texture": "https://i.ibb.co/dJDF46FY/Glass-Car-Material-25-Albedo-Transparency.png"}, {"shop": "Sex Cars (Commons for All)", "editor": "", "section": "Body", "index": "0", "submesh": "Plane001.003", "notes": "Texture Body", "texture": ""}, {"shop": "Sex Cars (Commons for All)", "editor": "", "section": "Decals", "index": "1", "submesh": "Plane001.003", "notes": "Texture Decals", "texture": "https://i.ibb.co/nsVhPGhv/Decal.png"}, {"shop": "Red flame car (Extra)", "editor": "[Item]Car_Red", "section": "Pipes", "index": "0", "submesh": "Plane001.005", "notes": "Texture Pipes", "texture": ""}, {"shop": "Red flame car (Extra)", "editor": "[Item]Car_Red", "section": "", "index": "0", "submesh": "Plane001.005 (1)", "notes": "Texture Pipes", "texture": ""}, {"shop": "Red flame car (Extra)", "editor": "[Item]Car_Red", "section": "", "index": "0", "submesh": "Plane001.005 (2)", "notes": "Texture Pipes", "texture": ""}, {"shop": "Red flame car (Extra)", "editor": "[Item]Car_Red", "section": "", "index": "0", "submesh": "Plane001.005 (3)", "notes": "Texture Pipes", "texture": ""}, {"shop": "Red flame car (Extra)", "editor": "[Item]Car_Red", "section": "", "index": "0", "submesh": "Plane001.005 (4)", "notes": "Texture Pipes", "texture": ""}, {"shop": "Red flame car (Extra)", "editor": "[Item]Car_Red", "section": "", "index": "0", "submesh": "Plane001.005 (5)", "notes": "Texture Pipes", "texture": ""}, {"shop": "Red flame car (Extra)", "editor": "[Item]Car_Red", "section": "Fire", "index": "0", "submesh": "Fire", "notes": "Texture Flames", "texture": "https://i.ibb.co/S4RhV6K5/fire-sword-loop.png"}, {"shop": "Red flame car (Extra)", "editor": "[Item]Car_Red", "section": "", "index": "0", "submesh": "Fire_fuel", "notes": "Texture Fuel", "texture": "https://i.ibb.co/LDK96G4B/fire-sword-fuel-loop-4x16.png"}, {"shop": "Halloween car (Extra)", "editor": "[Item]Car_Halloween", "section": "Pumpkins", "index": "0", "submesh": "car_halloween_pumpkin", "notes": "Texture Pumpkins", "texture": ""}, {"shop": "Square Swing", "editor": "[Bers]_Square_Swing", "section": "", "index": "0", "submesh": "sm_base", "notes": "", "texture": ""}, {"shop": "Square Swing", "editor": "[Bers]_Square_Swing", "section": "", "index": "0", "submesh": "sm_drap", "notes": "", "texture": ""}, {"shop": "Table Pimico/Moobius", "editor": "Table288t", "section": "", "index": "0", "submesh": "Table288tL", "notes": "Texture Neon Light", "texture": ""}, {"shop": "Table lamp", "editor": "WestLamp782t", "section": "", "index": "0", "submesh": "Particle System", "notes": "Texture Flames", "texture": ""}, {"shop": "Table lamp", "editor": "WestLamp782t", "section": "", "index": "0", "submesh": "Particle System (1)", "notes": "Texture Flames", "texture": ""}, {"shop": "Thanksgiving Day Fireplace", "editor": "thankday_fireplace", "section": "Flames", "index": "0", "submesh": "Flames", "notes": "Texture Flames", "texture": ""}, {"shop": "The fireplace suspended", "editor": "AngmhKamin", "section": "", "index": "0", "submesh": "AngmhKaminG", "notes": "Texture Glass", "texture": ""}, {"shop": "The fireplace suspended", "editor": "AngmhKamin", "section": "", "index": "0", "submesh": "Flames", "notes": "Texture Flames", "texture": ""}, {"shop": "The fireplace suspended", "editor": "AngmhKamin", "section": "", "index": "0", "submesh": "Flames (1)", "notes": "Texture Flames", "texture": ""}, {"shop": "The fireplace suspended", "editor": "AngmhKamin", "section": "", "index": "0", "submesh": "Flames (2)", "notes": "Texture Flames", "texture": ""}, {"shop": "The smoke generator", "editor": "SmokeBoilerT", "section": "Smoke", "index": "1", "submesh": "TubeSteam", "notes": "Texture Smoke", "texture": ""}, {"shop": "The torch small", "editor": "MidTorch", "section": "Flames", "index": "0", "submesh": "Flames", "notes": "Texture Flames", "texture": ""}, {"shop": "The wigwam light", "editor": "Wigwam808t", "section": "", "index": "0", "submesh": "Wigwam808tFabric", "notes": "", "texture": ""}, {"shop": "The wigwam dark", "editor": "WigwamBig", "section": "", "index": "0", "submesh": "WigwamBigCloth", "notes": "", "texture": ""}, {"shop": "Torch", "editor": "Torch268t", "section": "Flames", "index": "0", "submesh": "Flames", "notes": "Texture Flames", "texture": ""}, {"shop": "Tree", "editor": "Tree", "section": "Pot", "index": "0", "submesh": "flowerbed (1)", "notes": "Texture Flowerpot", "texture": ""}, {"shop": "(Sakura)", "editor": "", "section": "Pot", "index": "1", "submesh": "flowerbed (1)", "notes": "Texture Dirt", "texture": ""}, {"shop": "(Sakura)", "editor": "", "section": "Body", "index": "0", "submesh": "old tree", "notes": "Texture Bark", "texture": ""}, {"shop": "(Sakura)", "editor": "", "section": "Body", "index": "1", "submesh": "old tree", "notes": "Texture Leaves", "texture": ""}, {"shop": "(Sakura)", "editor": "", "section": "Body", "index": "2", "submesh": "old tree", "notes": "Texture Leaves", "texture": ""}, {"shop": "Wall lamp", "editor": "WestLamp526t", "section": "Flames", "index": "0", "submesh": "Particle System", "notes": "Texture Flames", "texture": ""}, {"shop": "Wood Boxing lamp", "editor": "WB_LongLamp", "section": "Body", "index": "0", "submesh": "WoodBox_LongLampA", "notes": "Texture White Glass", "texture": ""}, {"shop": "Windmill", "editor": "Mill710t", "section": "", "index": "0", "submesh": "Mill710t_A", "notes": "", "texture": ""}, {"shop": "Windmill", "editor": "Mill710t", "section": "Wheel", "index": "0", "submesh": "Mill710t_B", "notes": "", "texture": ""}, {"shop": "Yacht", "editor": "Boat628tSTAND", "section": "Body", "index": "0", "submesh": "Boat628t", "notes": "Texture Boat", "texture": ""}];
+
+const list = document.getElementById('list');
+const empty = document.getElementById('empty');
+const search = document.getElementById('search');
+const counts = document.getElementById('counts');
+
+function group(rows) {
+    const map = new Map();
+    rows.forEach(row => {
+        if (!map.has(row.shop)) map.set(row.shop, []);
+        map.get(row.shop).push(row);
+    });
+    return map;
+}
+
+function matches(row, q) {
+    if (!q) return true;
+    const blob = [row.shop, row.editor, row.section, row.index, row.submesh, row.notes, row.texture].join(' ').toLowerCase();
+    return blob.includes(q);
+}
+
+async function copyName(name, btn) {
+    try {
+        await navigator.clipboard.writeText(name);
+        const old = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => btn.textContent = old, 1200);
+    } catch {}
+}
+
+function render() {
+    const q = search.value.trim().toLowerCase();
+    const rows = DATA.filter(r => matches(r, q));
+    const grouped = group(rows);
+    counts.textContent = `${rows.length} submeshes · ${grouped.size} items`;
+    list.innerHTML = '';
+    empty.classList.toggle('hidden', rows.length !== 0);
+
+    grouped.forEach((items, shop) => {
+        const editor = items.find(i => i.editor)?.editor || '—';
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        const rowsHtml = items.map(item => {
+            const tex = item.texture.startsWith('http')
+                ? `<a class="tex" href="${item.texture}" target="_blank" rel="noopener">texture</a>`
+                : (item.texture || '—');
+            return `<tr>
+                <td>${item.section || '—'}</td>
+                <td class="text-green font-bold">${item.index || '—'}</td>
+                <td class="mono">${item.submesh || '—'}</td>
+                <td>${item.notes || '—'}</td>
+                <td>${tex}</td>
+                <td><button class="copy-mini" data-name="${item.submesh.replace(/"/g,'&quot;')}">Copy</button></td>
+            </tr>`;
+        }).join('');
+        card.innerHTML = `
+            <button class="shop-head" type="button">
+                <div>
+                    <div class="text-[9px] uppercase tracking-[0.16em] font-bold text-slate-600">Shop item</div>
+                    <div class="text-sm font-bold text-white mt-0.5">${shop}</div>
+                    <div class="text-[11px] text-slate-500 mt-0.5">${editor} · ${items.length} submesh${items.length===1?'':'es'}</div>
+                </div>
+                <div class="text-purple text-xs font-bold">▾</div>
+            </button>
+            <div class="px-2 pb-2 overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            <th>Index</th>
+                            <th>Submesh</th>
+                            <th>Notes</th>
+                            <th>Texture</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHtml}</tbody>
+                </table>
+            </div>`;
+        card.querySelectorAll('.copy-mini').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                copyName(btn.dataset.name, btn);
+            });
+        });
+        list.appendChild(card);
+    });
+}
+
+search.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>
