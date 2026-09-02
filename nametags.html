@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<tml>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -85,17 +85,7 @@
                     <div class="card p-4">
                         <div class="panel-title text-purple">Text</div>
                         <label class="label">Name</label>
-                        <input id="name" class="input" value="MAMI">
-                        <div class="grid grid-cols-2 gap-2 mt-3">
-                            <div>
-                                <label class="label">Prefix</label>
-                                <input id="prefix" class="input" value="♥">
-                            </div>
-                            <div>
-                                <label class="label">Suffix</label>
-                                <input id="suffix" class="input" value="♥">
-                            </div>
-                        </div>
+                        <input id="name" class="input" value="WOLFY">
                         <label class="flex items-center gap-2 mt-3 text-sm text-slate-300">
                             <input id="spaced" type="checkbox" checked> Space between letters
                         </label>
@@ -213,12 +203,8 @@ function renderStops(){
 
 function buildDisplay(){
     const name=document.getElementById('name').value;
-    const prefix=document.getElementById('prefix').value;
-    const suffix=document.getElementById('suffix').value;
     const spaced=document.getElementById('spaced').checked;
-    const letters=[...name];
-    const mid=spaced? letters.join(' ') : name;
-    return `${prefix}${prefix&&mid?' ':''}${mid}${mid&&suffix?' ':''}${suffix}`;
+    return spaced ? [...name].join(' ') : name;
 }
 
 function build(){
@@ -235,7 +221,6 @@ function build(){
         const hex=colorAt(t, colors, hsl);
         const span=document.createElement('span');
         span.style.color=hex;
-        span.textContent=ch===' '?' ':'';
         if(ch!==' ') span.textContent=ch;
         else span.innerHTML='&nbsp;';
         preview.appendChild(span);
@@ -245,7 +230,7 @@ function build(){
     document.getElementById('code').value=pieces.join(' ');
 }
 
-['name','prefix','suffix','spaced','hsl'].forEach(id=>{
+['name','spaced','hsl'].forEach(id=>{
     document.getElementById(id).addEventListener('input', build);
     document.getElementById(id).addEventListener('change', build);
 });
