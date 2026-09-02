@@ -1,18 +1,33 @@
-# Wolves Albedo Tile Calculator
+# Wolves Editing Tools
 
-A compact utility for calculating Albedo Wall Tile dimensions.
+Browser tools made for Wolves clan and others — tiling, textures, name tags, colors, and reference lookups.
 
-## Features
+**Live site:** [https://lildvrkness.github.io/wolves-editing-tools/](https://lildvrkness.github.io/wolves-editing-tools/)
 
-- X / Y / Z wall dimension inputs
-- Automatic tile dimension calculation
-- Vector output
-- Live preview
-- Copy-to-clipboard functionality
-- Dark UI with purple and green ambient lighting
+Everything runs locally in the browser. No costs, no accounts, no uploads.
+
+## Tools
+
+| Tool | What it does |
+| --- | --- |
+| **Albedo Tile Calculator** | Convert wall X / Y into matching albedo tile values |
+| **Texture Workshop** | Resize, convert PNG/JPEG/WebP, bake a normal map, tag DPI |
+| **Name Tag Gradients** | Build smooth `[color=#hex]` codes for in-game name tags |
+| **Fancy Text** | Unicode font styles plus click-to-copy text symbols |
+| **Color Codes** | Color picker with hex, RGB, HSL, Unity, and tag copy |
+| **Submeshes** | Searchable shop / editor / submesh / texture reference |
 
 ## Usage
 
-Enter the wall dimensions and the calculator automatically generates the corresponding Albedo tile values.
+Open the live site and pick a tool from the hub.  
+Or clone the repo and open `index.html`.
 
-MADE FOR WOLVES CLAN <3
+## Pages
+
+- `index.html` — hub
+- `albedo.html`
+- `textures.html`
+- `nametags.html`
+- `fancy.html`
+- `colors.html`
+- `submeshes.html`
