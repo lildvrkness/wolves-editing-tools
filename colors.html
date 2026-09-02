@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Codes — Wolves Editing Tools</title>
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+    <script>tailwind.config={theme:{extend:{colors:{purple:"#9b5cff",green:"#39ff88"}}}}</script>
+    <style>
+        :root { --purple:#9b5cff; --green:#39ff88; --ink:#030405; }
+        * { box-sizing:border-box; }
+        html { min-height:100%; background:var(--ink); }
+        ::selection { background:rgba(155,92,255,.35); color:#fff; }
+        body {
+            margin:0; min-height:100vh; font-family:Inter,sans-serif; color:#e5e7eb;
+            background:
+                radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%),
+                #030405;
+            padding:28px 16px 48px;
+        }
+        .background-grid {
+            position:fixed; inset:0; pointer-events:none; opacity:.028; z-index:0;
+            background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
+            background-size:42px 42px;
+        }
+        .wolf-bg { position:fixed; right:-60px; bottom:-80px; width:min(420px,55vw); opacity:.07; pointer-events:none; z-index:0; }
+        .wolves-title { font-family:"New Rocker",cursive; letter-spacing:.025em; line-height:1.02; }
+        .title-wolves { color:#39ff88; display:inline-block; text-shadow:0 0 10px rgba(57,255,136,.55),0 0 24px rgba(57,255,136,.28); animation:wolvesPulse 2.8s ease-in-out infinite; }
+        .title-rest { color:#9b5cff; display:inline-block; text-shadow:0 0 12px rgba(155,92,255,.55),0 0 24px rgba(155,92,255,.22); animation:albedoShimmer 4.2s ease-in-out infinite; }
+        @keyframes wolvesPulse { 0%,100%{text-shadow:0 0 8px rgba(57,255,136,.4),0 0 18px rgba(57,255,136,.18)} 50%{text-shadow:0 0 16px rgba(57,255,136,.85),0 0 32px rgba(57,255,136,.4)} }
+        @keyframes albedoShimmer { 0%,100%{text-shadow:0 0 10px rgba(155,92,255,.4),0 0 20px rgba(155,92,255,.18)} 50%{text-shadow:0 0 18px rgba(155,92,255,.8),0 0 32px rgba(155,92,255,.3)} }
+        .card { background:linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97)); border:1px solid #202229; border-radius:14px; }
+        .shell { box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(155,92,255,.08); }
+        .label { font-size:13px; color:#e2e8f0; font-weight:600; display:block; margin-bottom:6px; }
+        .panel-title { font-size:15px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; margin-bottom:12px; }
+        .btn { height:42px; padding:0 12px; border-radius:8px; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; border:0; }
+        .btn-green { background:#39ff88; color:#000; }
+        .btn-green:hover { box-shadow:0 0 22px rgba(57,255,136,.28); }
+        .sv {
+            position:relative; width:100%; height:240px; border-radius:12px; cursor:crosshair;
+            background:
+                linear-gradient(to top, #000, transparent),
+                linear-gradient(to right, #fff, var(--hue, #ff0000));
+            border:1px solid #2a2d35;
+        }
+        .ring {
+            position:absolute; width:16px; height:16px; border:2px solid #fff; border-radius:50%;
+            box-shadow:0 0 0 1px #000, 0 0 12px rgba(0,0,0,.45); transform:translate(-50%,-50%); pointer-events:none;
+        }
+        .hue {
+            -webkit-appearance:none; appearance:none; width:100%; height:16px; border-radius:999px; outline:none; cursor:pointer; margin-top:12px;
+            background:linear-gradient(90deg,#ff0000,#ffff00,#00ff00,#00ffff,#0000ff,#ff00ff,#ff0000);
+        }
+        .hue::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:#fff; border:2px solid #111; box-shadow:0 0 10px rgba(155,92,255,.4); }
+        .alpha {
+            -webkit-appearance:none; appearance:none; width:100%; height:12px; border-radius:999px; outline:none; cursor:pointer; margin-top:10px;
+            background:
+                linear-gradient(90deg, transparent, var(--solid, #fff)),
+                repeating-linear-gradient(45deg,#222 0 6px,#444 6px 12px);
+        }
+        .alpha::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:#fff; border:2px solid #111; }
+        .swatch {
+            min-height:160px; border-radius:14px; border:1px solid #2a2d35;
+            display:flex; align-items:flex-end; justify-content:space-between; padding:16px;
+            box-shadow:inset 0 0 0 1px rgba(255,255,255,.06), 0 0 40px rgba(155,92,255,.12);
+        }
+        .hex-main { font-family:ui-monospace,Menlo,monospace; font-size:28px; font-weight:800; letter-spacing:.04em; }
+        .row {
+            display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid #262830; border-radius:10px; background:rgba(0,0,0,.28); margin-bottom:8px;
+        }
+        .row .fmt { width:72px; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#9b5cff; }
+        .row .val { flex:1; font-family:ui-monospace,Menlo,monospace; font-size:14px; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .chip { width:36px; height:36px; border-radius:10px; border:1px solid #2a2d35; cursor:pointer; }
+        .chip:hover { transform:translateY(-1px); box-shadow:0 0 14px rgba(155,92,255,.25); }
+        .toast {
+            position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(12px);
+            opacity:0; pointer-events:none; transition:.25s ease; z-index:20;
+            background:#0b0c10; border:1px solid rgba(57,255,136,.3); color:#39ff88;
+            padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700;
+        }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
+
+    <main class="relative z-10 w-full max-w-6xl mx-auto">
+        <div class="card shell overflow-hidden">
+            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="index.html" class="text-sm uppercase tracking-[0.18em] font-bold text-green hover:text-white">← Tools</a>
+                    <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                    <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Reference</span>
+                </div>
+                <h1 class="wolves-title text-4xl md:text-5xl">
+                    <span class="title-wolves">Wolves</span>
+                    <span class="title-rest">Color Codes</span>
+                </h1>
+                <p class="text-sm text-slate-300 mt-3">Pick a color, see it large, copy hex first — plus RGB, HSL, and in-game tags.</p>
+            </header>
+
+            <section class="p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="card p-4">
+                    <div class="panel-title text-purple">Picker</div>
+                    <div id="sv" class="sv"><div id="ring" class="ring"></div></div>
+                    <input id="hue" class="hue" type="range" min="0" max="360" value="271">
+                    <input id="alpha" class="alpha" type="range" min="0" max="100" value="100">
+                    <div class="flex flex-wrap gap-2 mt-4" id="presets"></div>
+                </div>
+
+                <div>
+                    <div id="swatch" class="swatch mb-4">
+                        <div>
+                            <div class="text-[11px] uppercase tracking-[0.16em] font-bold opacity-80">Selected</div>
+                            <div id="hexMain" class="hex-main">#9B5CFF</div>
+                        </div>
+                        <button id="copyHex" class="btn btn-green">Copy HEX</button>
+                    </div>
+
+                    <div class="card p-4">
+                        <div class="panel-title text-green">Copy formats</div>
+                        <div id="formats"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <div id="toast" class="toast">Copied</div>
+
+<script>
+const state = { h: 271, s: 64, v: 100, a: 100 };
+const sv = document.getElementById('sv');
+const ring = document.getElementById('ring');
+const hue = document.getElementById('hue');
+const alpha = document.getElementById('alpha');
+const swatch = document.getElementById('swatch');
+const hexMain = document.getElementById('hexMain');
+const toast = document.getElementById('toast');
+
+const presets = ['#9b5cff','#39ff88','#8f00ff','#c77dff','#ffffff','#000000','#ff4d6d','#4cc9f0','#ffd60a','#ff7b00'];
+
+function hsvToRgb(h,s,v){
+    s/=100; v/=100;
+    const c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c;
+    let r=0,g=0,b=0;
+    if(h<60)[r,g,b]=[c,x,0];
+    else if(h<120)[r,g,b]=[x,c,0];
+    else if(h<180)[r,g,b]=[0,c,x];
+    else if(h<240)[r,g,b]=[0,x,c];
+    else if(h<300)[r,g,b]=[x,0,c];
+    else [r,g,b]=[c,0,x];
+    return [Math.round((r+m)*255), Math.round((g+m)*255), Math.round((b+m)*255)];
+}
+function rgbToHex(r,g,b){ return '#'+[r,g,b].map(n=>n.toString(16).padStart(2,'0')).join('').toUpperCase(); }
+function rgbToHsl(r,g,b){
+    r/=255;g/=255;b/=255;
+    const max=Math.max(r,g,b), min=Math.min(r,g,b);
+    let h=0,s=0,l=(max+min)/2;
+    if(max!==min){
+        const d=max-min;
+        s=l>0.5?d/(2-max-min):d/(max+min);
+        if(max===r)h=((g-b)/d+(g<b?6:0))/6;
+        else if(max===g)h=((b-r)/d+2)/6;
+        else h=((r-g)/d+4)/6;
+    }
+    return [Math.round(h*360), Math.round(s*100), Math.round(l*100)];
+}
+function hexToHsv(hex){
+    hex=hex.replace('#','');
+    const r=parseInt(hex.slice(0,2),16)/255, g=parseInt(hex.slice(2,4),16)/255, b=parseInt(hex.slice(4,6),16)/255;
+    const max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+    let h=0;
+    if(d){
+        if(max===r)h=((g-b)/d)%6;
+        else if(max===g)h=(b-r)/d+2;
+        else h=(r-g)/d+4;
+        h*=60; if(h<0)h+=360;
+    }
+    const s=max===0?0:d/max;
+    return {h, s:s*100, v:max*100};
+}
+
+function formats(r,g,b,a,hex){
+    const [hh,ss,ll]=rgbToHsl(r,g,b);
+    const af=(a/100).toFixed(2);
+    return [
+        {key:'HEX', value:hex, main:true},
+        {key:'HEX raw', value:hex.slice(1)},
+        {key:'RGB', value:`rgb(${r}, ${g}, ${b})`},
+        {key:'RGBA', value:`rgba(${r}, ${g}, ${b}, ${af})`},
+        {key:'HSL', value:`hsl(${hh}, ${ss}%, ${ll}%)`},
+        {key:'HSLA', value:`hsla(${hh}, ${ss}%, ${ll}%, ${af})`},
+        {key:'HSV', value:`hsv(${Math.round(state.h)}, ${Math.round(state.s)}%, ${Math.round(state.v)}%)`},
+        {key:'Unity', value:`new Color(${(r/255).toFixed(3)}f, ${(g/255).toFixed(3)}f, ${(b/255).toFixed(3)}f, ${af}f)`},
+        {key:'Tag', value:`[color=${hex.toLowerCase()}]`},
+    ];
+}
+
+async function copy(text, label){
+    try{
+        await navigator.clipboard.writeText(text);
+        toast.textContent='Copied '+label;
+        toast.classList.add('show');
+        setTimeout(()=>toast.classList.remove('show'),1400);
+    }catch{}
+}
+
+function render(){
+    const [r,g,b]=hsvToRgb(state.h,state.s,state.v);
+    const hex=rgbToHex(r,g,b);
+    const hueHex=rgbToHex(...hsvToRgb(state.h,100,100));
+    sv.style.setProperty('--hue', hueHex);
+    document.documentElement.style.setProperty('--solid', hex);
+    ring.style.left=(state.s)+'%';
+    ring.style.top=(100-state.v)+'%';
+    const a=state.a/100;
+    swatch.style.background=`linear-gradient(180deg, rgba(${r},${g},${b},${a}), rgba(${r},${g},${b},${a})), repeating-linear-gradient(45deg,#1a1a1a 0 8px,#111 8px 16px)`;
+    const light= (r*0.299+g*0.587+b*0.114)>160;
+    swatch.style.color=light?'#111':'#fff';
+    hexMain.textContent=hex;
+    hue.value=Math.round(state.h);
+    alpha.value=Math.round(state.a);
+
+    const box=document.getElementById('formats');
+    box.innerHTML='';
+    formats(r,g,b,state.a,hex).forEach(item=>{
+        const row=document.createElement('div');
+        row.className='row';
+        row.innerHTML=`<div class="fmt">${item.key}</div><div class="val">${item.value}</div>`;
+        const btn=document.createElement('button');
+        btn.className='btn btn-green';
+        btn.textContent='Copy';
+        btn.addEventListener('click',()=>copy(item.value, item.key));
+        row.appendChild(btn);
+        box.appendChild(row);
+    });
+}
+
+function pick(e){
+    const rec=sv.getBoundingClientRect();
+    const x=Math.min(1,Math.max(0,(e.clientX-rec.left)/rec.width));
+    const y=Math.min(1,Math.max(0,(e.clientY-rec.top)/rec.height));
+    state.s=x*100; state.v=(1-y)*100; render();
+}
+sv.addEventListener('pointerdown',e=>{
+    sv.setPointerCapture(e.pointerId);
+    pick(e);
+    sv.onpointermove=pick;
+});
+sv.addEventListener('pointerup',()=>sv.onpointermove=null);
+hue.addEventListener('input',()=>{ state.h=Number(hue.value); render(); });
+alpha.addEventListener('input',()=>{ state.a=Number(alpha.value); render(); });
+document.getElementById('copyHex').addEventListener('click',()=>copy(hexMain.textContent,'HEX'));
+
+const presetBox=document.getElementById('presets');
+presets.forEach(hex=>{
+    const b=document.createElement('button');
+    b.className='chip';
+    b.style.background=hex;
+    b.title=hex;
+    b.addEventListener('click',()=>{
+        const hsv=hexToHsv(hex);
+        state.h=hsv.h; state.s=hsv.s; state.v=hsv.v; render();
+    });
+    presetBox.appendChild(b);
+});
+
+render();
+</script>
+</body>
+</html>
