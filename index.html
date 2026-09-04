@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
     <script>
         tailwind.config = {
             theme: { extend: { colors: { purple: "#9b5cff", green: "#39ff88" } } }
@@ -79,19 +80,34 @@
         .tool-grid { display:grid; grid-template-columns:1fr; gap:14px; }
         @media (min-width:680px) { .tool-grid { grid-template-columns:1fr 1fr; } }
         .tool-card {
+            position:relative; overflow:hidden;
             display:flex; align-items:center; gap:14px; text-align:left;
             padding:18px; border-radius:16px; border:1px solid #262830;
-            background:linear-gradient(145deg, rgba(17,18,22,.86), rgba(8,9,11,.9));
+            background:linear-gradient(145deg, rgba(17,18,22,.9), rgba(8,9,11,.92));
             text-decoration:none; color:inherit;
             transition:transform .25s ease, border-color .25s ease, box-shadow .3s ease;
-            backdrop-filter:blur(10px);
+            backdrop-filter:blur(12px);
+            animation:cardIn .6s ease both;
         }
+        .tool-card:nth-child(1){animation-delay:.04s} .tool-card:nth-child(2){animation-delay:.08s}
+        .tool-card:nth-child(3){animation-delay:.12s} .tool-card:nth-child(4){animation-delay:.16s}
+        .tool-card:nth-child(5){animation-delay:.2s} .tool-card:nth-child(6){animation-delay:.24s}
+        @keyframes cardIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+        .tool-card::after {
+            content:""; position:absolute; inset:0; pointer-events:none;
+            background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.07) 50%, transparent 65%);
+            transform:translateX(-140%);
+        }
+        .tool-card:hover::after { animation:shine .7s ease; }
+        @keyframes shine { to { transform:translateX(140%); } }
         .tool-card:hover { transform:translateY(-3px); }
-        .tool-card.purple:hover { border-color:rgba(155,92,255,.55); box-shadow:0 0 0 1px rgba(155,92,255,.16),0 0 28px rgba(155,92,255,.18); }
-        .tool-card.green:hover { border-color:rgba(57,255,136,.5); box-shadow:0 0 0 1px rgba(57,255,136,.14),0 0 28px rgba(57,255,136,.16); }
+        .tool-card.purple:hover { border-color:rgba(155,92,255,.55); box-shadow:0 0 0 1px rgba(155,92,255,.16),0 10px 28px rgba(155,92,255,.16); }
+        .tool-card.green:hover { border-color:rgba(57,255,136,.5); box-shadow:0 0 0 1px rgba(57,255,136,.14),0 10px 28px rgba(57,255,136,.14); }
         .glyph {
             width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:900;
+            transition: box-shadow .25s ease, transform .25s ease;
         }
+        .tool-card:hover .glyph { transform:scale(1.04); }
         .glyph.xy { color:#9b5cff; background:rgba(155,92,255,.1); border:1px solid rgba(155,92,255,.28); box-shadow:0 0 16px rgba(155,92,255,.12); }
         .glyph.mesh { color:#39ff88; background:rgba(57,255,136,.08); border:1px solid rgba(57,255,136,.26); box-shadow:0 0 16px rgba(57,255,136,.1); }
         .glyph.tex { color:#d6c4ff; background:rgba(155,92,255,.1); border:1px solid rgba(155,92,255,.28); box-shadow:0 0 16px rgba(155,92,255,.12); }
@@ -126,8 +142,8 @@
             <span class="title-wolves">Wolves</span>
             <span class="title-rest">Editing Tools</span>
         </h1>
-        <p class="text-sm text-slate-400 max-w-md mx-auto mb-8 leading-relaxed">
-            A growing set of tools and references, built for Wolves and others.
+        <p class="text-[15px] text-slate-300 max-w-md mx-auto mb-8 leading-relaxed">
+            A growing set of editors and lookups for Wolves worlds. Pick a tool to start.
         </p>
         <div class="tool-grid">
             <a class="tool-card purple" href="albedo.html">
@@ -135,7 +151,7 @@
                 <div>
                     <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">Tiling</div>
                     <div class="text-base font-bold text-white">Albedo Tile Calculator</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">Convert wall size into tile X and Y.</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Convert wall size into tile X and Y.</div>
                 </div>
             </a>
             <a class="tool-card purple" href="textures.html">
@@ -149,7 +165,7 @@
                 <div>
                     <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">Textures</div>
                     <div class="text-base font-bold text-white">Texture Workshop</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">Resize, convert, normals, and DPI.</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Resize, convert, normals, and DPI.</div>
                 </div>
             </a>
             <a class="tool-card purple" href="nametags.html">
@@ -161,7 +177,7 @@
                 <div>
                     <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">Names</div>
                     <div class="text-base font-bold text-white">Name Tag Gradients</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">Smooth [color] codes for custom tags.</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Smooth [color] codes for custom tags.</div>
                 </div>
             </a>
             <a class="tool-card purple" href="fancy.html">
@@ -174,7 +190,7 @@
                 <div>
                     <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">Text</div>
                     <div class="text-base font-bold text-white">Fancy Text</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">Unicode fonts and click-to-copy symbols.</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Unicode fonts and click-to-copy symbols.</div>
                 </div>
             </a>
             <a class="tool-card green" href="colors.html">
@@ -187,7 +203,7 @@
                 <div>
                     <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-green mb-1">Reference</div>
                     <div class="text-base font-bold text-white">Color Codes</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">Picker with hex, RGB, HSL, and tag copy.</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Picker with hex, RGB, HSL, and tag copy.</div>
                 </div>
             </a>
             <a class="tool-card green" href="submeshes.html">
@@ -200,7 +216,7 @@
                 <div>
                     <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-green mb-1">Reference</div>
                     <div class="text-base font-bold text-white">Submeshes</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">Search available submeshes.</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Shop items, indexes, and texture notes.</div>
                 </div>
             </a>
         </div>

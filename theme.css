@@ -1,0 +1,103 @@
+:root {
+    --purple: #9b5cff;
+    --green: #39ff88;
+    --ink: #030405;
+    --card: #0d0e12;
+    --line: #262830;
+}
+
+html { scroll-behavior: smooth; }
+
+::selection { background: rgba(155, 92, 255, .35); color: #fff; }
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::before {
+    width: 540px;
+    height: 540px;
+    left: -220px;
+    top: -160px;
+    background: rgba(155, 92, 255, .14);
+    filter: blur(110px);
+    animation: orbDrift 14s ease-in-out infinite;
+}
+
+body::after {
+    width: 560px;
+    height: 560px;
+    right: -240px;
+    bottom: -220px;
+    background: rgba(57, 255, 136, .1);
+    filter: blur(120px);
+    animation: orbDrift 18s ease-in-out infinite reverse;
+}
+
+@keyframes orbDrift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(18px, -14px) scale(1.06); }
+}
+
+.wolf-bg {
+    animation: wolfBreath 7s ease-in-out infinite;
+}
+
+@keyframes wolfBreath {
+    0%, 100% {
+        opacity: .16;
+        filter: drop-shadow(0 0 24px rgba(155, 92, 255, .28)) drop-shadow(0 0 40px rgba(57, 255, 136, .12));
+    }
+    50% {
+        opacity: .24;
+        filter: drop-shadow(0 0 36px rgba(155, 92, 255, .42)) drop-shadow(0 0 58px rgba(57, 255, 136, .2));
+    }
+}
+
+.card, .shell {
+    background: linear-gradient(160deg, rgba(18, 19, 24, .96), rgba(8, 9, 12, .98));
+    border: 1px solid #22242c;
+}
+
+.shell {
+    box-shadow:
+        0 28px 70px rgba(0, 0, 0, .45),
+        0 0 0 1px rgba(155, 92, 255, .08),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+
+.btn, button.btn, .btn-green {
+    transition: transform .16s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.btn:hover, button.btn:hover, .btn-green:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+}
+
+.btn:active, button.btn:active, .btn-green:active {
+    transform: translateY(0);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid rgba(57, 255, 136, .7);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+.label { color: #e8edf5 !important; font-size: 14px !important; }
+.panel-title { letter-spacing: .14em; }
