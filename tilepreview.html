@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Preview — Wolves Editing Tools</title>
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
+    <script>tailwind.config={theme:{extend:{colors:{purple:"#9b5cff",green:"#39ff88"}}}}</script>
+    <style>
+        :root { --purple:#9b5cff; --green:#39ff88; --ink:#030405; }
+        * { box-sizing:border-box; }
+        html { min-height:100%; background:var(--ink); }
+        body {
+            margin:0; min-height:100vh; font-family:Inter,sans-serif; color:#e5e7eb;
+            background:
+                radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%),
+                #030405;
+            padding:28px 16px 48px;
+        }
+        .background-grid {
+            position:fixed; inset:0; pointer-events:none; opacity:.028; z-index:0;
+            background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
+            background-size:42px 42px;
+        }
+        .wolf-bg { position:fixed; right:-40px; bottom:-70px; width:min(420px,50vw); opacity:.08; pointer-events:none; z-index:0; }
+        .wolves-title { font-family:"New Rocker",cursive; letter-spacing:.025em; line-height:1.02; }
+        .title-wolves { color:#39ff88; display:inline-block; text-shadow:0 0 10px rgba(57,255,136,.55),0 0 24px rgba(57,255,136,.28); animation:wolvesPulse 2.8s ease-in-out infinite; }
+        .title-rest { color:#9b5cff; display:inline-block; text-shadow:0 0 12px rgba(155,92,255,.55),0 0 24px rgba(155,92,255,.22); animation:albedoShimmer 4.2s ease-in-out infinite; }
+        @keyframes wolvesPulse { 0%,100%{text-shadow:0 0 8px rgba(57,255,136,.4),0 0 18px rgba(57,255,136,.18)} 50%{text-shadow:0 0 16px rgba(57,255,136,.85),0 0 32px rgba(57,255,136,.4)} }
+        @keyframes albedoShimmer { 0%,100%{text-shadow:0 0 10px rgba(155,92,255,.4),0 0 20px rgba(155,92,255,.18)} 50%{text-shadow:0 0 18px rgba(155,92,255,.8),0 0 32px rgba(155,92,255,.3)} }
+        .card { background:linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97)); border:1px solid #202229; border-radius:14px; }
+        .shell { box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(155,92,255,.08); }
+        .input { width:100%; height:44px; background:rgba(3,4,5,.88); border:1px solid #292c34; border-radius:10px; padding:8px 12px; color:white; font-size:15px; outline:none; }
+        .input:focus { border-color:#9b5cff; box-shadow:0 0 0 2px rgba(155,92,255,.08), 0 0 16px rgba(155,92,255,.22); }
+        .label { font-size:12px; color:#cbd5e1; font-weight:600; display:block; margin-bottom:5px; }
+        .btn { height:44px; padding:0 14px; border-radius:10px; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; border:0; }
+        .btn-green { background:#39ff88; color:#041208; }
+        .btn-ghost { background:rgba(155,92,255,.1); color:#e8dcff; border:1px solid rgba(155,92,255,.35); }
+        .drop {
+            border:1px dashed rgba(155,92,255,.4); border-radius:12px; padding:18px;
+            background:rgba(0,0,0,.28); text-align:center; cursor:pointer;
+        }
+        .drop:hover, .drop.on { border-color:#39ff88; box-shadow:0 0 18px rgba(57,255,136,.12); }
+        .stage {
+            position:relative; width:100%; min-height:520px; height:min(72vh, 820px);
+            border-radius:14px; border:1px solid #262830; background:#050608;
+            overflow:hidden;
+        }
+        .wall {
+            position:absolute; left:50%; top:50%;
+            transform:translate(-50%,-50%);
+            background-repeat:repeat;
+            background-position:0 0;
+            image-rendering:auto;
+            box-shadow:0 0 0 1px rgba(155,92,255,.25), 0 20px 50px rgba(0,0,0,.45);
+        }
+        .wall.pixel { image-rendering:pixelated; }
+        .seams { position:absolute; inset:0; pointer-events:none; opacity:.0; }
+        .hint { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#64748b; font-size:14px; text-align:center; padding:24px; }
+        .chip { display:inline-flex; align-items:center; gap:8px; font-size:12px; color:#cbd5e1; }
+        .chip input { accent-color:#39ff88; }
+    </style>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
+    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
+    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
+    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
+
+    <main class="relative z-10 w-full max-w-6xl mx-auto">
+        <div class="card shell overflow-hidden">
+            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="index.html" class="back-link">← Tools</a>
+                    <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                    <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Tiling</span>
+                </div>
+                <h1 class="wolves-title text-4xl md:text-5xl">
+                    <span class="title-wolves">Wolves</span>
+                    <span class="title-rest">Tile Preview</span>
+                </h1>
+                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Upload a texture and see how it repeats on a wall. Tile X / Y is how many times it wraps. Stays in your browser.</p>
+            </header>
+
+            <section class="p-4 md:p-6 grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-4">
+                <div class="space-y-4">
+                    <label class="drop block" id="drop">
+                        <input id="file" type="file" accept="image/*" class="hidden">
+                        <div class="text-sm font-bold text-white">Drop texture or click to upload</div>
+                        <div class="text-xs text-slate-400 mt-1" id="fileName">PNG, JPEG, or WebP</div>
+                    </label>
+
+                    <div class="card p-4 space-y-3">
+                        <div class="text-[11px] uppercase tracking-[0.16em] font-extrabold text-purple">Wall size</div>
+                        <div>
+                            <label class="label">Wall X</label>
+                            <input id="wallX" class="input" type="number" min="0.01" step="any" value="4">
+                        </div>
+                        <div>
+                            <label class="label">Wall Y</label>
+                            <input id="wallY" class="input" type="number" min="0.01" step="any" value="3">
+                        </div>
+                    </div>
+
+                    <div class="card p-4 space-y-3">
+                        <div class="text-[11px] uppercase tracking-[0.16em] font-extrabold text-green">Albedo tile</div>
+                        <div>
+                            <label class="label">Tile X</label>
+                            <input id="tileX" class="input" type="number" min="0.01" step="any" value="2">
+                        </div>
+                        <div>
+                            <label class="label">Tile Y</label>
+                            <input id="tileY" class="input" type="number" min="0.01" step="any" value="1.5">
+                        </div>
+                        <button id="fromWall" class="btn btn-ghost w-full" type="button">Match from units / 2</button>
+                    </div>
+
+                    <label class="chip"><input id="seams" type="checkbox"> Show tile seams</label>
+                    <label class="chip"><input id="pixel" type="checkbox"> Pixelated</label>
+                    <div class="text-xs text-slate-400" id="meta">No texture loaded.</div>
+                </div>
+
+                <div>
+                    <div class="stage" id="stage">
+                        <div class="hint" id="hint">Upload a texture to preview tiling on the wall.</div>
+                        <div class="wall" id="wall" hidden></div>
+                    </div>
+                    <div class="text-xs text-slate-500 mt-2" id="readout"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+<script>
+const $ = (id) => document.getElementById(id);
+let url = '';
+let natural = { w: 0, h: 0 };
+
+function n(id) {
+    const v = parseFloat($(id).value);
+    return Number.isFinite(v) && v > 0 ? v : 0.01;
+}
+
+function draw() {
+    const wall = $('wall');
+    const hint = $('hint');
+    const wx = n('wallX'), wy = n('wallY');
+    const tx = n('tileX'), ty = n('tileY');
+    const stage = $('stage');
+    const maxW = stage.clientWidth - 36;
+    const maxH = stage.clientHeight - 36;
+    const scale = Math.min(maxW / wx, maxH / wy);
+    const pw = Math.max(80, wx * scale);
+    const ph = Math.max(80, wy * scale);
+
+    if (!url) {
+        wall.hidden = true;
+        hint.hidden = false;
+        $('readout').textContent = '';
+        return;
+    }
+    hint.hidden = true;
+    wall.hidden = false;
+    wall.style.width = pw + 'px';
+    wall.style.height = ph + 'px';
+    wall.style.backgroundImage = 'url("' + url + '")';
+    wall.style.backgroundSize = (100 / tx) + '% ' + (100 / ty) + '%';
+    wall.classList.toggle('pixel', $('pixel').checked);
+
+    const cellW = pw / tx;
+    const cellH = ph / ty;
+    if ($('seams').checked) {
+        wall.style.boxShadow = '0 0 0 1px rgba(155,92,255,.25), 0 20px 50px rgba(0,0,0,.45)';
+        wall.style.backgroundImage =
+            'linear-gradient(to right, rgba(57,255,136,.55) 1px, transparent 1px),' +
+            'linear-gradient(to bottom, rgba(155,92,255,.55) 1px, transparent 1px),' +
+            'url("' + url + '")';
+        wall.style.backgroundSize = cellW + 'px 100%, 100% ' + cellH + 'px, ' + cellW + 'px ' + cellH + 'px';
+    }
+
+    $('readout').textContent =
+        'Wall ' + wx + ' × ' + wy + '   ·   tile ' + tx + ' × ' + ty +
+        (natural.w ? '   ·   texture ' + natural.w + ' × ' + natural.h : '');
+}
+
+function loadFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    if (url) URL.revokeObjectURL(url);
+    url = URL.createObjectURL(file);
+    $('fileName').textContent = file.name;
+    const img = new Image();
+    img.onload = () => { natural = { w: img.naturalWidth, h: img.naturalHeight }; $('meta').textContent = file.name + ' · ' + natural.w + ' × ' + natural.h; draw(); };
+    img.src = url;
+}
+
+$('file').addEventListener('change', (e) => loadFile(e.target.files[0]));
+['dragover','dragenter'].forEach(ev => $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.add('on'); }));
+['dragleave','drop'].forEach(ev => $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.remove('on'); }));
+$('drop').addEventListener('drop', (e) => loadFile(e.dataTransfer.files[0]));
+$('drop').addEventListener('click', () => $('file').click());
+['wallX','wallY','tileX','tileY','seams','pixel'].forEach(id => $(id).addEventListener('input', draw));
+$('fromWall').addEventListener('click', () => {
+    $('tileX').value = (n('wallX') / 2).toFixed(4);
+    $('tileY').value = (n('wallY') / 2).toFixed(4);
+    draw();
+});
+window.addEventListener('resize', draw);
+draw();
+</script>
+<script src="fx.js"></script>
+</body>
+</html>
