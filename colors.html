@@ -39,7 +39,7 @@
         .shell { box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(155,92,255,.08); }
         .label { font-size:13px; color:#e2e8f0; font-weight:600; display:block; margin-bottom:6px; }
         .panel-title { font-size:15px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; margin-bottom:12px; }
-        .btn { height:42px; padding:0 12px; border-radius:8px; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; border:0; }
+        .btn { height:42px; padding:0 12px; border-radius:8px; font-size:13px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; border:0; }
         .btn-green { background:#39ff88; color:#000; }
         .btn-green:hover { box-shadow:0 0 22px rgba(57,255,136,.28); }
         .sv {
@@ -74,7 +74,7 @@
         .row {
             display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid #262830; border-radius:10px; background:rgba(0,0,0,.28); margin-bottom:8px;
         }
-        .row .fmt { width:72px; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#9b5cff; }
+        .row .fmt { width:72px; font-size:13px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#9b5cff; }
         .row .val { flex:1; font-family:ui-monospace,Menlo,monospace; font-size:14px; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .chip { width:36px; height:36px; border-radius:10px; border:1px solid #2a2d35; cursor:pointer; }
         .chip:hover { transform:translateY(-1px); box-shadow:0 0 14px rgba(155,92,255,.25); }
@@ -87,11 +87,8 @@
         .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
     </style>
 </head>
-<body>
+<body class="no-fx no-tilt">
     <div class="background-grid"></div>
-    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
-    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
-    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
 
     <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
 
@@ -279,6 +276,5 @@ presets.forEach(hex=>{
 
 render();
 </script>
-<script src="fx.js"></script>
 </body>
 </html>
