@@ -45,7 +45,7 @@
         .field { display:flex; flex-direction:column; min-width:0; }
         .row { display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; }
         .panel-title { font-size:13px; letter-spacing:.16em; text-transform:uppercase; font-weight:800; }
-        .btn { height:40px; padding:0 12px; border-radius:10px; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border:0; }
+        .btn { height:40px; padding:0 12px; border-radius:10px; font-size:13px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border:0; }
         .btn-green { background:#39ff88; color:#041208; }
         .snap-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
         @media (min-width:720px) { .snap-grid { grid-template-columns:repeat(4,1fr); } }
@@ -61,11 +61,8 @@
         .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
     </style>
 </head>
-<body>
+<body class="no-fx no-tilt">
     <div class="background-grid"></div>
-    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
-    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
-    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
 
     <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
     <main class="relative z-10 w-full max-w-6xl mx-auto">
@@ -87,7 +84,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div class="card p-4 md:p-5">
                         <div class="panel-title text-purple mb-1">Reference wall</div>
-                        <p class="text-xs text-slate-400 mb-4">Existing wall center, scale, and Y rotation.</p>
+                        <p class="text-sm text-slate-300 mb-4">Existing wall center, scale, and Y rotation.</p>
                         <div class="row">
                             <div class="field"><label class="label">Position X</label><input id="rx" class="input" type="number" step="any" value="0"></div>
                             <div class="field"><label class="label">Position Y</label><input id="ry" class="input" type="number" step="any" value="0"></div>
@@ -108,7 +105,7 @@
                     </div>
                     <div class="card p-4 md:p-5">
                         <div class="panel-title text-green mb-1">Moving wall</div>
-                        <p class="text-xs text-slate-400 mb-4">Wall you want to snap against the reference.</p>
+                        <p class="text-sm text-slate-300 mb-4">Wall you want to snap against the reference.</p>
                         <div class="row">
                             <div class="field"><label class="label">Scale X</label><input id="msx" class="input" type="number" step="any" value="1"></div>
                             <div class="field"><label class="label">Scale Y</label><input id="msy" class="input" type="number" step="any" value="1"></div>
@@ -138,7 +135,7 @@
                 </div>
                 <div class="card p-4 md:p-5">
                     <div class="text-2xl font-black text-white mb-1" style="text-shadow:0 0 18px rgba(155,92,255,.25)">Suggested Snap Positions</div>
-                    <p class="text-xs text-slate-400 mb-4">Paste one row into the moving wall position fields.</p>
+                    <p class="text-sm text-slate-300 mb-4">Paste one row into the moving wall position fields.</p>
                     <div class="snap-grid" id="snaps"></div>
                 </div>
             </section>
@@ -203,6 +200,5 @@ function calc() {
 });
 calc();
 </script>
-<script src="fx.js"></script>
 </body>
 </html>
