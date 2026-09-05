@@ -1,0 +1,139 @@
+:root {
+    --purple: #9b5cff;
+    --green: #39ff88;
+    --ink: #030405;
+}
+
+html { scroll-behavior: smooth; }
+::selection { background: rgba(155, 92, 255, .35); color: #fff; }
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+body::before {
+    width: 480px; height: 480px; left: -200px; top: -140px;
+    background: rgba(155, 92, 255, .12);
+    filter: blur(90px);
+}
+body::after {
+    width: 500px; height: 500px; right: -220px; bottom: -200px;
+    background: rgba(57, 255, 136, .09);
+    filter: blur(96px);
+}
+
+.wolf-bg { animation: wolfBreath 8s ease-in-out infinite; }
+@keyframes wolfBreath {
+    0%, 100% { opacity: .14; filter: drop-shadow(0 0 20px rgba(155,92,255,.24)); }
+    50% { opacity: .2; filter: drop-shadow(0 0 28px rgba(155,92,255,.34)); }
+}
+.pack-wolf {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+    mix-blend-mode: screen;
+}
+.pack-wolf.a { left: -3%; bottom: 4%; width: min(220px, 28vw); opacity: .08; }
+.pack-wolf.b { right: -2%; top: 10%; width: min(180px, 22vw); opacity: .07; }
+.pack-wolf.c { left: 6%; top: 7%; width: min(150px, 18vw); opacity: .06; }
+@media (max-width: 700px) {
+    .pack-wolf.a { width: 110px; opacity: .06; }
+    .pack-wolf.b { width: 90px; opacity: .05; }
+    .pack-wolf.c { display: none; }
+}
+
+body.no-fx .pack-wolf,
+body.no-fx [data-parallax] { display: none !important; }
+body.no-fx .wolf-bg {
+    animation: none;
+    opacity: .04;
+    transform: none !important;
+    filter: none;
+}
+body.no-fx::before,
+body.no-fx::after { display: none; }
+
+.card, .shell {
+    background: linear-gradient(160deg, rgba(14,15,19,.97), rgba(7,8,10,.98));
+    border: 1px solid #262830;
+    border-radius: 18px;
+}
+.shell {
+    box-shadow:
+        0 28px 70px rgba(0,0,0,.5),
+        0 0 0 1px rgba(155,92,255,.1),
+        inset 0 1px 0 rgba(255,255,255,.04);
+    backdrop-filter: blur(16px);
+}
+
+.btn, button.btn, .btn-green, .copy-button {
+    background: #39ff88 !important;
+    color: #041208 !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    box-shadow: 0 0 0 1px rgba(57,255,136,.25), 0 8px 22px rgba(57,255,136,.16);
+    transition: transform .16s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn:hover, button.btn:hover, .btn-green:hover, .copy-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 0 0 1px rgba(57,255,136,.4), 0 12px 28px rgba(57,255,136,.24);
+}
+.btn-ghost, .ghost-btn {
+    background: rgba(155,92,255,.1) !important;
+    color: #e8dcff !important;
+    border: 1px solid rgba(155,92,255,.35) !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+}
+.btn-ghost:hover, .ghost-btn:hover {
+    background: rgba(155,92,255,.18) !important;
+    color: #fff !important;
+}
+
+.input, input.input, textarea.input {
+    border-radius: 10px !important;
+}
+.input:focus, input.input:focus, textarea.input:focus {
+    border-color: #9b5cff !important;
+    box-shadow: 0 0 0 3px rgba(155,92,255,.14), 0 0 18px rgba(155,92,255,.16) !important;
+}
+
+.label { color: #e8edf5 !important; font-size: 14px !important; }
+.panel-title { letter-spacing: .14em; }
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(57,255,136,.1);
+    color: #39ff88 !important;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    border: 1px solid rgba(57,255,136,.28);
+}
+.back-link:hover { background: rgba(57,255,136,.18); color: #fff !important; }
+
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid rgba(57,255,136,.7);
+    outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-width: 700px) {
+    body::before, body::after { display: none; }
+}
