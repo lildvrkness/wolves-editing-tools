@@ -572,11 +572,8 @@
     </style>
 </head>
 
-<body>
+<body class="no-fx no-tilt">
     <div class="background-grid"></div>
-    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
-    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
-    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
 
     <div class="noise"></div>
 
@@ -617,7 +614,7 @@
                         <div class="flex items-center gap-2 mb-1.5">
                             <a href="index.html" class="back-link">← Tools</a>
                             <span class="h-1 w-1 rounded-full bg-green/70 shadow-[0_0_8px_#39ff88]"></span>
-                            <span class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple">Albedo</span>
+                            <span class="text-[12px] uppercase tracking-[0.18em] font-bold text-purple">Albedo</span>
                         </div>
 
                         <h1 class="wolves-title text-[2.35rem] md:text-[3.15rem]">
@@ -626,7 +623,7 @@
                             <span class="title-rest">Tile Calculator</span>
                         </h1>
 
-                        <p class="text-xs text-slate-500 mt-2 max-w-2xl leading-relaxed">
+                        <p class="text-sm text-slate-400 mt-2 max-w-2xl leading-relaxed">
                             Convert wall size into matching albedo tiling. Adjust units-per-tile,
                             preview repeats, and copy each tile value.
                         </p>
@@ -640,7 +637,7 @@
                     <div class="card glow-card glow-purple p-4 md:p-5">
                         <div class="flex items-start justify-between mb-4">
                             <div>
-                                <div class="text-[9px] uppercase tracking-[0.22em] font-bold text-purple mb-1">Input</div>
+                                <div class="text-[12px] uppercase tracking-[0.22em] font-bold text-purple mb-1">Input</div>
                                 <h2 class="text-lg font-bold text-white">Wall Size</h2>
                                 <p class="text-[11px] text-slate-500 mt-0.5">World units for the surface you are texturing.</p>
                             </div>
@@ -649,12 +646,12 @@
 
                         <div class="space-y-3.5">
                             <div>
-                                <label class="block text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500 mb-1.5">X — Width</label>
+                                <label class="block text-[12px] uppercase tracking-[0.15em] font-bold text-slate-500 mb-1.5">X — Width</label>
                                 <input id="wallX" type="number" value="0" step="any" placeholder="Enter X" class="input">
                             </div>
 
                             <div>
-                                <label class="block text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500 mb-1.5">Y — Height</label>
+                                <label class="block text-[12px] uppercase tracking-[0.15em] font-bold text-slate-500 mb-1.5">Y — Height</label>
                                 <input id="wallY" type="number" value="0" step="any" placeholder="Enter Y" class="input">
                             </div>
                         </div>
@@ -662,7 +659,7 @@
                         <div class="mt-5 pt-4 border-t border-[#1c1e24] space-y-4">
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="text-[9px] uppercase tracking-[0.15em] font-bold text-slate-500">Units per tile</label>
+                                    <label class="text-[12px] uppercase tracking-[0.15em] font-bold text-slate-500">Units per tile</label>
                                     <span id="divisorLabel" class="text-[11px] font-bold text-purple tabular-nums">2.00</span>
                                 </div>
                                 <input id="divisor" type="range" min="0.25" max="8" step="0.25" value="2">
@@ -684,7 +681,7 @@
                         <div class="relative">
                             <div class="flex items-start justify-between mb-4">
                                 <div>
-                                    <div class="text-[9px] uppercase tracking-[0.22em] font-bold text-green mb-1">Result</div>
+                                    <div class="text-[12px] uppercase tracking-[0.22em] font-bold text-green mb-1">Result</div>
                                     <h2 class="text-lg font-bold text-white">Albedo Tile</h2>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Texture tiling values for X and Y.</p>
                                 </div>
@@ -695,14 +692,14 @@
                                 <div class="result-box rounded-lg border border-[#292c33] bg-black/35 py-4 px-3 text-center">
                                     <div class="text-[8px] uppercase tracking-[0.2em] font-bold text-slate-600">Tile X</div>
                                     <div id="outputX" class="output-number text-4xl md:text-5xl font-black text-purple mt-1">0.00</div>
-                                    <button type="button" data-copy="x" class="axis-copy copy-button w-full mt-3 bg-green hover:bg-[#4dffa0] text-black font-black text-[9px] uppercase tracking-[0.16em] rounded-lg">
+                                    <button type="button" data-copy="x" class="axis-copy copy-button w-full mt-3 bg-green hover:bg-[#4dffa0] text-black font-black text-[12px] uppercase tracking-[0.16em] rounded-lg">
                                         Copy Tile X
                                     </button>
                                 </div>
                                 <div class="result-box rounded-lg border border-[#292c33] bg-black/35 py-4 px-3 text-center">
                                     <div class="text-[8px] uppercase tracking-[0.2em] font-bold text-slate-600">Tile Y</div>
                                     <div id="outputY" class="output-number text-4xl md:text-5xl font-black text-purple mt-1">0.00</div>
-                                    <button type="button" data-copy="y" class="axis-copy copy-button w-full mt-3 bg-green hover:bg-[#4dffa0] text-black font-black text-[9px] uppercase tracking-[0.16em] rounded-lg">
+                                    <button type="button" data-copy="y" class="axis-copy copy-button w-full mt-3 bg-green hover:bg-[#4dffa0] text-black font-black text-[12px] uppercase tracking-[0.16em] rounded-lg">
                                         Copy Tile Y
                                     </button>
                                 </div>
@@ -723,7 +720,7 @@
                                 </div>
                             </div>
 
-                            <div id="copyStatus" class="text-center text-[9px] text-slate-600 mt-2 h-3"></div>
+                            <div id="copyStatus" class="text-center text-[12px] text-slate-600 mt-2 h-3"></div>
                         </div>
                     </div>
                 </div>
@@ -731,10 +728,10 @@
                 <div class="card glow-card glow-purple mt-4 overflow-hidden">
                     <div class="px-4 md:px-5 py-3 border-b border-[#1c1e24] flex items-center justify-between gap-3">
                         <div>
-                            <div class="text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600">Preview</div>
+                            <div class="text-[12px] uppercase tracking-[0.2em] font-bold text-slate-600">Preview</div>
                             <h3 class="text-xs font-bold text-white mt-0.5">Wall Proportion + Tile Repeats</h3>
                         </div>
-                        <div id="previewDimensions" class="text-[9px] text-slate-600 whitespace-nowrap">0 × 0</div>
+                        <div id="previewDimensions" class="text-[12px] text-slate-600 whitespace-nowrap">0 × 0</div>
                     </div>
 
                     <div class="h-[210px] flex items-center justify-center p-6 bg-black/20">
@@ -908,6 +905,5 @@
 
         calculate();
     </script>
-<script src="fx.js"></script>
 </body>
 </html>
