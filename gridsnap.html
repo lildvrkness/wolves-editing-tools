@@ -64,6 +64,152 @@
 <body class="no-fx no-tilt">
     <div class="background-grid"></div>
 
+    <img class="watermark" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
+    <main class="relative z-10 w-full max-w-6xl mx-auto">
+        <div class="card shell overflow-hidden">
+            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-start gap-4">
+                    <div class="logo-ring">
+                        <img src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="Wolves emblem">
+                    </div>
+                    <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="index.html" class="back-link">← Tools</a>
+                    <span class="h-1 w-1 rounded-full bg-green/70 shadow-[0_0_8px_#39ff88]"></span>
+                    <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Placement</span>
+                </div>
+                <h1 class="wolves-title text-4xl md:text-5xl">
+                    <span class="title-wolves">Wolves</span>
+                    <span class="title-rest">Grid Snap Calculator</span>
+                </h1>
+                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Line up walls using center positions and half-size math.</p>
+                <div class="steps mt-4"><em>Reference wall</em> › <em>Moving wall</em> › <em>Copy snap position</em></div>
+                    </div>
+                </div>
+            </header>
+            <section class="p-4 md:p-6 space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="card p-4 md:p-5">
+                        <div class="panel-title text-purple mb-1">Reference wall</div>
+                        <p class="text-sm text-slate-300 mb-4">Existing wall center, scale, and Y rotation.</p>
+                        <div class="row">
+                            <div class="field"><label class="label">Position X</label><input id="rx" class="input" type="number" step="any" value="0"></div>
+                            <div class="field"><label class="label">Position Y</label><input id="ry" class="input" type="number" step="any" value="0"></div>
+                            <div class="field"><label class="label">Position Z</label><input id="rz" class="input" type="number" step="any" value="0"></div>
+                            <div class="field"><label class="label">Scale X</label><input id="rsx" class="input" type="number" step="any" value="1"></div>
+                            <div class="field"><label class="label">Scale Y</label><input id="rsy" class="input" type="number" step="any" value="1"></div>
+                            <div class="field"><label class="label">Scale Z</label><input id="rsz" class="input" type="number" step="any" value="1"></div>
+                            <div class="field">
+                                <label class="label">Rotation Y</label>
+                                <select id="rrot" class="select">
+                                    <option value="0" selected>0</option>
+                                    <option value="90">90</option>
+                                    <option value="180">180</option>
+                                    <option value="270">270</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4 md:p-5">
+                        <div class="panel-title text-green mb-1">Moving wall</div>
+                        <p class="text-sm text-slate-300 mb-4">Wall you want to snap against the reference.</p>
+                        <div class="row">
+                            <div class="field"><label class="label">Scale X</label><input id="msx" class="input" type="number" step="any" value="1"></div>
+                            <div class="field"><label class="label">Scale Y</label><input id="msy" class="input" type="number" step="any" value="1"></div>
+                            <div class="field"><label class="label">Scale Z</label><input id="msz" class="input" type="number" step="any" value="1"></div>
+                            <div class="field">
+                                <label class="label">Rotation Y</label>
+                                <select id="mrot" class="select">
+                                    <option value="0" selected>0</option>
+                                    <option value="90">90</option>
+                                    <option value="180">180</option>
+                                    <option value="270">270</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label class="label">Round Grid</label>
+                                <select id="grid" class="select">
+                                    <option value="0.01" selected>0.01</option>
+                                    <option value="0.05">0.05</option>
+                                    <option value="0.1">0.1</option>
+                                    <option value="0.25">0.25</option>
+                                    <option value="0.5">0.5</option>
+                                    <option value="1">1</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 md:p-5">
+                    <div class="text-2xl font-black text-white mb-1" style="text-shadow:0 0 18px rgba(155,92,255,.25)">Suggested Snap Positions</div>
+                    <p class="text-sm text-slate-300 mb-4">Paste one row into the moving wall position fields.</p>
+                    <div class="snap-grid" id="snaps"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <div class="toast" id="toast">Copied</div>
+<script>
+const $ = (id) => document.getElementById(id);
+function n(id) { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : 0; }
+function rnd(v, g) { if (!g) return v; return Math.round(v / g) * g; }
+function fmt(v) {
+    const s = (Math.round(v * 10000) / 10000).toFixed(4);
+    return s.replace(/\.?0+$/, m => m.includes('.') ? m.replace(/0+$/,'').replace(/\.$/,'') : m);
+}
+function halfXZ(sx, sz, rot) {
+    const r = ((rot % 360) + 360) % 360;
+    if (r === 90 || r === 270) return { x: Math.abs(sz) / 2, z: Math.abs(sx) / 2 };
+    return { x: Math.abs(sx) / 2, z: Math.abs(sz) / 2 };
+}
+function toast(msg) {
+    const t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast._id); toast._id = setTimeout(() => t.classList.remove('show'), 1100);
+}
+function calc() {
+    const rx = n('rx'), ry = n('ry'), rz = n('rz');
+    const rHalf = halfXZ(n('rsx'), n('rsz'), n('rrot'));
+    const mHalf = halfXZ(n('msx'), n('msz'), n('mrot'));
+    const rHy = Math.abs(n('rsy')) / 2;
+    const mHy = Math.abs(n('msy')) / 2;
+    const g = n('grid') || 0.01;
+    const snaps = {
+        LEFT:   { x: rx - rHalf.x - mHalf.x, y: ry, z: rz },
+        RIGHT:  { x: rx + rHalf.x + mHalf.x, y: ry, z: rz },
+        FRONT:  { x: rx, y: ry, z: rz + rHalf.z + mHalf.z },
+        BACK:   { x: rx, y: ry, z: rz - rHalf.z - mHalf.z },
+        TOP:    { x: rx, y: ry + rHy + mHy, z: rz },
+        BOTTOM: { x: rx, y: ry - rHy - mHy, z: rz },
+        'CENTER ALIGN': { x: rx, y: ry, z: rz }
+    };
+    const box = $('snaps');
+    box.innerHTML = '';
+    Object.entries(snaps).forEach(([name, p]) => {
+        p.x = rnd(p.x, g); p.y = rnd(p.y, g); p.z = rnd(p.z, g);
+        const card = document.createElement('div');
+        card.className = 'snap-card';
+        card.innerHTML =
+            '<div class="text-[11px] font-extrabold tracking-[0.16em] text-slate-300 mb-2">' + name + '</div>' +
+            '<div class="axis"><b>X</b><span>' + fmt(p.x) + '</span></div>' +
+            '<div class="axis"><b>Y</b><span>' + fmt(p.y) + '</span></div>' +
+            '<div class="axis"><b>Z</b><span>' + fmt(p.z) + '</span></div>' +
+            '<button class="btn btn-green w-full mt-1">Copy XYZ</button>';
+        card.querySelector('button').addEventListener('click', async () => {
+            await navigator.clipboard.writeText(fmt(p.x) + ', ' + fmt(p.y) + ', ' + fmt(p.z));
+            toast('Copied ' + name);
+        });
+        box.appendChild(card);
+    });
+}
+['rx','ry','rz','rsx','rsy','rsz','rrot','msx','msy','msz','mrot','grid'].forEach(id => {
+    $(id).addEventListener('input', calc);
+    $(id).addEventListener('change', calc);
+});
+calc();
+</script>
+</body>
+</html>    <div class="background-grid"></div>
+
     <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
     <main class="relative z-10 w-full max-w-6xl mx-auto">
         <div class="card shell overflow-hidden">
