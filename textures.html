@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="theme.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
     <script>tailwind.config={theme:{extend:{colors:{purple:"#9b5cff",green:"#39ff88"}}}}</script>
     <style>
         :root { --purple:#9b5cff; --green:#39ff88; --ink:#030405; }
@@ -67,7 +68,7 @@
         }
         .drop:hover, .drop.drag { border-color:rgba(155,92,255,.7); box-shadow:0 0 20px rgba(155,92,255,.15); }
         .btn {
-            height:42px; padding:0 14px; border-radius:8px; font-size:10px; font-weight:800;
+            height:42px; padding:0 14px; border-radius:8px; font-size:12px; font-weight:800;
             letter-spacing:.14em; text-transform:uppercase; cursor:pointer; border:0;
         }
         .btn-green { background:#39ff88; color:#000; }
@@ -89,11 +90,8 @@
         .btn { height:46px; font-size:12px; }
     </style>
 </head>
-<body>
+<body class="no-fx no-tilt">
     <div class="background-grid"></div>
-    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
-    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
-    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
 
     <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="" aria-hidden="true">
 
@@ -110,7 +108,7 @@
                     <span class="title-wolves">Wolves</span>
                     <span class="title-rest">Texture Workshop</span>
                 </h1>
-                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Resize, convert, stamp DPI, bake a normal map, or bake a normal map. Files stay in your browser.</p>
+                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Resize, convert, stamp DPI, or bake a normal map. Files stay in your browser.</p>
             </header>
 
             <section class="p-4 md:p-6 space-y-4">
@@ -169,15 +167,39 @@
                         <button id="exportBtn" class="btn btn-green w-full mt-4">Export image</button>
                     </div>
 
-                    <div class="card p-4">
-                        <div class="panel-title text-purple">Normal map</div>
-                        <div class="flex justify-between label mb-1"><span>Strength</span><span id="sLabel">1.80</span></div>
-                        <input id="strength" type="range" min="0.2" max="6" step="0.05" value="1.8">
-                        <label class="flex items-center gap-2 mt-3 text-sm text-slate-300">
-                            <input id="invertY" type="checkbox" checked> Invert Y (DirectX / Unity)
-                        </label>
-                        <p class="note mt-2">Treats the image as a height map and bakes a tangent-space normal.</p>
-                        <button id="normalBtn" class="btn btn-green w-full mt-3">Preview + export normal</button>
+                    <div class="card p-4 md:col-span-2">
+                        <div class="panel-title text-purple">Normal map maker</div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div>
+                                <div id="nDrop" class="drop" style="min-height:120px">
+                                    <div>
+                                        <div class="text-base font-bold text-white">Drop a height / albedo image</div>
+                                        <div class="note mt-1">Own upload for this tool. PNG, JPG, or WebP.</div>
+                                    </div>
+                                </div>
+                                <input id="nFile" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" class="hidden">
+                                <div id="nMeta" class="note mt-2">No normal source loaded.</div>
+                                <div class="flex justify-between label mb-1 mt-3"><span>Strength</span><span id="sLabel">1.80</span></div>
+                                <input id="strength" type="range" min="0.2" max="6" step="0.05" value="1.8">
+                                <label class="flex items-center gap-2 mt-3 text-sm text-slate-300">
+                                    <input id="invertY" type="checkbox" checked> Invert Y (DirectX / Unity)
+                                </label>
+                                <button id="normalBtn" class="btn btn-green w-full mt-4">Export normal PNG</button>
+                            </div>
+                            <div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <div class="label">Normal preview</div>
+                                        <div class="preview-frame" id="nPreview" style="min-height:220px"><span class="note">2D</span></div>
+                                    </div>
+                                    <div>
+                                        <div class="label">3D cube</div>
+                                        <canvas id="nCube" width="320" height="320" style="width:100%;height:220px;background:#07080c;border:1px solid #262830;border-radius:10px;display:block"></canvas>
+                                    </div>
+                                </div>
+                                <p class="note mt-2">Drag the cube to spin it. Strength updates the preview live.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card p-4">
@@ -217,24 +239,33 @@ const quality = document.getElementById('quality');
 const qLabel = document.getElementById('qLabel');
 const strength = document.getElementById('strength');
 const sLabel = document.getElementById('sLabel');
+const nDrop = document.getElementById('nDrop');
+const nFile = document.getElementById('nFile');
+const nMeta = document.getElementById('nMeta');
+const nPreview = document.getElementById('nPreview');
 
 let source = null;
 let sourceFile = null;
 let aspect = 1;
 let updating = false;
+let nSource = null;
+let nSourceFile = null;
+let lastNormal = null;
+let nTimer = 0;
 
 quality.addEventListener('input', () => qLabel.textContent = Number(quality.value).toFixed(2));
-strength.addEventListener('input', () => sLabel.textContent = Number(strength.value).toFixed(2));
 
-drop.addEventListener('click', () => fileInput.click());
-drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('drag'); });
-drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
-drop.addEventListener('drop', (e) => {
-    e.preventDefault();
-    drop.classList.remove('drag');
-    if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
-});
-fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+function bindDrop(zone, input, handler) {
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('drag');
+        if (e.dataTransfer.files[0]) handler(e.dataTransfer.files[0]);
+    });
+    input.addEventListener('change', () => { if (input.files[0]) handler(input.files[0]); });
+}
 
 function loadFile(file) {
     sourceFile = file;
@@ -251,10 +282,25 @@ function loadFile(file) {
         img.style.maxWidth = '100%';
         img.style.maxHeight = '280px';
         previewWrap.appendChild(img);
-        meta.textContent = `${file.name} · ${img.naturalWidth}×${img.naturalHeight} · ${(file.size/1024).toFixed(1)} KB`;
+        meta.textContent = file.name + ' · ' + img.naturalWidth + '×' + img.naturalHeight + ' · ' + (file.size/1024).toFixed(1) + ' KB';
     };
     img.src = url;
 }
+
+function loadNormalSrc(file) {
+    nSourceFile = file;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+        nSource = img;
+        nMeta.textContent = file.name + ' · ' + img.naturalWidth + '×' + img.naturalHeight;
+        bakeNormalLive();
+    };
+    img.src = url;
+}
+
+bindDrop(drop, fileInput, loadFile);
+bindDrop(nDrop, nFile, loadNormalSrc);
 
 wEl.addEventListener('input', () => {
     if (updating || !lock.checked) return;
@@ -282,6 +328,18 @@ document.querySelectorAll('[data-size]').forEach(btn => {
 function needImage() {
     if (!source) { alert('Load an image first.'); return false; }
     return true;
+}
+
+function drawFrom(img, maxSide) {
+    const c = document.createElement('canvas');
+    const scale = maxSide ? Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight)) : 1;
+    c.width = Math.max(1, Math.round(img.naturalWidth * scale));
+    c.height = Math.max(1, Math.round(img.naturalHeight * scale));
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    return c;
 }
 
 function drawResized() {
@@ -314,17 +372,17 @@ document.getElementById('exportBtn').addEventListener('click', () => {
     const type = fmt.value;
     canvas.toBlob((blob) => {
         const base = (sourceFile?.name || 'texture').replace(/\.[^.]+$/, '');
-        downloadBlob(blob, `${base}-${canvas.width}x${canvas.height}.${extFor(type)}`);
+        downloadBlob(blob, base + '-' + canvas.width + 'x' + canvas.height + '.' + extFor(type));
     }, type, Number(quality.value));
 });
 
 function makeNormal(srcCanvas) {
     const w = srcCanvas.width, h = srcCanvas.height;
-    const ctx = srcCanvas.getContext('2d');
+    const ctx = srcCanvas.getContext('2d', { willReadFrequently: true });
     const src = ctx.getImageData(0, 0, w, h);
     const out = ctx.createImageData(w, h);
     const s = Number(strength.value);
-    const invertY = document.getElementById('invertY').checked;
+    const inv = document.getElementById('invertY').checked;
     const lum = (i) => {
         const p = i * 4;
         return (src.data[p] * 0.299 + src.data[p+1] * 0.587 + src.data[p+2] * 0.114) / 255;
@@ -334,7 +392,7 @@ function makeNormal(srcCanvas) {
         for (let x = 0; x < w; x++) {
             const dx = (at(x+1,y) - at(x-1,y)) * s;
             const dy = (at(x,y+1) - at(x,y-1)) * s;
-            let nx = -dx, ny = invertY ? dy : -dy, nz = 1;
+            let nx = -dx, ny = inv ? dy : -dy, nz = 1;
             const len = Math.hypot(nx, ny, nz) || 1;
             nx /= len; ny /= len; nz /= len;
             const i = (y * w + x) * 4;
@@ -350,16 +408,84 @@ function makeNormal(srcCanvas) {
     return c;
 }
 
-document.getElementById('normalBtn').addEventListener('click', () => {
-    if (!needImage()) return;
-    const n = makeNormal(drawResized());
-    previewWrap.innerHTML = '';
+let cube = null;
+function setupCube() {
+    const canvas = document.getElementById('nCube');
+    if (!window.THREE || !canvas) return;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    renderer.setClearColor(0x07080c, 1);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, canvas.clientWidth / Math.max(1, canvas.clientHeight), 0.1, 20);
+    camera.position.set(2.1, 1.5, 2.4);
+    camera.lookAt(0,0,0);
+    const light = new THREE.DirectionalLight(0xffffff, 1.35);
+    light.position.set(2.4, 3.2, 2.8);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x9b5cff, 0.28));
+    scene.add(new THREE.AmbientLight(0x39ff88, 0.12));
+    const geo = new THREE.BoxGeometry(1.15, 1.15, 1.15);
+    const mat = new THREE.MeshStandardMaterial({
+        color: 0xc8c8c8,
+        metalness: 0.08,
+        roughness: 0.55,
+        normalScale: new THREE.Vector2(1, 1)
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    scene.add(mesh);
+    let drag = false, lx = 0, ly = 0;
+    canvas.addEventListener('pointerdown', (e) => { drag = true; lx = e.clientX; ly = e.clientY; canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener('pointerup', () => { drag = false; });
+    canvas.addEventListener('pointermove', (e) => {
+        if (!drag) return;
+        mesh.rotation.y += (e.clientX - lx) * 0.01;
+        mesh.rotation.x += (e.clientY - ly) * 0.01;
+        lx = e.clientX; ly = e.clientY;
+    });
+    function tick() {
+        if (!drag) mesh.rotation.y += 0.008;
+        renderer.render(scene, camera);
+        requestAnimationFrame(tick);
+    }
+    tick();
+    cube = { renderer, scene, camera, mesh, mat };
+}
+
+function applyCubeNormal(canvas) {
+    if (!cube || !window.THREE) return;
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.NoColorSpace;
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    if (cube.mat.normalMap) cube.mat.normalMap.dispose();
+    cube.mat.normalMap = tex;
+    cube.mat.needsUpdate = true;
+}
+
+function bakeNormalLive() {
+    if (!nSource) return;
+    const n = makeNormal(drawFrom(nSource, 768));
+    lastNormal = n;
+    nPreview.innerHTML = '';
     n.style.maxWidth = '100%';
-    n.style.maxHeight = '280px';
-    previewWrap.appendChild(n);
+    n.style.maxHeight = '220px';
+    nPreview.appendChild(n);
+    applyCubeNormal(n);
+}
+
+strength.addEventListener('input', () => {
+    sLabel.textContent = Number(strength.value).toFixed(2);
+    clearTimeout(nTimer);
+    nTimer = setTimeout(bakeNormalLive, 60);
+});
+document.getElementById('invertY').addEventListener('change', bakeNormalLive);
+
+document.getElementById('normalBtn').addEventListener('click', () => {
+    if (!nSource) { alert('Drop an image into the normal map maker first.'); return; }
+    const n = makeNormal(drawFrom(nSource));
     n.toBlob((blob) => {
-        const base = (sourceFile?.name || 'texture').replace(/\.[^.]+$/, '');
-        downloadBlob(blob, `${base}-normal.png`);
+        const base = (nSourceFile?.name || 'texture').replace(/\.[^.]+$/, '');
+        downloadBlob(blob, base + '-normal.png');
     }, 'image/png');
 });
 
@@ -407,10 +533,10 @@ document.getElementById('dpiBtn').addEventListener('click', async () => {
     const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
     const tagged = writePngDpi(await blob.arrayBuffer(), dpi);
     const base = (sourceFile?.name || 'texture').replace(/\.[^.]+$/, '');
-    downloadBlob(new Blob([tagged], {type:'image/png'}), `${base}-${dpi}dpi.png`);
+    downloadBlob(new Blob([tagged], {type:'image/png'}), base + '-' + dpi + 'dpi.png');
 });
 
+setupCube();
 </script>
-<script src="fx.js"></script>
 </body>
 </html>
