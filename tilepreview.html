@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -67,26 +67,30 @@
         .chip input { accent-color:#39ff88; }
     </style>
 </head>
-<body>
+<body class="no-fx no-tilt">
     <div class="background-grid"></div>
-    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
-    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
-    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
-    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
+    <img class="watermark" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
 
     <main class="relative z-10 w-full max-w-6xl mx-auto">
         <div class="card shell overflow-hidden">
             <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-start gap-4">
+                    <div class="logo-ring">
+                        <img src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="Wolves emblem">
+                    </div>
+                    <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2 mb-2">
                     <a href="index.html" class="back-link">← Tools</a>
-                    <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                    <span class="h-1 w-1 rounded-full bg-green/70 shadow-[0_0_8px_#39ff88]"></span>
                     <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Tiling</span>
                 </div>
                 <h1 class="wolves-title text-4xl md:text-5xl">
                     <span class="title-wolves">Wolves</span>
                     <span class="title-rest">Tile Preview</span>
                 </h1>
-                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Upload a texture and see how it repeats on a wall. Tile X / Y is how many times it wraps. Stays in your browser. Click Match From Units/2 to auto tile once wall size is entered.</p>
+                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Upload a texture and see how it repeats on a wall. Tile X / Y is how many times it wraps. Stays in your browser.</p>
+                    </div>
+                </div>
             </header>
 
             <section class="p-4 md:p-6 grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-4">
@@ -94,7 +98,7 @@
                     <label class="drop block" id="drop">
                         <input id="file" type="file" accept="image/*" class="hidden">
                         <div class="text-sm font-bold text-white">Drop texture or click to upload</div>
-                        <div class="text-xs text-slate-400 mt-1" id="fileName">PNG, JPEG, or WebP</div>
+                        <div class="text-sm text-slate-300 mt-1" id="fileName">PNG, JPEG, or WebP</div>
                     </label>
 
                     <div class="card p-4 space-y-3">
@@ -124,7 +128,7 @@
 
                     <label class="chip"><input id="seams" type="checkbox"> Show tile seams</label>
                     <label class="chip"><input id="pixel" type="checkbox"> Pixelated</label>
-                    <div class="text-xs text-slate-400" id="meta">No texture loaded.</div>
+                    <div class="text-sm text-slate-300" id="meta">No texture loaded.</div>
                 </div>
 
                 <div>
@@ -132,7 +136,7 @@
                         <div class="hint" id="hint">Upload a texture to preview tiling on the wall.</div>
                         <div class="wall" id="wall" hidden></div>
                     </div>
-                    <div class="text-xs text-slate-500 mt-2" id="readout"></div>
+                    <div class="text-sm text-slate-400 mt-2" id="readout"></div>
                 </div>
             </section>
         </div>
@@ -213,6 +217,5 @@ $('fromWall').addEventListener('click', () => {
 window.addEventListener('resize', draw);
 draw();
 </script>
-<script src="fx.js"></script>
 </body>
 </html>
