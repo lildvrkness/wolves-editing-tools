@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -138,6 +138,10 @@
 </head>
 <body>
     <div class="background-grid"></div>
+    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
+    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
+    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
+
     <div class="noise"></div>
     <img class="wolf-cursor" id="wolfCursor" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
     <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="" aria-hidden="true">
@@ -210,7 +214,7 @@
                 <div class="meta">
                     <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-green mb-1">Reference</div>
                     <div class="text-base font-bold text-white">Submeshes</div>
-                    <div class="text-xs text-slate-400 mt-0.5">Search available submeshes.</div>
+                    <div class="text-xs text-slate-400 mt-0.5">Shop items, indexes, and texture notes.</div>
                 </div>
             </a>
         </div>
@@ -226,10 +230,15 @@ window.addEventListener('pointermove', (e) => {
     wolfCursor.style.display = 'block';
     wolfCursor.style.left = e.clientX + 'px';
     wolfCursor.style.top = e.clientY + 'px';
-    if (!canTilt || !wolfBg) return;
-    const x = (e.clientX / window.innerWidth - 0.5) * 24;
-    const y = (e.clientY / window.innerHeight - 0.5) * 16;
-    wolfBg.style.transform = 'translate(calc(-50% + ' + x + 'px), calc(-50% + ' + y + 'px))';
+    const nx = e.clientX / window.innerWidth - 0.5;
+    const ny = e.clientY / window.innerHeight - 0.5;
+    if (canTilt && wolfBg) {
+        wolfBg.style.transform = 'translate(calc(-50% + ' + (nx * 24) + 'px), calc(-50% + ' + (ny * 16) + 'px))';
+    }
+    document.querySelectorAll('.pack-wolf').forEach((el) => {
+        const s = parseFloat(el.getAttribute('data-parallax') || '18');
+        el.style.transform = 'translate(' + (nx * s) + 'px, ' + (ny * s * 0.7) + 'px)';
+    });
 });
 
 if (canTilt) {
