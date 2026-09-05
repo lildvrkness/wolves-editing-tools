@@ -75,10 +75,10 @@
         .shop-head:hover { background:rgba(155,92,255,.05); }
         table { width:100%; border-collapse:collapse; }
         th, td { padding:9px 11px; text-align:left; font-size:13px; border-top:1px solid #1d2026; vertical-align:top; color:#e5e7eb; }
-        th { color:#94a3b8; font-size:9px; letter-spacing:.14em; text-transform:uppercase; font-weight:800; }
+        th { color:#94a3b8; font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:800; }
         .copy-mini {
             border:1px solid #2a2d35; background:rgba(57,255,136,.08); color:#39ff88;
-            border-radius:6px; font-size:9px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
+            border-radius:6px; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
             padding:4px 7px; cursor:pointer;
         }
         .copy-mini:hover { box-shadow:0 0 12px rgba(57,255,136,.2); }
@@ -96,18 +96,18 @@
                 <div class="flex items-center gap-2 mb-2">
                     <a href="index.html" class="back-link">← Tools</a>
                     <span class="h-1 w-1 rounded-full bg-green/70"></span>
-                    <span class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple">Reference</span>
+                    <span class="text-[12px] uppercase tracking-[0.18em] font-bold text-purple">Reference</span>
                 </div>
                 <h1 class="wolves-title text-4xl md:text-5xl">
                     <span class="title-wolves">Wolves</span>
                     <span class="title-rest">Submeshes</span>
                 </h1>
-                <p class="text-xs text-slate-500 mt-2 max-w-2xl">Search submeshes, indexes, props.</p>
+                <p class="text-sm text-slate-400 mt-2 max-w-2xl">Shop objects, editor names, submesh indexes, and texture notes.</p>
             </header>
 
             <section class="p-4 md:p-6">
                 <div class="flex flex-col md:flex-row gap-3 md:items-center mb-4">
-                    <input id="search" class="input" type="search" placeholder="Search submesh...">
+                    <input id="search" class="input" type="search" placeholder="Search shop, editor, submesh, notes...">
                     <div id="counts" class="text-[11px] text-slate-500 whitespace-nowrap"></div>
                 </div>
                 <div id="list"></div>
@@ -176,7 +176,7 @@ function render() {
         card.innerHTML = `
             <button class="shop-head" type="button">
                 <div>
-                    <div class="text-[9px] uppercase tracking-[0.16em] font-bold text-slate-600">Shop item</div>
+                    <div class="text-[12px] uppercase tracking-[0.16em] font-bold text-slate-600">Shop item</div>
                     <div class="text-sm font-bold text-white mt-0.5">${shop}</div>
                     <div class="text-[11px] text-slate-500 mt-0.5">${editor} · ${items.length} submesh${items.length===1?'':'es'}</div>
                 </div>
