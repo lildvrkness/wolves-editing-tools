@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Snap Calculator — Wolves Editing Tools</title>
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
+    <script>tailwind.config={theme:{extend:{colors:{purple:"#9b5cff",green:"#39ff88"}}}}</script>
+    <style>
+        :root { --purple:#9b5cff; --green:#39ff88; --ink:#030405; }
+        * { box-sizing:border-box; }
+        html { min-height:100%; background:var(--ink); }
+        body {
+            margin:0; min-height:100vh; font-family:Inter,sans-serif; color:#e5e7eb;
+            background:
+                radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%),
+                #030405;
+            padding:28px 16px 48px;
+        }
+        .background-grid {
+            position:fixed; inset:0; pointer-events:none; opacity:.028; z-index:0;
+            background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
+            background-size:42px 42px;
+        }
+        .wolf-bg { position:fixed; right:-40px; bottom:-70px; width:min(480px,58vw); opacity:.12; pointer-events:none; z-index:0; }
+        .wolves-title { font-family:"New Rocker",cursive; letter-spacing:.025em; line-height:1.02; }
+        .title-wolves { color:#39ff88; display:inline-block; text-shadow:0 0 10px rgba(57,255,136,.55),0 0 24px rgba(57,255,136,.28); animation:wolvesPulse 2.8s ease-in-out infinite; }
+        .title-rest { color:#9b5cff; display:inline-block; text-shadow:0 0 12px rgba(155,92,255,.55),0 0 24px rgba(155,92,255,.22); animation:albedoShimmer 4.2s ease-in-out infinite; }
+        @keyframes wolvesPulse { 0%,100%{text-shadow:0 0 8px rgba(57,255,136,.4),0 0 18px rgba(57,255,136,.18)} 50%{text-shadow:0 0 16px rgba(57,255,136,.85),0 0 32px rgba(57,255,136,.4)} }
+        @keyframes albedoShimmer { 0%,100%{text-shadow:0 0 10px rgba(155,92,255,.4),0 0 20px rgba(155,92,255,.18)} 50%{text-shadow:0 0 18px rgba(155,92,255,.8),0 0 32px rgba(155,92,255,.3)} }
+        .card { background:linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97)); border:1px solid #202229; border-radius:14px; }
+        .shell { box-shadow:0 30px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(155,92,255,.08); }
+        .input, .select {
+            width:100%; height:42px; background:rgba(3,4,5,.88); border:1px solid #292c34; border-radius:10px;
+            padding:8px 12px; color:white; font-size:14px; outline:none;
+        }
+        .input:focus, .select:focus { border-color:#9b5cff; box-shadow:0 0 0 2px rgba(155,92,255,.08), 0 0 16px rgba(155,92,255,.22); }
+        .label { font-size:12px; color:#cbd5e1; font-weight:600; display:block; margin-bottom:5px; }
+        .field { display:flex; flex-direction:column; min-width:0; }
+        .row { display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; }
+        .panel-title { font-size:13px; letter-spacing:.16em; text-transform:uppercase; font-weight:800; }
+        .btn { height:40px; padding:0 12px; border-radius:10px; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border:0; }
+        .btn-green { background:#39ff88; color:#041208; }
+        .snap-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+        @media (min-width:720px) { .snap-grid { grid-template-columns:repeat(4,1fr); } }
+        @media (min-width:1100px) { .snap-grid { grid-template-columns:repeat(7,1fr); } }
+        .snap-card { padding:12px; border:1px solid #262830; border-radius:12px; background:rgba(0,0,0,.28); }
+        .snap-card:hover { border-color:rgba(155,92,255,.45); box-shadow:0 0 18px rgba(155,92,255,.12); }
+        .axis { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+        .axis b { width:16px; color:#9b5cff; font-size:12px; }
+        .axis span { flex:1; height:34px; border-radius:8px; border:1px solid #2a2d35; background:#07080c; display:flex; align-items:center; padding:0 10px; font-variant-numeric:tabular-nums; font-weight:700; }
+        .steps { display:flex; flex-wrap:wrap; gap:8px; color:#94a3b8; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+        .steps em { color:#e2e8f0; font-style:normal; }
+        .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(12px); opacity:0; transition:.25s ease; z-index:20; background:#0b0c10; border:1px solid rgba(57,255,136,.3); color:#39ff88; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
+    <main class="relative z-10 w-full max-w-6xl mx-auto">
+        <div class="card shell overflow-hidden">
+            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="index.html" class="back-link">← Tools</a>
+                    <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                    <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Placement</span>
+                </div>
+                <h1 class="wolves-title text-4xl md:text-5xl">
+                    <span class="title-wolves">Wolves</span>
+                    <span class="title-rest">Grid Snap Calculator</span>
+                </h1>
+                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Line up modular Unity walls using center positions and half-size math.</p>
+                <div class="steps mt-4"><em>Reference wall</em> › <em>Moving wall</em> › <em>Copy snap position</em></div>
+            </header>
+            <section class="p-4 md:p-6 space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="card p-4 md:p-5">
+                        <div class="panel-title text-purple mb-1">Reference wall</div>
+                        <p class="text-xs text-slate-400 mb-4">Existing wall center, scale, and Y rotation.</p>
+                        <div class="row">
+                            <div class="field"><label class="label">Position X</label><input id="rx" class="input" type="number" step="any" value="0"></div>
+                            <div class="field"><label class="label">Position Y</label><input id="ry" class="input" type="number" step="any" value="0"></div>
+                            <div class="field"><label class="label">Position Z</label><input id="rz" class="input" type="number" step="any" value="0"></div>
+                            <div class="field"><label class="label">Scale X</label><input id="rsx" class="input" type="number" step="any" value="1"></div>
+                            <div class="field"><label class="label">Scale Y</label><input id="rsy" class="input" type="number" step="any" value="1"></div>
+                            <div class="field"><label class="label">Scale Z</label><input id="rsz" class="input" type="number" step="any" value="1"></div>
+                            <div class="field">
+                                <label class="label">Rotation Y</label>
+                                <select id="rrot" class="select">
+                                    <option value="0" selected>0</option>
+                                    <option value="90">90</option>
+                                    <option value="180">180</option>
+                                    <option value="270">270</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4 md:p-5">
+                        <div class="panel-title text-green mb-1">Moving wall</div>
+                        <p class="text-xs text-slate-400 mb-4">Wall you want to snap against the reference.</p>
+                        <div class="row">
+                            <div class="field"><label class="label">Scale X</label><input id="msx" class="input" type="number" step="any" value="1"></div>
+                            <div class="field"><label class="label">Scale Y</label><input id="msy" class="input" type="number" step="any" value="1"></div>
+                            <div class="field"><label class="label">Scale Z</label><input id="msz" class="input" type="number" step="any" value="1"></div>
+                            <div class="field">
+                                <label class="label">Rotation Y</label>
+                                <select id="mrot" class="select">
+                                    <option value="0" selected>0</option>
+                                    <option value="90">90</option>
+                                    <option value="180">180</option>
+                                    <option value="270">270</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label class="label">Round Grid</label>
+                                <select id="grid" class="select">
+                                    <option value="0.01" selected>0.01</option>
+                                    <option value="0.05">0.05</option>
+                                    <option value="0.1">0.1</option>
+                                    <option value="0.25">0.25</option>
+                                    <option value="0.5">0.5</option>
+                                    <option value="1">1</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 md:p-5">
+                    <div class="text-2xl font-black text-white mb-1" style="text-shadow:0 0 18px rgba(155,92,255,.25)">Suggested Snap Positions</div>
+                    <p class="text-xs text-slate-400 mb-4">Paste one row into the moving wall position fields.</p>
+                    <div class="snap-grid" id="snaps"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <div class="toast" id="toast">Copied</div>
+<script>
+const $ = (id) => document.getElementById(id);
+function n(id) { const v = parseFloat($(id).value); return Number.isFinite(v) ? v : 0; }
+function rnd(v, g) { if (!g) return v; return Math.round(v / g) * g; }
+function fmt(v) {
+    const s = (Math.round(v * 10000) / 10000).toFixed(4);
+    return s.replace(/\.?0+$/, m => m.includes('.') ? m.replace(/0+$/,'').replace(/\.$/,'') : m);
+}
+function halfXZ(sx, sz, rot) {
+    const r = ((rot % 360) + 360) % 360;
+    if (r === 90 || r === 270) return { x: Math.abs(sz) / 2, z: Math.abs(sx) / 2 };
+    return { x: Math.abs(sx) / 2, z: Math.abs(sz) / 2 };
+}
+function toast(msg) {
+    const t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast._id); toast._id = setTimeout(() => t.classList.remove('show'), 1100);
+}
+function calc() {
+    const rx = n('rx'), ry = n('ry'), rz = n('rz');
+    const rHalf = halfXZ(n('rsx'), n('rsz'), n('rrot'));
+    const mHalf = halfXZ(n('msx'), n('msz'), n('mrot'));
+    const rHy = Math.abs(n('rsy')) / 2;
+    const mHy = Math.abs(n('msy')) / 2;
+    const g = n('grid') || 0.01;
+    const snaps = {
+        LEFT:   { x: rx - rHalf.x - mHalf.x, y: ry, z: rz },
+        RIGHT:  { x: rx + rHalf.x + mHalf.x, y: ry, z: rz },
+        FRONT:  { x: rx, y: ry, z: rz + rHalf.z + mHalf.z },
+        BACK:   { x: rx, y: ry, z: rz - rHalf.z - mHalf.z },
+        TOP:    { x: rx, y: ry + rHy + mHy, z: rz },
+        BOTTOM: { x: rx, y: ry - rHy - mHy, z: rz },
+        'CENTER ALIGN': { x: rx, y: ry, z: rz }
+    };
+    const box = $('snaps');
+    box.innerHTML = '';
+    Object.entries(snaps).forEach(([name, p]) => {
+        p.x = rnd(p.x, g); p.y = rnd(p.y, g); p.z = rnd(p.z, g);
+        const card = document.createElement('div');
+        card.className = 'snap-card';
+        card.innerHTML =
+            '<div class="text-[11px] font-extrabold tracking-[0.16em] text-slate-300 mb-2">' + name + '</div>' +
+            '<div class="axis"><b>X</b><span>' + fmt(p.x) + '</span></div>' +
+            '<div class="axis"><b>Y</b><span>' + fmt(p.y) + '</span></div>' +
+            '<div class="axis"><b>Z</b><span>' + fmt(p.z) + '</span></div>' +
+            '<button class="btn btn-green w-full mt-1">Copy XYZ</button>';
+        card.querySelector('button').addEventListener('click', async () => {
+            await navigator.clipboard.writeText(fmt(p.x) + ', ' + fmt(p.y) + ', ' + fmt(p.z));
+            toast('Copied ' + name);
+        });
+        box.appendChild(card);
+    });
+}
+['rx','ry','rz','rsx','rsy','rsz','rrot','msx','msy','msz','mrot','grid'].forEach(id => {
+    $(id).addEventListener('input', calc);
+    $(id).addEventListener('change', calc);
+});
+calc();
+</script>
+<script src="fx.js"></script>
+</body>
+</html>
