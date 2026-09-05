@@ -66,7 +66,7 @@
             border-color:#9b5cff;
             box-shadow:0 0 0 2px rgba(155,92,255,.08), 0 0 16px rgba(155,92,255,.22);
         }
-        .shop-card { border:1px solid #262830; border-radius:12px; background:rgba(0,0,0,.28); overflow:hidden; }
+        .shop-card { border:1px solid #2a2d36; border-radius:12px; background:rgba(6,7,10,.88); overflow:hidden; }
         .shop-card + .shop-card { margin-top:12px; }
         .shop-head {
             width:100%; text-align:left; padding:14px 16px; background:transparent; border:0; color:inherit; cursor:pointer;
@@ -74,7 +74,7 @@
         }
         .shop-head:hover { background:rgba(155,92,255,.05); }
         table { width:100%; border-collapse:collapse; }
-        th, td { padding:8px 10px; text-align:left; font-size:12px; border-top:1px solid #1d2026; vertical-align:top; }
+        th, td { padding:9px 11px; text-align:left; font-size:13px; border-top:1px solid #1d2026; vertical-align:top; color:#e5e7eb; }
         th { color:#94a3b8; font-size:9px; letter-spacing:.14em; text-transform:uppercase; font-weight:800; }
         .copy-mini {
             border:1px solid #2a2d35; background:rgba(57,255,136,.08); color:#39ff88;
@@ -86,13 +86,8 @@
         a.tex { color:#39ff88; text-decoration:underline; text-underline-offset:2px; }
     </style>
 </head>
-<body>
+<body class="no-fx no-tilt">
     <div class="background-grid"></div>
-    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
-    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
-    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
-
-    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="" aria-hidden="true">
 
     <main class="relative z-10 w-full max-w-6xl mx-auto">
 
@@ -107,12 +102,12 @@
                     <span class="title-wolves">Wolves</span>
                     <span class="title-rest">Submeshes</span>
                 </h1>
-                <p class="text-xs text-slate-500 mt-2 max-w-2xl">Shop objects, editor names, submesh indexes, and texture notes.</p>
+                <p class="text-xs text-slate-500 mt-2 max-w-2xl">Search submeshes, indexes, props.</p>
             </header>
 
             <section class="p-4 md:p-6">
                 <div class="flex flex-col md:flex-row gap-3 md:items-center mb-4">
-                    <input id="search" class="input" type="search" placeholder="Search shop, editor, submesh, notes...">
+                    <input id="search" class="input" type="search" placeholder="Search submesh...">
                     <div id="counts" class="text-[11px] text-slate-500 whitespace-nowrap"></div>
                 </div>
                 <div id="list"></div>
@@ -215,6 +210,5 @@ function render() {
 search.addEventListener('input', render);
 render();
 </script>
-<script src="fx.js"></script>
 </body>
 </html>
