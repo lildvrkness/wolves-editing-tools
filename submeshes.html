@@ -93,21 +93,28 @@
 
         <div class="card shell overflow-hidden">
             <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+                <div class="flex items-start gap-4">
+                    <div class="logo-ring">
+                        <img src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="Wolves emblem">
+                    </div>
+                    <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-2 mb-2">
                     <a href="index.html" class="back-link">← Tools</a>
-                    <span class="h-1 w-1 rounded-full bg-green/70"></span>
+                    <span class="h-1 w-1 rounded-full bg-green/70 shadow-[0_0_8px_#39ff88]"></span>
                     <span class="text-[12px] uppercase tracking-[0.18em] font-bold text-purple">Reference</span>
                 </div>
                 <h1 class="wolves-title text-4xl md:text-5xl">
                     <span class="title-wolves">Wolves</span>
                     <span class="title-rest">Submeshes</span>
                 </h1>
-                <p class="text-sm text-slate-400 mt-2 max-w-2xl">Shop objects, editor names, submesh indexes, and texture notes.</p>
+                <p class="text-sm text-slate-400 mt-2 max-w-2xl">Search available submeshes, indexes.</p>
+                    </div>
+                </div>
             </header>
 
             <section class="p-4 md:p-6">
                 <div class="flex flex-col md:flex-row gap-3 md:items-center mb-4">
-                    <input id="search" class="input" type="search" placeholder="Search shop, editor, submesh, notes...">
+                    <input id="search" class="input" type="search" placeholder="Search submesh, prop...">
                     <div id="counts" class="text-[11px] text-slate-500 whitespace-nowrap"></div>
                 </div>
                 <div id="list"></div>
