@@ -568,11 +568,17 @@
             .logo-ring { width: 58px; height: 58px; border-radius: 15px; }
             .heart.h3, .heart.h10 { display: none; }
         }
+            .wolf-bg { position:fixed; right:-50px; bottom:-80px; width:min(420px,55vw); opacity:.08; pointer-events:none; z-index:0; }
     </style>
 </head>
 
 <body>
     <div class="background-grid"></div>
+    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
+    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
+    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
+    <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="" aria-hidden="true">
+
     <div class="noise"></div>
 
     <div class="heart-field" aria-hidden="true">
@@ -596,6 +602,7 @@
     >
 
     <main class="relative z-10 w-full max-w-5xl">
+
         <div class="card shell overflow-hidden">
 
             <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
@@ -609,7 +616,7 @@
 
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 mb-1.5">
-                            <a href="index.html" class="text-[9px] uppercase tracking-[0.22em] font-bold text-green hover:text-white transition">← Tools</a>
+                            <a href="index.html" class="back-link">← Tools</a>
                             <span class="h-1 w-1 rounded-full bg-green/70 shadow-[0_0_8px_#39ff88]"></span>
                             <span class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple">Albedo</span>
                         </div>
@@ -902,5 +909,6 @@
 
         calculate();
     </script>
+<script src="fx.js"></script>
 </body>
 </html>
