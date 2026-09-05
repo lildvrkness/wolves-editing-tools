@@ -39,13 +39,13 @@
         .input { width:100%; height:52px; background:rgba(3,4,5,.88); border:1px solid #292c34; border-radius:8px; padding:10px 14px; color:white; font-size:16px; outline:none; }
         .input:focus { border-color:#9b5cff; box-shadow:0 0 16px rgba(155,92,255,.22); }
         .panel-title { font-size:15px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; margin-bottom:12px; }
-        .btn { height:40px; padding:0 12px; border-radius:8px; font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; border:0; background:#39ff88; color:#000; flex-shrink:0; }
+        .btn { height:40px; padding:0 12px; border-radius:8px; font-size:13px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; border:0; background:#39ff88; color:#000; flex-shrink:0; }
         .btn:hover { box-shadow:0 0 18px rgba(57,255,136,.28); }
         .style-row {
             display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid #262830;
             border-radius:10px; background:rgba(0,0,0,.28); margin-bottom:8px;
         }
-        .style-name { width:110px; font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#9b5cff; flex-shrink:0; }
+        .style-name { width:110px; font-size:13px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#9b5cff; flex-shrink:0; }
         .style-out { flex:1; font-size:18px; color:#fff; overflow-x:auto; white-space:nowrap; }
         .combo {
             display:inline-flex; align-items:center; justify-content:center;
@@ -64,11 +64,8 @@
         .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
     </style>
 </head>
-<body>
+<body class="no-fx no-tilt">
     <div class="background-grid"></div>
-    <img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
-    <img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
-    <img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
 
     <img class="wolf-bg" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
     <main class="relative z-10 w-full max-w-5xl mx-auto">
@@ -84,7 +81,7 @@
                     <span class="title-wolves">Wolves</span>
                     <span class="title-rest">Fancy Text</span>
                 </h1>
-                <p class="text-sm text-slate-300 mt-3">Convert text into unicode styles, or tap any symbol combo to copy it.</p>
+                <p class="text-sm text-slate-300 mt-3">Convert a name into unicode styles, then tap any symbol combo to copy it.</p>
             </header>
 
             <section class="p-4 md:p-6">
@@ -93,7 +90,7 @@
                 <div id="styles"></div>
 
                 <div class="panel-title text-green mt-8">Symbol combos</div>
-                <p class="text-sm text-slate-400 mb-2">Click a combo to copy.</p>
+                <p class="text-sm text-slate-400 mb-2">Click a combo to copy. Text symbols only.</p>
                 <div id="combos"></div>
             </section>
         </div>
@@ -267,6 +264,5 @@ document.getElementById('src').addEventListener('input', renderStyles);
 renderStyles();
 renderCombos();
 </script>
-<script src="fx.js"></script>
 </body>
 </html>
