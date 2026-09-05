@@ -61,5 +61,3 @@ Results are rounded to the selected grid (default `0.01`).
 - `colors.html`
 - `submeshes.html`
 - `theme.css` / `fx.js` — shared look and mouse parallax
-
-Hub icons live in `icons/` (`tile.jpg`, `tilepreview.jpg`, `gridsnap.jpg`, …). Wolf cutouts sit in the repo root (`wolfcutout1.png`, `wolfcutout2.png`, `wolfcutout3.png`).
