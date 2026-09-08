@@ -79,7 +79,8 @@
             background:#0a0b0e; border:1px solid #262830; border-radius:10px; min-height:180px;
             display:flex; align-items:center; justify-content:center; overflow:hidden;
         }
-        .preview-frame img, .preview-frame canvas { max-width:100%; max-height:280px; display:block; }
+        .preview-frame img, .preview-frame canvas { max-width:100%; max-height:420px; display:block; }
+        #nPreview img, #nPreview canvas { max-height:420px; }
         .chip { height:34px; padding:0 12px; border-radius:999px; border:1px solid #2a2d35; background:rgba(0,0,0,.35); color:#e2e8f0; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
         .chip:hover, .chip.on { border-color:rgba(155,92,255,.7); color:#fff; background:rgba(155,92,255,.12); }
         input[type="range"] { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:999px; background:linear-gradient(90deg, rgba(155,92,255,.8), rgba(57,255,136,.6)); outline:none; }
@@ -113,7 +114,7 @@
                     <span class="title-wolves">Wolves</span>
                     <span class="title-rest">Texture Workshop</span>
                 </h1>
-                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Resize, convert, stamp DPI, or bake a normal map. Files stay in your browser.</p>
+                <p class="text-sm text-slate-300 mt-3 max-w-2xl">Resize, convert formats, or bake a normal map. Files stay in your browser.</p>
                     </div>
                 </div>
             </header>
@@ -174,11 +175,11 @@
                         <button id="exportBtn" class="btn btn-green w-full mt-4">Export image</button>
                     </div>
 
-                    <div class="card p-4 md:col-span-2">
+                    <div class="card p-4 md:p-5 md:col-span-2">
                         <div class="panel-title text-purple">Normal map maker</div>
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 xl:grid-cols-[280px_1fr] gap-5">
                             <div>
-                                <div id="nDrop" class="drop" style="min-height:120px">
+                                <div id="nDrop" class="drop" style="min-height:140px">
                                     <div>
                                         <div class="text-base font-bold text-white">Drop a height / albedo image</div>
                                         <div class="note mt-1">Own upload for this tool. PNG, JPG, or WebP.</div>
@@ -194,38 +195,19 @@
                                 <button id="normalBtn" class="btn btn-green w-full mt-4">Export normal PNG</button>
                             </div>
                             <div>
-                                <div class="grid grid-cols-2 gap-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <div class="label">Normal preview</div>
-                                        <div class="preview-frame" id="nPreview" style="min-height:220px"><span class="note">2D</span></div>
+                                        <div class="preview-frame" id="nPreview" style="min-height:380px"><span class="note">2D</span></div>
                                     </div>
                                     <div>
                                         <div class="label">3D cube</div>
-                                        <canvas id="nCube" width="320" height="320" style="width:100%;height:220px;background:#07080c;border:1px solid #262830;border-radius:10px;display:block"></canvas>
+                                        <canvas id="nCube" width="512" height="512" style="width:100%;height:380px;background:#07080c;border:1px solid #262830;border-radius:10px;display:block"></canvas>
                                     </div>
                                 </div>
                                 <p class="note mt-2">Drag the cube to spin it. Strength updates the preview live.</p>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="card p-4">
-                        <div class="panel-title text-green">DPI</div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="label">Target DPI</label>
-                                <input id="dpi" class="input" type="number" min="1" value="300">
-                            </div>
-                            <div>
-                                <label class="label">Mode</label>
-                                <select id="dpiMode" class="input">
-                                    <option value="meta">Tag metadata only</option>
-                                    <option value="scale">Scale pixels to match DPI</option>
-                                </select>
-                            </div>
-                        </div>
-                        <p class="note mt-2">Metadata tagging works best on PNG. Scale mode changes pixel size using newDPI / 72.</p>
-                        <button id="dpiBtn" class="btn btn-green w-full mt-3">Export with DPI</button>
                     </div>
                 </div>
 
@@ -475,7 +457,7 @@ function bakeNormalLive() {
     lastNormal = n;
     nPreview.innerHTML = '';
     n.style.maxWidth = '100%';
-    n.style.maxHeight = '220px';
+    n.style.maxHeight = '380px';
     nPreview.appendChild(n);
     applyCubeNormal(n);
 }
@@ -494,53 +476,6 @@ document.getElementById('normalBtn').addEventListener('click', () => {
         const base = (nSourceFile?.name || 'texture').replace(/\.[^.]+$/, '');
         downloadBlob(blob, base + '-normal.png');
     }, 'image/png');
-});
-
-function writePngDpi(pngBuf, dpi) {
-    const ppm = Math.round(dpi / 0.0254);
-    const phys = new Uint8Array(21);
-    const view = new DataView(phys.buffer);
-    view.setUint32(0, 9);
-    phys[4]=112; phys[5]=72; phys[6]=89; phys[7]=115;
-    view.setUint32(8, ppm);
-    view.setUint32(12, ppm);
-    phys[16] = 1;
-    const crcSrc = phys.subarray(4, 17);
-    view.setUint32(17, crc32(crcSrc));
-    const src = new Uint8Array(pngBuf);
-    const iend = src.length - 12;
-    const out = new Uint8Array(src.length + 21);
-    out.set(src.subarray(0, iend), 0);
-    out.set(phys, iend);
-    out.set(src.subarray(iend), iend + 21);
-    return out;
-}
-
-function crc32(bytes) {
-    let c = ~0;
-    for (let i = 0; i < bytes.length; i++) {
-        c ^= bytes[i];
-        for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xEDB88320 & -(c & 1));
-    }
-    return ~c >>> 0;
-}
-
-document.getElementById('dpiBtn').addEventListener('click', async () => {
-    if (!needImage()) return;
-    const dpi = Math.max(1, Number(document.getElementById('dpi').value) || 300);
-    const mode = document.getElementById('dpiMode').value;
-    if (mode === 'scale') {
-        const scale = dpi / 72;
-        updating = true;
-        wEl.value = Math.max(1, Math.round(source.naturalWidth * scale));
-        hEl.value = Math.max(1, Math.round(source.naturalHeight * scale));
-        updating = false;
-    }
-    const canvas = drawResized();
-    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-    const tagged = writePngDpi(await blob.arrayBuffer(), dpi);
-    const base = (sourceFile?.name || 'texture').replace(/\.[^.]+$/, '');
-    downloadBlob(new Blob([tagged], {type:'image/png'}), base + '-' + dpi + 'dpi.png');
 });
 
 setupCube();
