@@ -13,7 +13,7 @@ Everything runs locally in the browser. No accounts. Image tools never upload yo
 | **Grid Snap Calculator** | `gridsnap.html` | Line up modular Unity walls from center position + scale. Copy Left / Right / Front / Back / Top / Bottom / Center Align. |
 | **Albedo Tile Calculator** | `albedo.html` | Convert wall X / Y into matching albedo tile values. |
 | **Tile Preview** | `tilepreview.html` | Upload a texture and live-preview how it wraps on a wall at Tile X / Y. |
-| **Texture Workshop** | `textures.html` | Resize, convert PNG / JPEG / WebP, bake a normal map, tag DPI. |
+| **Texture Workshop** | `textures.html` | Resize, convert PNG / JPEG / WebP, bake a normal map and preview. |
 | **Name Tag Gradients** | `nametags.html` | Build smooth `[color=#hex]` codes for in-game name tags. |
 | **Fancy Text** | `fancy.html` | Unicode font styles plus click-to-copy text symbols. |
 | **Color Codes** | `colors.html` | Color picker with hex, RGB, HSL, Unity, and tag copy. |
