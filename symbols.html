@@ -1,0 +1,1064 @@
+< html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Text Symbols — Wolves Editing Tools</title>
+
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="theme.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        purple:"#9b5cff",
+                        green:"#39ff88"
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+
+        :root {
+            --purple:#9b5cff;
+            --green:#39ff88;
+            --ink:#030405;
+        }
+
+        * {
+            box-sizing:border-box;
+        }
+
+        html {
+            min-height:100%;
+            background:var(--ink);
+        }
+
+        body {
+            margin:0;
+            min-height:100vh;
+            font-family:Inter,sans-serif;
+            color:#e5e7eb;
+            background:
+                radial-gradient(
+                    ellipse 720px 560px at 8% 8%,
+                    rgba(155,92,255,.18),
+                    transparent 68%
+                ),
+                radial-gradient(
+                    ellipse 720px 560px at 94% 92%,
+                    rgba(57,255,136,.12),
+                    transparent 68%
+                ),
+                #030405;
+            padding:28px 16px 48px;
+        }
+
+        .background-grid {
+            position:fixed;
+            inset:0;
+            pointer-events:none;
+            opacity:.028;
+            z-index:0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
+            background-size:42px 42px;
+        }
+
+        .wolves-title {
+            font-family:"New Rocker",cursive;
+            letter-spacing:.025em;
+            line-height:1.02;
+        }
+
+        .title-wolves {
+            color:#39ff88;
+            text-shadow:
+                0 0 10px rgba(57,255,136,.55),
+                0 0 24px rgba(57,255,136,.28);
+        }
+
+        .title-rest {
+            color:#9b5cff;
+            text-shadow:
+                0 0 12px rgba(155,92,255,.55),
+                0 0 24px rgba(155,92,255,.22);
+        }
+
+        .card {
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(17,18,22,.96),
+                    rgba(8,9,11,.97)
+                );
+            border:1px solid #202229;
+            border-radius:14px;
+        }
+
+        .shell {
+            box-shadow:
+                0 30px 80px rgba(0,0,0,.45),
+                0 0 0 1px rgba(155,92,255,.08);
+        }
+
+        .input {
+            width:100%;
+            height:52px;
+            background:rgba(3,4,5,.9);
+            border:1px solid #292c34;
+            border-radius:9px;
+            padding:10px 15px;
+            color:white;
+            font-size:16px;
+            outline:none;
+            transition:.2s ease;
+        }
+
+        .input:hover {
+            border-color:rgba(155,92,255,.45);
+            box-shadow:0 0 15px rgba(155,92,255,.08);
+        }
+
+        .input:focus {
+            border-color:#9b5cff;
+            box-shadow:0 0 18px rgba(155,92,255,.22);
+        }
+
+        .category-nav {
+            display:flex;
+            flex-wrap:wrap;
+            gap:7px;
+            margin-top:15px;
+            margin-bottom:20px;
+        }
+
+        .category-btn {
+            border:1px solid #292c34;
+            background:rgba(0,0,0,.3);
+            color:#8d93a0;
+            border-radius:999px;
+            padding:7px 11px;
+            font-size:10px;
+            font-weight:800;
+            letter-spacing:.07em;
+            text-transform:uppercase;
+            cursor:pointer;
+            transition:.2s ease;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            color:#fff;
+            border-color:rgba(57,255,136,.5);
+            background:rgba(57,255,136,.06);
+            box-shadow:0 0 15px rgba(57,255,136,.08);
+        }
+
+        .category-title {
+            display:flex;
+            align-items:center;
+            gap:9px;
+            margin:24px 0 10px;
+            color:#39ff88;
+            font-size:12px;
+            font-weight:900;
+            letter-spacing:.15em;
+            text-transform:uppercase;
+        }
+
+        .category-title::after {
+            content:"";
+            flex:1;
+            height:1px;
+            background:linear-gradient(
+                90deg,
+                rgba(57,255,136,.18),
+                transparent
+            );
+        }
+
+        .symbols {
+            display:flex;
+            flex-wrap:wrap;
+        }
+
+        .symbol {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-height:44px;
+            padding:9px 12px;
+            margin:0 7px 7px 0;
+            border:1px solid #292c34;
+            border-radius:9px;
+            background:rgba(0,0,0,.3);
+            color:#fff;
+            cursor:pointer;
+            font-size:19px;
+            line-height:1.25;
+            transition:.18s ease;
+        }
+
+        .symbol:hover {
+            border-color:rgba(155,92,255,.65);
+            background:rgba(155,92,255,.06);
+            box-shadow:0 0 16px rgba(155,92,255,.14);
+            transform:translateY(-1px);
+        }
+
+        .symbol:active {
+            transform:translateY(0);
+        }
+
+        .count {
+            margin-top:8px;
+            color:#686f7d;
+            font-size:11px;
+        }
+
+        .empty {
+            padding:28px;
+            border:1px dashed #2b2e37;
+            border-radius:10px;
+            text-align:center;
+            color:#717784;
+            font-size:13px;
+        }
+
+        .toast {
+            position:fixed;
+            left:50%;
+            bottom:22px;
+            transform:translateX(-50%) translateY(12px);
+            opacity:0;
+            transition:.25s ease;
+            z-index:50;
+            pointer-events:none;
+            background:#0b0c10;
+            border:1px solid rgba(57,255,136,.3);
+            color:#39ff88;
+            padding:8px 14px;
+            border-radius:10px;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .toast.show {
+            opacity:1;
+            transform:translateX(-50%) translateY(0);
+        }
+
+    </style>
+</head>
+
+<body class="no-fx no-tilt">
+
+<div class="background-grid"></div>
+
+<img
+    class="watermark"
+    src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
+    alt=""
+>
+
+<main class="relative z-10 w-full max-w-5xl mx-auto">
+
+    <div class="card shell overflow-hidden">
+
+        <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
+
+            <div class="flex items-start gap-4">
+
+                <div class="logo-ring">
+                    <img
+                        src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
+                        alt="Wolves emblem"
+                    >
+                </div>
+
+                <div class="min-w-0 flex-1">
+
+                    <div class="flex items-center gap-2 mb-2">
+
+                        <a href="index.html" class="back-link">
+                            ← Tools
+                        </a>
+
+                        <span class="h-1 w-1 rounded-full bg-green/70 shadow-[0_0_8px_#39ff88]"></span>
+
+                        <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">
+                            Text
+                        </span>
+
+                    </div>
+
+                    <h1 class="wolves-title text-4xl md:text-5xl">
+
+                        <span class="title-wolves">
+                            Wolves
+                        </span>
+
+                        <span class="title-rest">
+                            Text Symbols
+                        </span>
+
+                    </h1>
+
+                    <p class="text-sm text-slate-300 mt-3">
+                        A huge copy-and-paste library of symbols, decorations, faces and more.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="p-4 md:p-6">
+
+            <input
+                id="search"
+                class="input"
+                placeholder="Search symbols... try animal, cross, dance, heart, moon, music..."
+                autocomplete="off"
+                spellcheck="false"
+            >
+
+            <div id="categoryNav" class="category-nav"></div>
+
+            <div id="library"></div>
+
+            <div class="count" id="count"></div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<div id="toast" class="toast">
+    Copied ✓
+</div>
+
+
+<script>
+
+/* =========================================================
+   SYMBOL LIBRARY
+   ========================================================= */
+
+const library = {
+
+    "Crosses & Gothic": [
+
+        '†','‡','✝','✞','✟','✠',
+        '✚','✛','✜','✢','✣','✤','✥',
+        '☨','☩','☦','☧',
+        '♰','♱',
+        '⛧','⛥','⛤',
+        '𖤐','𖤓','𖣂','𖦹',
+        '☾†☽',
+        '༺†༻',
+        '༺✞༻',
+        '𖤐†𖤐',
+        '†･ﾟ✧･ﾟ†',
+        '꧁†꧂',
+        '꧁༺†༻꧂',
+        '✞ ── ✞ ── ✞',
+        '✟ ═══ ✟ ═══ ✟'
+    ],
+
+
+    "Dance": [
+
+        'ᕕ( ᐛ )ᕗ',
+        'ᕕ( ՞ ᗜ ՞ )ᕗ',
+        'ᕕ(⌐■_■)ᕗ',
+        'ᕕ( ᐛ )ᕗ ♪',
+        '♪┏(・o･)┛♪',
+        '┗(・o･)┓♪',
+        '┌(・。・)┘♪',
+        '└(・。・)┐♪',
+        '┌(・o･)┐',
+        '└(･o･)┘',
+        '┌(・o･)┘',
+        '└(・o･)┐',
+        '┗(＾0＾)┓',
+        '┏(＾0＾)┛',
+        'ヾ(⌐■_■)ノ♪',
+        '(〜￣▽￣)〜',
+        '〜(￣▽￣〜)',
+        'ヘ(￣ω￣ヘ)',
+        'ヽ(⌐■_■)ノ♪',
+        'ヽ(°◇° )ノ',
+        'ヽ(´▽`)/',
+        '＼(^ω^＼)',
+        '(/^ω^)/',
+        '＼(^o^)／',
+        '┌( ಠ‿ಠ )┘',
+        '└( ಠ‿ಠ )┐',
+        '┌( ಠ‿ಠ )┘└( ಠ‿ಠ )┐',
+        '┌(・o・)┐',
+        '└(・o・)┘',
+        '┗( ͡° ͜ʖ ͡°)┓',
+        '┏( ͡° ͜ʖ ͡°)┛',
+        '乁( •_• )ㄏ',
+        '乁( •_• )ㄏ 乁( •_• )ㄏ',
+        '(ง ˙o˙)ว',
+        '(ง •̀ω•́)ง',
+        '♪(┌・。・)┘♪',
+        '♪└(・。・┐)♪',
+        '♩¨̮(ง ˙˘˙ )ว♩¨̮'
+    ],
+
+
+    "Music": [
+
+        '♪','♫','♩','♬',
+        '𝄞','𝄢',
+        '♩ ♪ ♫ ♬',
+        '♪ ♫ ♩ ♬ ♪',
+        '♬♩♫♪♬',
+        '♫´•.¸¸.•´¯`•.¸¸.♫',
+        '♪───♫───♪',
+        '♬───♩───♬',
+        '♪₊˚⊹',
+        '♫₊˚⊹♡',
+        '♩₊˚.⋆',
+        '♪(★ω★)♪',
+        '♬\\(≧▽≦)/♬',
+        '｡･:*:･ﾟ★,｡･:*:･ﾟ☆',
+        '✧･ﾟ: *✧･ﾟ:*'
+    ],
+
+
+    "Animals": [
+
+        '🐺','🦊','🐻','🐼','🐨','🐯',
+        '🦁','🐮','🐷','🐸','🐵','🙈',
+        '🙉','🙊','🐹','🐰','🐻‍❄️',
+        '🦝','🦓','🦒','🦌','🐘',
+        '🦏','🦛','🐪','🐫','🦘',
+        '🦬','🐃','🐂','🐎','🐖',
+        '🐏','🐑','🦙','🐐',
+        '🦔','🦇','🐿️','🦫','🦦',
+        '🦥','🦨','🦡','🐕','🐩',
+        '🐈','🐈‍⬛','🐓','🦃',
+        '🦚','🦜','🦢','🦩',
+        '🐍','🦎','🐢','🐊',
+        '🐸','🐙','🦑','🦀','🦞',
+        '🐠','🐟','🐡','🦈','🐳',
+        '🐋','🐬','🦭'
+    ],
+
+
+    "Cats": [
+
+        'ฅ^•ﻌ•^ฅ',
+        'ฅ(＾・ω・＾ฅ)',
+        '(=^･ω･^=)',
+        '(=^･ｪ･^=)',
+        '(=｀ω´=)',
+        '(＾• ω •＾)',
+        'ฅ(•ㅅ•❀)ฅ',
+        'ฅ^•ﻌ•^ฅ♡',
+        'ᓚᘏᗢ',
+        'ᓚᘏᗢ ♡',
+        '😺','😸','😹','😻','😼',
+        '😽','🙀','😿','😾',
+        '🐱','🐈','🐈‍⬛'
+    ],
+
+
+    "Birds": [
+
+        '🐦','🐤','🐣','🐥',
+        '🐧','🦆','🦅','🦉',
+        '🦚','🦜','🦢','🦩',
+        '🕊️','🐦‍⬛',
+        '𓅃',
+        '𓅓',
+        '𓅭',
+        '𓅰',
+        '𓅱'
+    ],
+
+
+    "Ocean & Sea": [
+
+        '🌊','🐚','🪸','🐠','🐟',
+        '🐡','🦈','🐬','🐳','🐋',
+        '🦭','🦀','🦞','🦐','🦑',
+        '🐙','🪼','⚓',
+        '𓆉','𓆝','𓆟',
+        '𓆞','𓆡',
+        '≋≋≋',
+        '≈≈≈',
+        '🌊────🌊'
+    ],
+
+
+    "Nature & Plants": [
+
+        '🌿','☘','🍀','🌱','🌲',
+        '🌳','🌴','🌵','🌾','🍃',
+        '🍂','🍁','🌺','🌸','🌷',
+        '🌹','🥀','🌻','🌼','🪻',
+        '❀','✿','❁','❃','❋',
+        '⚘','ꕤ','ꕥ',
+        '☙','❧',
+        '𖧧','𖥧','𖦥','𖣔',
+        '༄',
+        '༺❀༻',
+        '✿────✿'
+    ],
+
+
+    "Celestial": [
+
+        '☾','☽','☀','☼','☄',
+        '☪','✦','✧','⋆',
+        '✩','✪','✫','✬',
+        '✭','✮','✯','✰',
+        '🌙','🌕','🌑','🌒',
+        '🌓','🌔','🌖','🌗',
+        '🌘','🌙',
+        '⭐','🌟','✨',
+        '☾⋆⁺₊✧',
+        '☽₊˚⊹',
+        '⋆｡°✩',
+        '☾𖤓☽'
+    ],
+
+
+    "Weather": [
+
+        '☀','☼','☁','☁︎','☂',
+        '☔','☃','❄','❅','❆',
+        '⚡','☄','🌈',
+        '🌧️','🌩️','🌪️',
+        '🌫️','🌨️',
+        '☀︎ ☁︎ ☾',
+        '☁︎☁︎☁︎',
+        '☼────☼',
+        '❄︎ ❅ ❆ ❄︎'
+    ],
+
+
+    "Hearts": [
+
+        '♡','♥','❤','❥','❣',
+        '❦','❧','ღ','ෆ','۵',
+        'ꨄ','💜','💚','🖤',
+        '🤍','💙','💗','💖',
+        '♡₊˚','♡⃝','♥︎',
+        '♡‧₊˚','₊˚⊹♡',
+        '꒰ა ♡ ໒꒱',
+        'ʚ♡ɞ',
+        '꧁♡꧂',
+        '♡────♡',
+        '♡♡♡',
+        '♥────♥'
+    ],
+
+
+    "Stars & Sparkles": [
+
+        '★','☆','✦','✧','✩',
+        '✪','✫','✬','✭',
+        '✮','✯','✰','⁂',
+        '⁑','⋆','※','❈',
+        '❉','❊','❋','✺',
+        '✹','✸','✷','✶',
+        '✵','✴','✳','✲',
+        '✱',
+        '★彡','☆彡',
+        '✦･ﾟ✧',
+        '✧･ﾟ: *✧･ﾟ:*',
+        '✦ . ⁺ . ✦',
+        '｡･:*˚:✧｡',
+        '⋆｡ﾟ✶°✧⋆'
+    ],
+
+
+    "Arrows": [
+
+        '→','←','↑','↓',
+        '↔','↕','↗','↘',
+        '↙','↖','⇢','⇠',
+        '⇡','⇣','➜','➝',
+        '➞','➟','➠','➡',
+        '➤','➳','➵','➸',
+        '➺','➻','➼','➽',
+        '»','«','↝','⟶',
+        '⟵','⤷','⤶',
+        '→→→',
+        '←────→',
+        '╰┈➤',
+        '╭┈┈➤',
+        '╰─▸',
+        '╭─▸'
+    ],
+
+
+    "Dividers": [
+
+        '──────────',
+        '━━━━━━━━━━',
+        '══════════',
+        '▬▬▬▬▬▬▬▬▬▬',
+        '┈┈┈┈┈┈┈┈',
+        '┄┄┄┄┄┄┄┄',
+        '╍╍╍╍╍╍╍╍',
+        '•────────•',
+        '✦──────✦',
+        '✧──────✧',
+        '★────────★',
+        '♡────────♡',
+        '†────────†',
+        '༺────────༻',
+        '꧁────────꧂',
+        '╰☆☆☆☆╮',
+        '╭☆☆☆☆╯',
+        '╭──────╮',
+        '╰──────╯',
+        '╔══════╗',
+        '╚══════╝',
+        '╭━━━╮',
+        '╰━━━╯',
+        '┏━━━┓',
+        '┗━━━┛'
+    ],
+
+
+    "Frames & Brackets": [
+
+        '『 TEXT 』',
+        '「 TEXT 」',
+        '【 TEXT 】',
+        '〖 TEXT 〗',
+        '《 TEXT 》',
+        '〈 TEXT 〉',
+        '〔 TEXT 〕',
+        '〘 TEXT 〙',
+        '〚 TEXT 〛',
+        '꧁ TEXT ꧂',
+        '༺ TEXT ༻',
+        '༼ TEXT ༽',
+        '⟦ TEXT ⟧',
+        '⟨ TEXT ⟩',
+        '⟪ TEXT ⟫',
+        '⌈ TEXT ⌉',
+        '⌊ TEXT ⌋',
+        '╭── TEXT ──╮',
+        '╰── TEXT ──╯',
+        '꧁༺ TEXT ༻꧂'
+    ],
+
+
+    "Cute": [
+
+        '୨୧','ʚɞ',
+        '૮₍ ˶ᵔ ᵕ ᵔ˶ ₎ა',
+        '૮₍ ˃ ⤙ ˂ ₎ა',
+        '૮₍ ˶•⤙•˶ ₎ა',
+        '(˶ᵔ ᵕ ᵔ˶)',
+        '(｡♥‿♥｡)',
+        '(≧◡≦)',
+        '(◕‿◕✿)',
+        '૮ ˶ᵔ ᵕ ᵔ˶ ა',
+        '꒰ა ♡ ໒꒱',
+        '₊˚⊹♡',
+        '˚₊‧꒰ა ☆ ໒꒱ ‧₊˚',
+        'ʚ♡ɞ',
+        '✧˖° ♡ ⋆｡˚',
+        '꒰ঌ(⃔ ⌯’ ‘⌯)⃕໒꒱'
+    ],
+
+
+    "Faces": [
+
+        '( ͡° ͜ʖ ͡°)',
+        '(ಠ_ಠ)',
+        '(¬‿¬)',
+        '(｡♥‿♥｡)',
+        '(≧◡≦)',
+        '(；一_一)',
+        '눈_눈',
+        '(￣▽￣)ノ',
+        'ʕ•ᴥ•ʔ',
+        '(◕‿◕✿)',
+        'ಥ_ಥ',
+        '(☞ﾟヮﾟ)☞',
+        '☜(ﾟヮﾟ☜)',
+        '¯\\_(ツ)_/¯',
+        '(づ￣ ³￣)づ',
+        '(っ˘ω˘ς )',
+        '٩(◕‿◕｡)۶',
+        '(づ｡◕‿‿◕｡)づ',
+        'ლ(ಠ益ಠლ)',
+        '(╯°□°）╯︵ ┻━┻',
+        '┬─┬ノ( º _ ºノ)',
+        '(ง •̀_•́)ง',
+        '乁( •_• )ㄏ'
+    ],
+
+
+    "Hands & Gestures": [
+
+        '👍','👎','👏','🙌','🙏',
+        '🤝','✌️','🤞','🤟',
+        '🤘','👌','🤌','🤏',
+        '👋','🫶','💪','☝️',
+        '👇','👆','👉','👈',
+        '☜','☞','☝','☟',
+        '✋','🤚','🖐️',
+        '༼ つ ◕_◕ ༽つ',
+        'ლ(ಠ益ಠლ)',
+        '╭∩╮(ಠ_ಠ)╭∩╮'
+    ],
+
+
+    "Food & Drinks": [
+
+        '🍕','🍔','🍟','🌮','🌯',
+        '🍣','🍜','🍩','🍪','🍰',
+        '🧁','🍫','🍓','🍒',
+        '🍉','🍇','🍎','🍊',
+        '🍋','🥝','🍍','🥑',
+        '🍑','🍉','☕','🍵',
+        '🧋','🥤','🍿','🍭',
+        '🍬','🍩','🥨','🧀',
+        '🍳','🥞','🍜','🍙'
+    ],
+
+
+    "Gaming & Fun": [
+
+        '🎮','🕹️','🎲','♟️',
+        '🎯','🏆','🥇','🥈',
+        '🥉','🎖️','🎪',
+        '✨','💫','💥',
+        '⭐','🌟','🎉',
+        '🎊','🎈','🎭',
+        '🎨','🧩','🎵',
+        '🎧','📀','💿',
+        '👾','🤖','🪐',
+        '⚡','🔥','❄️'
+    ],
+
+
+    "Math & Symbols": [
+
+        '∞','∴','∵','∿','≈',
+        '≋','≠','≤','≥','±',
+        '×','÷','√','∆','∇',
+        '∎','⌁','⌇','⌘','⌬',
+        '⌖','◈','◇','◆','○',
+        '●','◌','◍','◎','◉',
+        '◐','◑','◒','◓','◖',
+        '◗','∫','∑','π','Ω',
+        'λ','µ','φ','θ','Σ',
+        'Δ','Γ','Λ','Ψ','Φ',
+        'α','β','γ','δ','ε',
+        '∞────∞'
+    ],
+
+
+    "Greek": [
+
+        'Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ',
+        'Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω',
+        'α β γ δ ε ζ η θ ι κ λ μ',
+        'ν ξ ο π ρ σ τ υ φ χ ψ ω',
+        'Δ','Ω','Σ','Φ','Ψ','Λ',
+        'Γ','Θ','Ξ','Π'
+    ],
+
+
+    "Punctuation": [
+
+        '•','·','∙','‧','…',
+        '⋯','⋮','⁝','⁙','※',
+        '⁂','⁑','¡','¿',
+        '‼','⁇','⁈','⁉',
+        '§','¶','©','®','™',
+        '°','′','″','№',
+        '‰','※','⁕','⁖',
+        '⁘','⁙','⁜','⁝'
+    ],
+
+
+    "Miscellaneous": [
+
+        '☯','☮','☢','☣',
+        '⚜','♛','♕','♚','♔',
+        '♠','♣','♥','♦',
+        '♤','♧','♡','♢',
+        '☻','☺','☹',
+        '☀','☁','☂','☃',
+        '⚡','☄','☾','☽',
+        '⚘','❀','✿',
+        '❖','◆','◇','◈',
+        '⌁','⌘','⌬','⌖'
+    ]
+
+};
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+let activeCategory = "All";
+
+
+/* =========================================================
+   COPY
+   ========================================================= */
+
+async function copyText(text) {
+
+    try {
+
+        await navigator.clipboard.writeText(text);
+
+    } catch {
+
+        const area =
+            document.createElement('textarea');
+
+        area.value = text;
+
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+
+        document.body.appendChild(area);
+
+        area.select();
+
+        document.execCommand('copy');
+
+        area.remove();
+    }
+
+    const toast =
+        document.getElementById('toast');
+
+    toast.classList.add('show');
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    },1200);
+}
+
+
+/* =========================================================
+   CATEGORY BUTTONS
+   ========================================================= */
+
+function renderCategories() {
+
+    const nav =
+        document.getElementById('categoryNav');
+
+    nav.innerHTML = '';
+
+    const categories =
+        ['All',...Object.keys(library)];
+
+
+    categories.forEach(category => {
+
+        const button =
+            document.createElement('button');
+
+        button.className =
+            'category-btn' +
+            (category === activeCategory
+                ? ' active'
+                : '');
+
+        button.textContent = category;
+
+        button.addEventListener(
+            'click',
+            () => {
+
+                activeCategory = category;
+
+                renderCategories();
+                renderLibrary();
+
+            }
+        );
+
+        nav.appendChild(button);
+
+    });
+
+}
+
+
+/* =========================================================
+   RENDER LIBRARY
+   ========================================================= */
+
+function renderLibrary() {
+
+    const query =
+        document
+            .getElementById('search')
+            .value
+            .trim()
+            .toLowerCase();
+
+
+    const box =
+        document.getElementById('library');
+
+    box.innerHTML = '';
+
+
+    let shown = 0;
+
+
+    Object.entries(library).forEach(
+        ([category,items]) => {
+
+            if(
+                activeCategory !== 'All' &&
+                activeCategory !== category
+            ) {
+                return;
+            }
+
+
+            const filtered =
+                items.filter(symbol => {
+
+                    if(!query) {
+                        return true;
+                    }
+
+                    return symbol
+                        .toLowerCase()
+                        .includes(query);
+
+                });
+
+
+            if(!filtered.length) {
+                return;
+            }
+
+
+            const title =
+                document.createElement('div');
+
+            title.className =
+                'category-title';
+
+            title.textContent =
+                category;
+
+            box.appendChild(title);
+
+
+            const symbols =
+                document.createElement('div');
+
+            symbols.className =
+                'symbols';
+
+
+            filtered.forEach(symbol => {
+
+                const button =
+                    document.createElement('button');
+
+                button.className =
+                    'symbol';
+
+                button.type = 'button';
+
+                button.textContent =
+                    symbol;
+
+                button.title =
+                    'Click to copy';
+
+                button.addEventListener(
+                    'click',
+                    () => copyText(symbol)
+                );
+
+                symbols.appendChild(button);
+
+                shown++;
+
+            });
+
+
+            box.appendChild(symbols);
+
+        }
+    );
+
+
+    document.getElementById('count').textContent =
+        `${shown} symbol${shown === 1 ? '' : 's'} shown`;
+
+
+    if(!shown) {
+
+        const empty =
+            document.createElement('div');
+
+        empty.className = 'empty';
+
+        empty.textContent =
+            'No matching symbols found. Try another search.';
+
+        box.appendChild(empty);
+
+    }
+
+}
+
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+document
+    .getElementById('search')
+    .addEventListener(
+        'input',
+        renderLibrary
+    );
+
+
+renderCategories();
+renderLibrary();
+
+</script>
+
+</body>
+</html>
