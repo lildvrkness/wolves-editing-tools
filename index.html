@@ -5,1145 +5,947 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Wolves Editing Tools</title>
-    <meta name="description" content="Browser-based tools for building, editing, texturing and styling Wolves worlds.">
+    <meta
+        name="description"
+        content="A growing collection of editing tools and references built for Wolves and others."
+    >
 
-    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
+    <link
+        rel="icon"
+        href="https://images.guns.lol/16f3e810-0e4f-4b8c-8f4d-9c7a1b9c3e4a.png"
+    >
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="theme.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=New+Rocker&display=swap"
+        rel="stylesheet"
+    >
 
     <style>
+
+        /* =========================================================
+           ROOT
+        ========================================================= */
+
         :root {
             --purple: #9b5cff;
+            --purple-soft: rgba(155, 92, 255, 0.18);
+
             --green: #39ff88;
-            --ink: #030405;
+            --green-soft: rgba(57, 255, 136, 0.16);
+
+            --black: #030405;
+            --panel: rgba(9, 10, 14, 0.88);
+            --panel-strong: rgba(12, 13, 18, 0.96);
+
+            --text: #f3f2f7;
+            --muted: #9695a0;
+            --border: rgba(255, 255, 255, 0.08);
+
+            --radius: 18px;
         }
+
+
+        /* =========================================================
+           RESET
+        ========================================================= */
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         html {
-            min-height: 100%;
-            background: var(--ink);
             scroll-behavior: smooth;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
-            font-family: Inter, sans-serif;
-            color: #e5e7eb;
+
+            font-family: "Inter", sans-serif;
+
+            color: var(--text);
+
             background:
                 radial-gradient(
-                    ellipse 800px 600px at 50% 18%,
-                    rgba(155,92,255,.13),
-                    transparent 66%
+                    circle at 15% 10%,
+                    rgba(155, 92, 255, 0.10),
+                    transparent 30%
                 ),
                 radial-gradient(
-                    ellipse 700px 520px at 50% 78%,
-                    rgba(57,255,136,.07),
-                    transparent 68%
+                    circle at 85% 80%,
+                    rgba(57, 255, 136, 0.06),
+                    transparent 28%
                 ),
                 #030405;
 
-            padding: 28px 18px 60px;
             overflow-x: hidden;
         }
 
-        ::selection {
-            background: rgba(155,92,255,.35);
-            color: #fff;
-        }
 
-        /* ---------------------------------------------------------
+        /* =========================================================
            BACKGROUND
-        --------------------------------------------------------- */
+        ========================================================= */
 
-        .background-grid {
+        body::before {
+            content: "";
+
             position: fixed;
             inset: 0;
+
             pointer-events: none;
-            z-index: 0;
-            opacity: .022;
 
             background-image:
-                linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px);
+                linear-gradient(
+                    rgba(255,255,255,0.018) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,0.018) 1px,
+                    transparent 1px
+                );
 
-            background-size: 42px 42px;
+            background-size: 48px 48px;
+
+            mask-image: linear-gradient(
+                to bottom,
+                black,
+                transparent 85%
+            );
+
+            z-index: -3;
         }
 
-        .noise {
+        body::after {
+            content: "";
+
             position: fixed;
             inset: 0;
+
             pointer-events: none;
-            z-index: 1;
-            opacity: .025;
 
-            background-image:
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background:
+                radial-gradient(
+                    ellipse at center,
+                    transparent 20%,
+                    rgba(0,0,0,0.72) 100%
+                );
+
+            z-index: -2;
         }
 
-        .wolf-bg {
-            position: fixed;
-            left: 50%;
-            top: 45%;
-            width: min(720px, 88vw);
 
-            transform: translate(-50%, -50%);
+        /* =========================================================
+           PAGE
+        ========================================================= */
 
-            opacity: .105;
-            pointer-events: none;
-            user-select: none;
-            z-index: 0;
-
-            filter:
-                drop-shadow(0 0 28px rgba(155,92,255,.28))
-                drop-shadow(0 0 48px rgba(57,255,136,.12));
-
-            animation: wolfBreath 8s ease-in-out infinite;
-        }
-
-        @keyframes wolfBreath {
-            0%,100% {
-                opacity: .085;
-                filter: drop-shadow(0 0 22px rgba(155,92,255,.2));
-            }
-
-            50% {
-                opacity: .125;
-                filter:
-                    drop-shadow(0 0 32px rgba(155,92,255,.3))
-                    drop-shadow(0 0 42px rgba(57,255,136,.12));
-            }
-        }
-
-        /* ---------------------------------------------------------
-           LAYOUT
-        --------------------------------------------------------- */
-
-        .hub {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 980px;
+        .page {
+            width: min(1180px, calc(100% - 40px));
             margin: 0 auto;
+
+            padding: 70px 0 90px;
         }
 
-        /* ---------------------------------------------------------
+
+        /* =========================================================
            HEADER
-        --------------------------------------------------------- */
+        ========================================================= */
 
         .hero {
+            position: relative;
+
             text-align: center;
-            padding: 28px 10px 24px;
+
+            padding: 35px 20px 65px;
+        }
+
+        .hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 420px;
+            height: 180px;
+
+            left: 50%;
+            top: 5px;
+
+            transform: translateX(-50%);
+
+            background:
+                radial-gradient(
+                    ellipse,
+                    rgba(155, 92, 255, 0.20),
+                    transparent 70%
+                );
+
+            filter: blur(25px);
+
+            pointer-events: none;
         }
 
         .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            position: relative;
 
-            color: #737987;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: .24em;
+            display: inline-block;
+
+            margin-bottom: 15px;
+
+            font-size: 12px;
+            font-weight: 800;
+
+            letter-spacing: 0.25em;
             text-transform: uppercase;
-        }
 
-        .eyebrow::before,
-        .eyebrow::after {
-            content: "";
-            width: 24px;
-            height: 1px;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(155,92,255,.65)
-            );
-        }
-
-        .eyebrow::after {
-            background: linear-gradient(
-                90deg,
-                rgba(57,255,136,.65),
-                transparent
-            );
-        }
-
-        .wolves-title {
-            margin: 10px 0 0;
-
-            font-family: "New Rocker", cursive;
-            font-size: clamp(44px, 7vw, 72px);
-            font-weight: 400;
-            letter-spacing: .015em;
-            line-height: 1;
-        }
-
-        .title-wolves {
             color: var(--green);
 
             text-shadow:
-                0 0 10px rgba(57,255,136,.5),
-                0 0 26px rgba(57,255,136,.22);
+                0 0 12px rgba(57,255,136,0.35);
         }
 
-        .title-rest {
-            color: var(--purple);
+        h1 {
+            position: relative;
+
+            font-family: "New Rocker", cursive;
+
+            font-size: clamp(42px, 7vw, 76px);
+
+            line-height: 0.95;
+
+            letter-spacing: 0.025em;
+
+            color: #ffffff;
 
             text-shadow:
-                0 0 12px rgba(155,92,255,.5),
-                0 0 28px rgba(155,92,255,.22);
+                0 0 12px rgba(155, 92, 255, 0.55),
+                0 0 38px rgba(155, 92, 255, 0.18);
         }
 
         .hero-description {
-            max-width: 590px;
-            margin: 17px auto 0;
+            position: relative;
 
-            color: #a9afbb;
-            font-size: 14px;
+            max-width: 650px;
+
+            margin: 22px auto 0;
+
+            color: #a8a7b2;
+
+            font-size: 16px;
             line-height: 1.7;
         }
 
-        .status-row {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 19px;
-        }
 
-        .status {
-            padding: 6px 10px;
-
-            border: 1px solid #24262e;
-            border-radius: 999px;
-
-            background: rgba(8,9,11,.55);
-
-            color: #727987;
-            font-size: 9px;
-            font-weight: 900;
-            letter-spacing: .12em;
-            text-transform: uppercase;
-        }
-
-        .status strong {
-            color: #dfe4ec;
-        }
-
-        /* ---------------------------------------------------------
-           TOOLBAR
-        --------------------------------------------------------- */
-
-        .toolbar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-
-            margin: 8px 0 30px;
-        }
-
-        .search-wrap {
-            position: relative;
-            flex: 1;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            color: #626976;
-            pointer-events: none;
-            font-size: 15px;
-        }
-
-        #toolSearch {
-            width: 100%;
-            height: 44px;
-
-            padding: 0 42px;
-
-            border: 1px solid #252830;
-            border-radius: 12px;
-
-            outline: none;
-
-            background: rgba(8,9,11,.82);
-
-            color: #fff;
-            font-family: inherit;
-            font-size: 13px;
-
-            transition:
-                border-color .2s ease,
-                box-shadow .2s ease,
-                background .2s ease;
-        }
-
-        #toolSearch::placeholder {
-            color: #5d6370;
-        }
-
-        #toolSearch:hover {
-            border-color: rgba(155,92,255,.38);
-        }
-
-        #toolSearch:focus {
-            border-color: rgba(155,92,255,.72);
-
-            background: rgba(10,11,15,.95);
-
-            box-shadow:
-                0 0 0 3px rgba(155,92,255,.1),
-                0 0 24px rgba(155,92,255,.12);
-        }
-
-        .search-shortcut {
-            position: absolute;
-            right: 11px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            padding: 3px 6px;
-
-            border: 1px solid #292c34;
-            border-radius: 5px;
-
-            color: #555b67;
-            font-size: 9px;
-            font-weight: 800;
-        }
-
-        .favorite-filter {
-            height: 44px;
-            padding: 0 15px;
-
-            border: 1px solid #292c34;
-            border-radius: 12px;
-
-            background: rgba(8,9,11,.82);
-
-            color: #858b97;
-            font-family: inherit;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-
-            cursor: pointer;
-
-            transition:
-                border-color .2s ease,
-                color .2s ease,
-                background .2s ease;
-        }
-
-        .favorite-filter:hover,
-        .favorite-filter.active {
-            color: #fff;
-            border-color: rgba(57,255,136,.45);
-            background: rgba(57,255,136,.06);
-        }
-
-        /* ---------------------------------------------------------
-           SECTIONS
-        --------------------------------------------------------- */
+        /* =========================================================
+           SECTION HEADERS
+        ========================================================= */
 
         .section {
-            margin-top: 32px;
+            margin-top: 25px;
         }
 
         .section-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
 
-            margin-bottom: 12px;
+            margin-bottom: 18px;
+            padding: 0 4px;
         }
 
         .section-title {
-            color: #e9edf4;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: .19em;
+            font-size: 13px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.16em;
+
             text-transform: uppercase;
-            white-space: nowrap;
+
+            color: #ffffff;
         }
 
         .section-line {
             flex: 1;
+
             height: 1px;
 
-            background: linear-gradient(
-                90deg,
-                rgba(155,92,255,.3),
-                rgba(57,255,136,.08),
-                transparent
-            );
+            margin-left: 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(155,92,255,0.35),
+                    transparent
+                );
         }
 
-        .section-note {
-            color: #535965;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
 
-        /* ---------------------------------------------------------
+        /* =========================================================
            FEATURED TOOLS
-        --------------------------------------------------------- */
+        ========================================================= */
 
         .featured-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 13px;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 20px;
         }
 
-        .featured-card {
-            position: relative;
-            min-height: 214px;
 
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-
-            overflow: hidden;
-
-            padding: 20px;
-
-            border: 1px solid #292b34;
-            border-radius: 18px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(18,19,24,.96),
-                    rgba(7,8,10,.97)
-                );
-
-            color: inherit;
-            text-decoration: none;
-
-            isolation: isolate;
-
-            transition:
-                transform .28s ease,
-                border-color .25s ease,
-                box-shadow .3s ease;
-        }
-
-        .featured-card::before {
-            content: "";
-
-            position: absolute;
-            inset: 0;
-
-            z-index: -2;
-
-            background:
-                radial-gradient(
-                    circle at 20% 15%,
-                    rgba(155,92,255,.18),
-                    transparent 48%
-                ),
-                radial-gradient(
-                    circle at 90% 90%,
-                    rgba(57,255,136,.07),
-                    transparent 45%
-                );
-
-            opacity: .8;
-        }
-
-        .featured-card::after {
-            content: "";
-
-            position: absolute;
-            inset: -1px;
-
-            z-index: -1;
-
-            background:
-                linear-gradient(
-                    120deg,
-                    transparent 25%,
-                    rgba(255,255,255,.07) 50%,
-                    transparent 75%
-                );
-
-            transform: translateX(-130%);
-        }
-
-        .featured-card:hover {
-            transform: translateY(-4px);
-
-            border-color: rgba(155,92,255,.62);
-
-            box-shadow:
-                0 0 0 1px rgba(155,92,255,.16),
-                0 20px 48px rgba(0,0,0,.42),
-                0 0 36px rgba(155,92,255,.16);
-        }
-
-        .featured-card:hover::after {
-            animation: shine .75s ease;
-        }
-
-        .featured-card.green:hover {
-            border-color: rgba(57,255,136,.58);
-
-            box-shadow:
-                0 0 0 1px rgba(57,255,136,.13),
-                0 20px 48px rgba(0,0,0,.42),
-                0 0 36px rgba(57,255,136,.12);
-        }
-
-        @keyframes shine {
-            to {
-                transform: translateX(130%);
-            }
-        }
-
-        .featured-icon {
-            width: 62px;
-            height: 62px;
-
-            margin-bottom: auto;
-
-            overflow: hidden;
-
-            border: 1px solid rgba(155,92,255,.38);
-            border-radius: 15px;
-
-            background: #08070b;
-
-            box-shadow:
-                0 0 22px rgba(155,92,255,.14);
-        }
-
-        .featured-card.green .featured-icon {
-            border-color: rgba(57,255,136,.34);
-
-            box-shadow:
-                0 0 22px rgba(57,255,136,.12);
-        }
-
-        .featured-icon img {
-            width: 100%;
-            height: 100%;
-
-            object-fit: cover;
-
-            display: block;
-        }
-
-        .featured-label {
-            margin-top: 20px;
-
-            color: var(--purple);
-            font-size: 9px;
-            font-weight: 900;
-            letter-spacing: .16em;
-            text-transform: uppercase;
-        }
-
-        .featured-card.green .featured-label {
-            color: var(--green);
-        }
-
-        .featured-name {
-            margin-top: 5px;
-
-            color: #fff;
-            font-size: 18px;
-            font-weight: 800;
-            line-height: 1.2;
-        }
-
-        .featured-description {
-            margin-top: 7px;
-
-            color: #858b97;
-            font-size: 11px;
-            line-height: 1.5;
-        }
-
-        /* ---------------------------------------------------------
-           STANDARD TOOLS
-        --------------------------------------------------------- */
+        /* =========================================================
+           TOOL GRID
+        ========================================================= */
 
         .tool-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 11px;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 20px;
         }
+
+
+        /* =========================================================
+           TOOL CARD
+        ========================================================= */
 
         .tool-card {
             position: relative;
 
             display: flex;
-            align-items: center;
-            gap: 13px;
+            flex-direction: column;
 
-            min-width: 0;
+            min-height: 285px;
 
-            padding: 12px;
+            padding: 25px;
 
-            border: 1px solid #252830;
-            border-radius: 14px;
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius);
 
             background:
                 linear-gradient(
                     145deg,
-                    rgba(14,15,19,.92),
-                    rgba(7,8,10,.94)
+                    rgba(16,17,23,0.96),
+                    rgba(6,7,10,0.96)
                 );
 
-            color: inherit;
             text-decoration: none;
-
-            transition:
-                transform .22s ease,
-                border-color .22s ease,
-                box-shadow .25s ease;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-2px);
-
-            border-color: rgba(155,92,255,.48);
-
-            box-shadow:
-                0 0 0 1px rgba(155,92,255,.1),
-                0 12px 30px rgba(0,0,0,.28);
-        }
-
-        .tool-card.green:hover {
-            border-color: rgba(57,255,136,.45);
-
-            box-shadow:
-                0 0 0 1px rgba(57,255,136,.09),
-                0 12px 30px rgba(0,0,0,.28);
-        }
-
-        .tool-icon {
-            width: 58px;
-            height: 58px;
-
-            flex: 0 0 58px;
 
             overflow: hidden;
 
-            border: 1px solid rgba(155,92,255,.25);
-            border-radius: 13px;
-
-            background: #08070b;
+            transition:
+                transform 180ms ease,
+                border-color 180ms ease,
+                box-shadow 180ms ease,
+                background 180ms ease;
         }
 
-        .tool-card.green .tool-icon {
-            border-color: rgba(57,255,136,.25);
+        .tool-card::before {
+            content: "";
+
+            position: absolute;
+
+            width: 180px;
+            height: 180px;
+
+            top: -90px;
+            right: -70px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(155,92,255,0.13),
+                    transparent 70%
+                );
+
+            pointer-events: none;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+
+            border-color:
+                rgba(155,92,255,0.42);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(20,19,29,0.98),
+                    rgba(7,8,11,0.98)
+                );
+
+            box-shadow:
+                0 18px 50px rgba(0,0,0,0.45),
+                0 0 35px rgba(155,92,255,0.08);
+        }
+
+
+        /* =========================================================
+           FEATURED CARD
+        ========================================================= */
+
+        .featured-card {
+            min-height: 345px;
+
+            padding: 28px;
+        }
+
+        .featured-card:nth-child(2)::before {
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(57,255,136,0.12),
+                    transparent 70%
+                );
+        }
+
+        .featured-card:nth-child(3)::before {
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(155,92,255,0.16),
+                    transparent 70%
+                );
+        }
+
+
+        /* =========================================================
+           ICONS
+        ========================================================= */
+
+        .tool-icon {
+            position: relative;
+
+            width: 76px;
+            height: 76px;
+
+            flex-shrink: 0;
+
+            margin-bottom: 25px;
+
+            border-radius: 16px;
+
+            border: 1px solid rgba(155,92,255,0.25);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(155,92,255,0.12),
+                    rgba(5,6,9,0.95)
+                );
+
+            overflow: hidden;
+
+            box-shadow:
+                inset 0 0 25px rgba(155,92,255,0.04);
+
+            transition:
+                border-color 180ms ease,
+                box-shadow 180ms ease,
+                transform 180ms ease;
+        }
+
+        .tool-card:hover .tool-icon {
+            border-color:
+                rgba(155,92,255,0.5);
+
+            box-shadow:
+                0 0 25px rgba(155,92,255,0.12);
         }
 
         .tool-icon img {
             width: 100%;
             height: 100%;
 
-            display: block;
-
             object-fit: cover;
+
+            display: block;
         }
 
-        .tool-info {
-            min-width: 0;
-            flex: 1;
-        }
 
-        .tool-category {
-            color: var(--purple);
+        /* =========================================================
+           TEXT SYMBOLS ICON
+        ========================================================= */
 
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-        }
-
-        .tool-card.green .tool-category {
-            color: var(--green);
-        }
-
-        .tool-name {
-            margin-top: 4px;
-
-            color: #f4f6f9;
-            font-size: 14px;
-            font-weight: 800;
-        }
-
-        .tool-description {
-            margin-top: 3px;
-
-            color: #737987;
-            font-size: 10px;
-            line-height: 1.45;
-        }
-
-        /* ---------------------------------------------------------
-           FAVORITE BUTTON
-        --------------------------------------------------------- */
-
-        .favorite {
-            position: absolute;
-            top: 9px;
-            right: 9px;
-
-            width: 27px;
-            height: 27px;
-
+        .symbols-icon {
             display: flex;
+
             align-items: center;
             justify-content: center;
 
-            border: 1px solid #292c34;
-            border-radius: 8px;
+            font-family:
+                "Times New Roman",
+                serif;
 
-            background: rgba(0,0,0,.32);
+            font-size: 38px;
 
-            color: #505662;
+            color: var(--purple);
 
-            cursor: pointer;
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(155,92,255,0.20),
+                    rgba(6,7,10,0.98) 70%
+                );
 
-            font-size: 13px;
+            text-shadow:
+                0 0 8px rgba(155,92,255,0.85),
+                0 0 22px rgba(155,92,255,0.35);
+        }
+
+        .symbols-icon span {
+            transform: translateY(-2px);
+
+            letter-spacing: -4px;
+        }
+
+        .tool-card:hover .symbols-icon {
+            color: var(--green);
+
+            border-color:
+                rgba(57,255,136,0.45);
+
+            text-shadow:
+                0 0 8px rgba(57,255,136,0.85),
+                0 0 22px rgba(57,255,136,0.30);
+        }
+
+
+        /* =========================================================
+           CARD CONTENT
+        ========================================================= */
+
+        .tool-name {
+            position: relative;
+
+            font-size: 21px;
+
+            font-weight: 800;
+
+            line-height: 1.2;
+
+            color: #ffffff;
+        }
+
+        .featured-card .tool-name {
+            font-size: 24px;
+        }
+
+        .tool-description {
+            position: relative;
+
+            margin-top: 11px;
+
+            max-width: 520px;
+
+            color: #a2a1ab;
+
+            font-size: 14px;
+
+            line-height: 1.65;
+        }
+
+        .tool-arrow {
+            position: absolute;
+
+            right: 24px;
+            bottom: 22px;
+
+            font-size: 20px;
+
+            color: #666570;
 
             transition:
-                color .18s ease,
-                border-color .18s ease,
-                background .18s ease,
-                transform .18s ease;
+                color 180ms ease,
+                transform 180ms ease;
         }
 
-        .favorite:hover {
-            color: #fff;
-            border-color: rgba(155,92,255,.45);
-            background: rgba(155,92,255,.08);
-            transform: scale(1.06);
-        }
-
-        .favorite.active {
+        .tool-card:hover .tool-arrow {
             color: var(--green);
-            border-color: rgba(57,255,136,.4);
-            background: rgba(57,255,136,.07);
+
+            transform: translateX(4px);
         }
 
-        /* ---------------------------------------------------------
-           ADVANCED
-        --------------------------------------------------------- */
 
-        .advanced {
-            opacity: .92;
-        }
+        /* =========================================================
+           FEATURED LABEL
+        ========================================================= */
 
-        .advanced .tool-card {
-            border-style: dashed;
-        }
+        .featured-label {
+            position: absolute;
 
-        .advanced-badge {
-            padding: 4px 7px;
+            top: 22px;
+            right: 22px;
 
-            border: 1px solid rgba(155,92,255,.25);
+            padding: 6px 10px;
+
+            border: 1px solid rgba(57,255,136,0.22);
+
             border-radius: 999px;
 
-            color: #777d89;
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-        }
+            background:
+                rgba(57,255,136,0.05);
 
-        /* ---------------------------------------------------------
-           EMPTY SEARCH
-        --------------------------------------------------------- */
+            color: var(--green);
 
-        .empty-state {
-            display: none;
+            font-size: 10px;
 
-            padding: 32px 20px;
-
-            border: 1px dashed #292c34;
-            border-radius: 14px;
-
-            color: #666c78;
-            text-align: center;
-            font-size: 12px;
-        }
-
-        .empty-state strong {
-            display: block;
-
-            margin-bottom: 5px;
-
-            color: #a8adb7;
-        }
-
-        /* ---------------------------------------------------------
-           FOOTER
-        --------------------------------------------------------- */
-
-        .footer {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-
-            margin-top: 38px;
-
-            color: #464b56;
-            font-size: 9px;
             font-weight: 800;
-            letter-spacing: .12em;
+
+            letter-spacing: 0.12em;
+
             text-transform: uppercase;
         }
 
-        .footer-dot {
-            color: #777d88;
+
+        /* =========================================================
+           ADVANCED
+        ========================================================= */
+
+        .advanced-card {
+            min-height: 240px;
         }
 
-        /* ---------------------------------------------------------
+        .advanced-card::before {
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(57,255,136,0.08),
+                    transparent 70%
+                );
+        }
+
+        .advanced-card:hover {
+            border-color:
+                rgba(57,255,136,0.35);
+
+            box-shadow:
+                0 18px 50px rgba(0,0,0,0.45),
+                0 0 30px rgba(57,255,136,0.06);
+        }
+
+        .advanced-card .tool-icon {
+            border-color:
+                rgba(57,255,136,0.20);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(57,255,136,0.10),
+                    rgba(5,6,9,0.95)
+                );
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+            padding-top: 65px;
+
+            text-align: center;
+
+            color: #55545d;
+
+            font-size: 12px;
+
+            letter-spacing: 0.04em;
+        }
+
+        footer span {
+            color: var(--purple);
+        }
+
+
+        /* =========================================================
            RESPONSIVE
-        --------------------------------------------------------- */
+        ========================================================= */
 
-        @media (max-width: 760px) {
-            body {
-                padding: 18px 12px 42px;
-            }
-
-            .hero {
-                padding-top: 18px;
-            }
+        @media (max-width: 850px) {
 
             .featured-grid {
                 grid-template-columns: 1fr;
             }
 
             .featured-card {
-                min-height: 175px;
+                min-height: 270px;
             }
 
             .tool-grid {
                 grid-template-columns: 1fr;
             }
+        }
 
-            .toolbar {
-                flex-direction: column;
-                align-items: stretch;
+
+        @media (max-width: 600px) {
+
+            .page {
+                width: min(100% - 26px, 600px);
+
+                padding-top: 40px;
             }
 
-            .favorite-filter {
-                width: 100%;
+            .hero {
+                padding-bottom: 45px;
             }
 
-            .wolf-bg {
-                width: 110vw;
-                opacity: .06;
+            h1 {
+                font-size: 48px;
             }
 
-            .section-note {
-                display: none;
+            .hero-description {
+                font-size: 14px;
+            }
+
+            .tool-card,
+            .featured-card {
+                min-height: 255px;
+
+                padding: 22px;
+            }
+
+            .tool-icon {
+                width: 68px;
+                height: 68px;
+            }
+
+            .tool-name {
+                font-size: 19px;
+            }
+
+            .featured-card .tool-name {
+                font-size: 22px;
             }
         }
 
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================= */
+
         @media (prefers-reduced-motion: reduce) {
+
+            html {
+                scroll-behavior: auto;
+            }
+
             *,
             *::before,
             *::after {
-                animation: none !important;
                 transition: none !important;
+                animation: none !important;
             }
         }
+
     </style>
 </head>
 
+
 <body>
 
-<div class="background-grid"></div>
-<div class="noise"></div>
+    <main class="page">
 
-<img
-    class="wolf-bg"
-    id="wolfBg"
-    src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
-    alt=""
-    aria-hidden="true"
->
+        <!-- =====================================================
+             HERO
+        ====================================================== -->
 
-<img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
-<img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
-<img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
+        <header class="hero">
 
-<main class="hub">
-
-    <!-- =====================================================
-         HERO
-    ====================================================== -->
-
-    <header class="hero">
-
-        <div class="eyebrow">
-            Wolves Utility Suite
-        </div>
-
-        <h1 class="wolves-title">
-            <span class="title-wolves">Wolves</span>
-            <span class="title-rest">Editing Tools</span>
-        </h1>
-
-        <p class="hero-description">
-            Browser-based tools for building, editing, texturing and styling
-            Wolves worlds — all in one place.
-        </p>
-
-        <div class="status-row">
-            <div class="status">
-                <strong>9</strong>&nbsp; Tools
+            <div class="eyebrow">
+                WOLVES CREATIVE TOOLKIT
             </div>
 
-            <div class="status">
-                <strong>100%</strong>&nbsp; Local
+            <h1>
+                Wolves Editing Tools
+            </h1>
+
+            <p class="hero-description">
+                A growing collection of tools and references built for
+                Wolves and anyone working with textures, tiles, names,
+                colors, and more.
+            </p>
+
+        </header>
+
+
+        <!-- =====================================================
+             FEATURED TOOLS
+        ====================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <div class="section-title">
+                    Core Tools
+                </div>
+
+                <div class="section-line"></div>
+
             </div>
 
-            <div class="status">
-                No Accounts
+
+            <div class="featured-grid">
+
+
+                <!-- ALBEDO -->
+
+                <a
+                    class="tool-card featured-card"
+                    href="albedo.html"
+                >
+
+                    <div class="featured-label">
+                        Primary
+                    </div>
+
+                    <div class="tool-icon">
+
+                        <img
+                            src="icons/tile.jpg"
+                            alt="Albedo Tile Calculator"
+                        >
+
+                    </div>
+
+                    <div class="tool-name">
+                        Albedo Tile Calculator
+                    </div>
+
+                    <div class="tool-description">
+                        Calculate wall tile dimensions and convert
+                        measurements quickly for your builds.
+                    </div>
+
+                    <div class="tool-arrow">
+                        →
+                    </div>
+
+                </a>
+
+
+                <!-- TILE PREVIEW -->
+
+                <a
+                    class="tool-card featured-card"
+                    href="tilepreview.html"
+                >
+
+                    <div class="featured-label">
+                        Primary
+                    </div>
+
+                    <div class="tool-icon">
+
+                        <img
+                            src="icons/tilepreview.jpg"
+                            alt="Tile Previewer"
+                        >
+
+                    </div>
+
+                    <div class="tool-name">
+                        Tile Previewer
+                    </div>
+
+                    <div class="tool-description">
+                        Preview tile layouts and see how textures
+                        and patterns will flow across a surface.
+                    </div>
+
+                    <div class="tool-arrow">
+                        →
+                    </div>
+
+                </a>
+
+
+                <!-- TEXTURE WORKSHOP -->
+
+                <a
+                    class="tool-card featured-card"
+                    href="textures.html"
+                >
+
+                    <div class="featured-label">
+                        Primary
+                    </div>
+
+                    <div class="tool-icon">
+
+                        <img
+                            src="icons/texture.jpg"
+                            alt="Texture Workshop"
+                        >
+
+                    </div>
+
+                    <div class="tool-name">
+                        Texture Workshop
+                    </div>
+
+                    <div class="tool-description">
+                        Work with textures, adjustments, previews,
+                        and useful editing tools in one place.
+                    </div>
+
+                    <div class="tool-arrow">
+                        →
+                    </div>
+
+                </a>
+
             </div>
 
-            <div class="status">
-                Files Stay Local
-            </div>
-        </div>
-
-    </header>
+        </section>
 
 
-    <!-- =====================================================
-         SEARCH
-    ====================================================== -->
+        <!-- =====================================================
+             BUILD & EDIT
+        ====================================================== -->
 
-    <div class="toolbar">
+        <section class="section">
 
-        <div class="search-wrap">
+            <div class="section-header">
 
-            <span class="search-icon">⌕</span>
+                <div class="section-title">
+                    Build &amp; Edit
+                </div>
 
-            <input
-                id="toolSearch"
-                type="search"
-                placeholder="Search tools..."
-                autocomplete="off"
-                spellcheck="false"
-            >
+                <div class="section-line"></div>
 
-            <span class="search-shortcut">/</span>
-
-        </div>
-
-        <button
-            id="favoriteFilter"
-            class="favorite-filter"
-            type="button"
-        >
-            ★ Favorites
-        </button>
-
-    </div>
-
-
-    <!-- =====================================================
-         FEATURED
-    ====================================================== -->
-
-    <section
-        class="section"
-        data-section="featured"
-    >
-
-        <div class="section-header">
-            <div class="section-title">
-                Featured Tools
             </div>
 
-            <div class="section-line"></div>
 
-            <div class="section-note">
-                Most useful
-            </div>
-        </div>
+            <div class="tool-grid">
 
 
-        <div class="featured-grid">
+                <!-- NAME TAGS -->
 
-            <!-- ALBEDO -->
+                <a
+                    class="tool-card"
+                    href="nametags.html"
+                >
 
-            <a
-                class="featured-card"
-                href="albedo.html"
-                data-tool
-                data-name="albedo tile calculator"
-                data-category="tiling"
-                data-id="albedo"
-            >
+                    <div class="tool-icon">
 
-                <div class="featured-icon">
-                    <img src="icons/tile.jpg" alt="">
-                </div>
+                        <img
+                            src="icons/tag.jpg"
+                            alt="Name Tag Gradients"
+                        >
 
-                <div class="featured-label">
-                    Tiling
-                </div>
-
-                <div class="featured-name">
-                    Albedo Tile Calculator
-                </div>
-
-                <div class="featured-description">
-                    Convert wall dimensions into matching albedo tile values.
-                </div>
-
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Albedo Tile Calculator"
-                    data-favorite="albedo"
-                >☆</button>
-
-            </a>
-
-
-            <!-- TILE PREVIEW -->
-
-            <a
-                class="featured-card"
-                href="tilepreview.html"
-                data-tool
-                data-name="tile preview texture preview"
-                data-category="tiling"
-                data-id="tilepreview"
-            >
-
-                <div class="featured-icon">
-                    <img src="icons/tilepreview.jpg" alt="">
-                </div>
-
-                <div class="featured-label">
-                    Tiling
-                </div>
-
-                <div class="featured-name">
-                    Tile Preview
-                </div>
-
-                <div class="featured-description">
-                    Preview exactly how a texture wraps across a custom wall.
-                </div>
-
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Tile Preview"
-                    data-favorite="tilepreview"
-                >☆</button>
-
-            </a>
-
-
-            <!-- TEXTURE WORKSHOP -->
-
-            <a
-                class="featured-card green"
-                href="textures.html"
-                data-tool
-                data-name="texture workshop resize convert normal map image"
-                data-category="textures"
-                data-id="textures"
-            >
-
-                <div class="featured-icon">
-                    <img src="icons/texture.jpg" alt="">
-                </div>
-
-                <div class="featured-label">
-                    Textures
-                </div>
-
-                <div class="featured-name">
-                    Texture Workshop
-                </div>
-
-                <div class="featured-description">
-                    Resize, convert, preview and create texture maps directly in your browser.
-                </div>
-
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Texture Workshop"
-                    data-favorite="textures"
-                >☆</button>
-
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         TEXTURE / TILING
-    ====================================================== -->
-
-    <section
-        class="section"
-        data-section="tools"
-    >
-
-        <div class="section-header">
-            <div class="section-title">
-                Build & Edit
-            </div>
-
-            <div class="section-line"></div>
-
-            <div class="section-note">
-                Everyday tools
-            </div>
-        </div>
-
-
-        <div class="tool-grid">
-
-            <a
-                class="tool-card"
-                href="nametags.html"
-                data-tool
-                data-name="name tag gradients names color tags"
-                data-category="names"
-                data-id="nametags"
-            >
-
-                <div class="tool-icon">
-                    <img src="icons/tag.jpg" alt="">
-                </div>
-
-                <div class="tool-info">
-                    <div class="tool-category">
-                        Names
                     </div>
 
                     <div class="tool-name">
@@ -1151,36 +953,31 @@
                     </div>
 
                     <div class="tool-description">
-                        Build smooth [color] codes for custom in-game name tags.
+                        Create colorful gradient combinations
+                        for names and labels.
                     </div>
-                </div>
 
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Name Tag Gradients"
-                    data-favorite="nametags"
-                >☆</button>
+                    <div class="tool-arrow">
+                        →
+                    </div>
 
-            </a>
+                </a>
 
 
-            <a
-                class="tool-card"
-                href="fancy.html"
-                data-tool
-                data-name="fancy text unicode font text generator"
-                data-category="text"
-                data-id="fancy"
-            >
+                <!-- FANCY TEXT -->
 
-                <div class="tool-icon">
-                    <img src="icons/fancy.jpg" alt="">
-                </div>
+                <a
+                    class="tool-card"
+                    href="fancy.html"
+                >
 
-                <div class="tool-info">
-                    <div class="tool-category">
-                        Text
+                    <div class="tool-icon">
+
+                        <img
+                            src="icons/fancy.jpg"
+                            alt="Fancy Text Generator"
+                        >
+
                     </div>
 
                     <div class="tool-name">
@@ -1188,39 +985,30 @@
                     </div>
 
                     <div class="tool-description">
-                        Turn normal text into copyable Unicode styles.
+                        Transform normal text into decorative
+                        Unicode styles for names and messages.
                     </div>
-                </div>
 
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Fancy Text Generator"
-                    data-favorite="fancy"
-                >☆</button>
+                    <div class="tool-arrow">
+                        →
+                    </div>
 
-            </a>
+                </a>
 
 
-            <a
-                class="tool-card"
-                href="symbols.html"
-                data-tool
-                data-name="text symbols symbols decorations faces animals music crosses"
-                data-category="text symbols"
-                data-id="symbols"
-            >
+                <!-- TEXT SYMBOLS -->
 
-                <div
-                    class="tool-icon symbol-icon"
-                    aria-hidden="true"
+                <a
+                    class="tool-card"
+                    href="symbols.html"
                 >
-                    ✦
-                </div>
 
-                <div class="tool-info">
-                    <div class="tool-category">
-                        Symbols
+                    <div class="tool-icon symbols-icon">
+
+                        <span>
+                            ✦✧
+                        </span>
+
                     </div>
 
                     <div class="tool-name">
@@ -1228,36 +1016,32 @@
                     </div>
 
                     <div class="tool-description">
-                        Browse hundreds of symbols, decorations, faces, animals and more.
+                        Browse and copy decorative symbols,
+                        characters, crosses, music, animals,
+                        and more.
                     </div>
-                </div>
 
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Text Symbols"
-                    data-favorite="symbols"
-                >☆</button>
+                    <div class="tool-arrow">
+                        →
+                    </div>
 
-            </a>
+                </a>
 
 
-            <a
-                class="tool-card"
-                href="colors.html"
-                data-tool
-                data-name="color codes color picker hex rgb hsl unity"
-                data-category="reference colors"
-                data-id="colors"
-            >
+                <!-- COLOR CODES -->
 
-                <div class="tool-icon">
-                    <img src="icons/color.jpg" alt="">
-                </div>
+                <a
+                    class="tool-card"
+                    href="colors.html"
+                >
 
-                <div class="tool-info">
-                    <div class="tool-category">
-                        Reference
+                    <div class="tool-icon">
+
+                        <img
+                            src="icons/color.jpg"
+                            alt="Color Codes"
+                        >
+
                     </div>
 
                     <div class="tool-name">
@@ -1265,36 +1049,31 @@
                     </div>
 
                     <div class="tool-description">
-                        Convert colors between hex, RGB, HSL, Unity and tag formats.
+                        Find, convert, and copy useful color
+                        values for your projects.
                     </div>
-                </div>
 
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Color Codes"
-                    data-favorite="colors"
-                >☆</button>
+                    <div class="tool-arrow">
+                        →
+                    </div>
 
-            </a>
+                </a>
 
 
-            <a
-                class="tool-card"
-                href="submeshes.html"
-                data-tool
-                data-name="submeshes props editor shop texture reference"
-                data-category="reference"
-                data-id="submeshes"
-            >
+                <!-- SUBMESHES -->
 
-                <div class="tool-icon">
-                    <img src="icons/mesh.jpg" alt="">
-                </div>
+                <a
+                    class="tool-card"
+                    href="submeshes.html"
+                >
 
-                <div class="tool-info">
-                    <div class="tool-category">
-                        Reference
+                    <div class="tool-icon">
+
+                        <img
+                            src="icons/mesh.jpg"
+                            alt="Submeshes"
+                        >
+
                     </div>
 
                     <div class="tool-name">
@@ -1302,64 +1081,55 @@
                     </div>
 
                     <div class="tool-description">
-                        Search available shop, editor, prop and texture references.
+                        Helpful references and tools for working
+                        with submesh-related assets.
                     </div>
-                </div>
 
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Submeshes"
-                    data-favorite="submeshes"
-                >☆</button>
+                    <div class="tool-arrow">
+                        →
+                    </div>
 
-            </a>
+                </a>
 
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         ADVANCED
-    ====================================================== -->
-
-    <section
-        class="section advanced"
-        data-section="advanced"
-    >
-
-        <div class="section-header">
-            <div class="section-title">
-                Advanced
             </div>
 
-            <div class="section-line"></div>
-
-            <div class="advanced-badge">
-                Power Users
-            </div>
-        </div>
+        </section>
 
 
-        <div class="tool-grid">
+        <!-- =====================================================
+             ADVANCED
+        ====================================================== -->
 
-            <a
-                class="tool-card"
-                href="gridsnap.html"
-                data-tool
-                data-name="grid snap calculator wall placement advanced unity"
-                data-category="advanced placement"
-                data-id="gridsnap"
-            >
+        <section class="section">
 
-                <div class="tool-icon">
-                    <img src="icons/gridsnap.jpg" alt="">
+            <div class="section-header">
+
+                <div class="section-title">
+                    Advanced
                 </div>
 
-                <div class="tool-info">
-                    <div class="tool-category">
-                        Advanced Placement
+                <div class="section-line"></div>
+
+            </div>
+
+
+            <div class="tool-grid">
+
+
+                <!-- GRID SNAP -->
+
+                <a
+                    class="tool-card advanced-card"
+                    href="gridsnap.html"
+                >
+
+                    <div class="tool-icon">
+
+                        <img
+                            src="icons/gridsnap.jpg"
+                            alt="Grid Snap Calculator"
+                        >
+
                     </div>
 
                     <div class="tool-name">
@@ -1367,351 +1137,30 @@
                     </div>
 
                     <div class="tool-description">
-                        Snap modular walls together using center positions and half-size math.
+                        Advanced grid and snapping calculations
+                        for more precise editing workflows.
                     </div>
-                </div>
 
-                <button
-                    class="favorite"
-                    type="button"
-                    aria-label="Favorite Grid Snap Calculator"
-                    data-favorite="gridsnap"
-                >☆</button>
+                    <div class="tool-arrow">
+                        →
+                    </div>
 
-            </a>
+                </a>
 
-        </div>
+            </div>
 
-    </section>
+        </section>
 
 
-    <!-- =====================================================
-         EMPTY SEARCH
-    ====================================================== -->
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
 
-    <div
-        id="emptyState"
-        class="empty-state"
-    >
-        <strong>No tools found</strong>
-        Try another search term.
-    </div>
+        <footer>
+            Built for <span>Wolves</span> · Wolves Editing Tools
+        </footer>
 
-
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
-
-    <footer class="footer">
-        <span>Wolves Editing Tools</span>
-        <span class="footer-dot">•</span>
-        <span>Runs locally in your browser</span>
-    </footer>
-
-</main>
-
-
-<script>
-
-    /* =========================================================
-       TOOL SEARCH
-    ========================================================= */
-
-    const search = document.getElementById("toolSearch");
-    const favoriteFilter = document.getElementById("favoriteFilter");
-    const emptyState = document.getElementById("emptyState");
-
-    let favoritesOnly = false;
-
-    const tools = [...document.querySelectorAll("[data-tool]")];
-
-    function getFavorites() {
-        try {
-            return JSON.parse(
-                localStorage.getItem("wolves-tool-favorites") || "[]"
-            );
-        } catch {
-            return [];
-        }
-    }
-
-    function setFavorites(list) {
-        localStorage.setItem(
-            "wolves-tool-favorites",
-            JSON.stringify(list)
-        );
-    }
-
-    function updateFavoriteButtons() {
-
-        const favorites = getFavorites();
-
-        document.querySelectorAll("[data-favorite]").forEach(button => {
-
-            const id = button.dataset.favorite;
-
-            const active = favorites.includes(id);
-
-            button.classList.toggle("active", active);
-            button.textContent = active ? "★" : "☆";
-
-        });
-    }
-
-    function filterTools() {
-
-        const query = search.value
-            .trim()
-            .toLowerCase();
-
-        let visible = 0;
-
-        tools.forEach(tool => {
-
-            const text = (
-                tool.dataset.name +
-                " " +
-                tool.dataset.category
-            ).toLowerCase();
-
-            const matchesSearch =
-                !query ||
-                text.includes(query);
-
-            const matchesFavorites =
-                !favoritesOnly ||
-                getFavorites().includes(tool.dataset.id);
-
-            const show =
-                matchesSearch &&
-                matchesFavorites;
-
-            tool.style.display = show ? "" : "none";
-
-            if (show) {
-                visible++;
-            }
-
-        });
-
-        emptyState.style.display =
-            visible === 0 ? "block" : "none";
-
-        document.querySelectorAll(".section").forEach(section => {
-
-            const visibleTools =
-                section.querySelectorAll(
-                    "[data-tool]:not([style*='display: none'])"
-                );
-
-            section.style.display =
-                visibleTools.length ? "" : "none";
-
-        });
-    }
-
-
-    /* =========================================================
-       FAVORITES
-    ========================================================= */
-
-    document.querySelectorAll("[data-favorite]").forEach(button => {
-
-        button.addEventListener("click", event => {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            const id = button.dataset.favorite;
-
-            let favorites = getFavorites();
-
-            if (favorites.includes(id)) {
-
-                favorites =
-                    favorites.filter(item => item !== id);
-
-            } else {
-
-                favorites.push(id);
-
-            }
-
-            setFavorites(favorites);
-
-            updateFavoriteButtons();
-            filterTools();
-
-        });
-
-    });
-
-
-    favoriteFilter.addEventListener("click", () => {
-
-        favoritesOnly = !favoritesOnly;
-
-        favoriteFilter.classList.toggle(
-            "active",
-            favoritesOnly
-        );
-
-        filterTools();
-
-    });
-
-
-    /* =========================================================
-       SEARCH
-    ========================================================= */
-
-    search.addEventListener("input", filterTools);
-
-    document.addEventListener("keydown", event => {
-
-        if (
-            event.key === "/" &&
-            document.activeElement !== search
-        ) {
-
-            event.preventDefault();
-
-            search.focus();
-
-        }
-
-        if (
-            event.key === "Escape" &&
-            document.activeElement === search
-        ) {
-
-            search.value = "";
-
-            filterTools();
-
-            search.blur();
-
-        }
-
-    });
-
-
-    /* =========================================================
-       RECENTLY USED
-    ========================================================= */
-
-    tools.forEach(tool => {
-
-        tool.addEventListener("click", () => {
-
-            const id = tool.dataset.id;
-
-            let recent = [];
-
-            try {
-                recent = JSON.parse(
-                    localStorage.getItem(
-                        "wolves-tool-recent"
-                    ) || "[]"
-                );
-            } catch {}
-
-            recent =
-                recent.filter(item => item !== id);
-
-            recent.unshift(id);
-
-            recent = recent.slice(0, 5);
-
-            localStorage.setItem(
-                "wolves-tool-recent",
-                JSON.stringify(recent)
-            );
-
-        });
-
-    });
-
-
-    /* =========================================================
-       WOLF PARALLAX
-    ========================================================= */
-
-    const wolfBg =
-        document.getElementById("wolfBg");
-
-    const reduce =
-        window.matchMedia(
-            "(prefers-reduced-motion: reduce)"
-        ).matches;
-
-    const canTilt =
-        window.matchMedia(
-            "(pointer:fine)"
-        ).matches && !reduce;
-
-    if (canTilt) {
-
-        window.addEventListener(
-            "pointermove",
-            event => {
-
-                if (event.pointerType !== "mouse")
-                    return;
-
-                const nx =
-                    event.clientX /
-                    window.innerWidth -
-                    0.5;
-
-                const ny =
-                    event.clientY /
-                    window.innerHeight -
-                    0.5;
-
-                if (wolfBg) {
-
-                    wolfBg.style.transform =
-                        "translate(calc(-50% + " +
-                        nx * 22 +
-                        "px), calc(-50% + " +
-                        ny * 15 +
-                        "px))";
-
-                }
-
-                document
-                    .querySelectorAll(".pack-wolf")
-                    .forEach(el => {
-
-                        const strength =
-                            parseFloat(
-                                el.dataset.parallax || 18
-                            );
-
-                        el.style.transform =
-                            "translate(" +
-                            nx * strength +
-                            "px, " +
-                            ny * strength * .7 +
-                            "px)";
-
-                    });
-
-            }
-        );
-
-    }
-
-
-    /* =========================================================
-       INITIALIZE
-    ========================================================= */
-
-    updateFavoriteButtons();
-    filterTools();
-
-</script>
+    </main>
 
 </body>
 </html>
