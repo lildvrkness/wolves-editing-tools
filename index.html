@@ -8,22 +8,16 @@
 
     <meta
         name="description"
-        content="A growing collection of tools and references built for Wolves and others."
+        content="A growing set of tools and references built for Wolves and others."
     >
 
-    <!-- Favicon -->
     <link
         rel="icon"
         href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
     >
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=New+Rocker&display=swap"
@@ -31,35 +25,26 @@
     >
 
     <style>
-
-        /* =========================================================
-           VARIABLES
-        ========================================================= */
-
         :root {
             --purple: #9b5cff;
             --purple-bright: #b783ff;
             --green: #39ff88;
 
             --black: #030405;
+            --panel: rgba(10, 11, 16, 0.82);
+            --panel-hover: rgba(15, 16, 23, 0.92);
 
             --white: #f5f3fa;
             --muted: #9997a4;
 
             --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
 
-            --radius: 18px;
+            --radius: 20px;
         }
-
-
-        /* =========================================================
-           RESET
-        ========================================================= */
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         html {
@@ -67,29 +52,41 @@
         }
 
         body {
+            margin: 0;
             min-height: 100vh;
-
-            font-family: "Inter", sans-serif;
-
-            color: var(--white);
-
             background: var(--black);
-
+            color: var(--white);
+            font-family: "Inter", sans-serif;
             overflow-x: hidden;
         }
 
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
         /* =========================================================
-           WOLF BACKGROUND
+           BACKGROUND
         ========================================================= */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: -20;
+            pointer-events: none;
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(155, 92, 255, 0.08),
+                    transparent 42%
+                ),
+                #030405;
+        }
 
         .wolf-background {
             position: fixed;
-
             inset: 0;
-
             z-index: -10;
-
             pointer-events: none;
 
             background-image:
@@ -102,114 +99,68 @@
                 url("https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png");
 
             background-repeat: no-repeat;
+            background-position: center, center 25px;
+            background-size: cover, min(900px, 78vw);
 
-            background-position:
-                center,
-                center 25px;
+            opacity: 0.35;
 
-            background-size:
-                cover,
-                min(900px, 78vw);
-
-            opacity: 0.27;
-
-           filter: 
-               contrast(1.08) 
-               saturate(1.25);
+            /* Keep original wolf colors */
+            filter: contrast(1.08) saturate(1.25);
 
             mix-blend-mode: screen;
         }
 
-
-        /* =========================================================
-           AMBIENT LIGHT
-        ========================================================= */
-
         .ambient-purple {
             position: fixed;
-
-            width: 560px;
-            height: 560px;
-
-            top: -260px;
+            width: 500px;
+            height: 500px;
+            top: -220px;
             left: -180px;
-
             border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(155, 92, 255, 0.16),
-                    transparent 70%
-                );
-
-            filter: blur(35px);
-
+            background: rgba(155, 92, 255, 0.09);
+            filter: blur(100px);
             pointer-events: none;
-
-            z-index: -8;
+            z-index: -5;
         }
 
         .ambient-green {
             position: fixed;
-
-            width: 520px;
-            height: 520px;
-
-            right: -200px;
-            bottom: -260px;
-
+            width: 450px;
+            height: 450px;
+            right: -180px;
+            top: 30%;
             border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(57, 255, 136, 0.075),
-                    transparent 70%
-                );
-
-            filter: blur(40px);
-
+            background: rgba(57, 255, 136, 0.045);
+            filter: blur(110px);
             pointer-events: none;
-
-            z-index: -8;
+            z-index: -5;
         }
-
-
-        /* =========================================================
-           BACKGROUND GRID
-        ========================================================= */
 
         .grid-overlay {
             position: fixed;
-
             inset: 0;
-
+            z-index: -4;
             pointer-events: none;
-
-            z-index: -6;
 
             background-image:
                 linear-gradient(
-                    rgba(255, 255, 255, 0.017) 1px,
+                    rgba(255,255,255,0.018) 1px,
                     transparent 1px
                 ),
                 linear-gradient(
                     90deg,
-                    rgba(255, 255, 255, 0.017) 1px,
+                    rgba(255,255,255,0.018) 1px,
                     transparent 1px
                 );
 
-            background-size: 48px 48px;
+            background-size: 70px 70px;
 
-            mask-image:
-                linear-gradient(
-                    to bottom,
-                    black,
-                    transparent 95%
-                );
+            mask-image: linear-gradient(
+                to bottom,
+                black,
+                transparent 75%
+            );
         }
-
 
         /* =========================================================
            CURSOR GLOW
@@ -217,7 +168,6 @@
 
         .cursor-glow {
             position: fixed;
-
             width: 280px;
             height: 280px;
 
@@ -225,7 +175,6 @@
             top: 0;
 
             border-radius: 50%;
-
             pointer-events: none;
 
             z-index: 1000;
@@ -245,13 +194,10 @@
                 );
 
             filter: blur(4px);
-
-            transition:
-                transform 70ms linear;
+            transition: transform 70ms linear;
 
             mix-blend-mode: screen;
         }
-
 
         /* =========================================================
            PAGE
@@ -259,12 +205,9 @@
 
         .page {
             width: min(1180px, calc(100% - 40px));
-
             margin: 0 auto;
-
-            padding: 65px 0 85px;
+            padding: 72px 0 40px;
         }
-
 
         /* =========================================================
            HERO
@@ -272,530 +215,494 @@
 
         .hero {
             position: relative;
-
             text-align: center;
-
-            padding:
-                35px 20px 65px;
+            padding: 18px 20px 70px;
         }
 
-        .hero-glow {
+        .hero::after {
+            content: "";
             position: absolute;
-
-            width: 650px;
-            height: 260px;
-
-            top: -10px;
+            width: 420px;
+            height: 120px;
             left: 50%;
-
+            bottom: 20px;
             transform: translateX(-50%);
 
             background:
                 radial-gradient(
                     ellipse,
-                    rgba(155, 92, 255, 0.16),
+                    rgba(155, 92, 255, 0.12),
                     transparent 70%
                 );
 
-            filter: blur(32px);
-
+            filter: blur(25px);
             pointer-events: none;
         }
 
-
-        /* =========================================================
-           BRAND
-        ========================================================= */
-
         .brand {
-            position: relative;
+            margin: 0;
 
-            display: inline-block;
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 12px;
 
             font-family: "New Rocker", cursive;
-
-            font-size:
-                clamp(46px, 7vw, 78px);
-
+            font-size: clamp(42px, 7vw, 76px);
             line-height: 0.95;
+            letter-spacing: 1px;
 
-            letter-spacing: 0.025em;
+            text-shadow:
+                0 0 25px rgba(155, 92, 255, 0.16),
+                0 0 45px rgba(57, 255, 136, 0.05);
         }
 
         .brand-wolves {
-            color: var(--purple);
-
-            text-shadow:
-                0 0 10px rgba(155, 92, 255, 0.70),
-                0 0 28px rgba(155, 92, 255, 0.30),
-                0 0 60px rgba(155, 92, 255, 0.10);
+            color: var(--purple-bright);
         }
 
         .brand-tools {
             color: var(--green);
-
-            text-shadow:
-                0 0 10px rgba(57, 255, 136, 0.55),
-                0 0 28px rgba(57, 255, 136, 0.22),
-                0 0 55px rgba(57, 255, 136, 0.08);
         }
 
-
-        /* =========================================================
-           HERO DESCRIPTION
-        ========================================================= */
-
         .hero-description {
-            position: relative;
+            max-width: 650px;
+            margin: 24px auto 22px;
 
-            max-width: 680px;
-
-            margin:
-                22px auto 18px;
-
-            color: #aaa8b4;
-
+            color: var(--muted);
             font-size: 15px;
-
             line-height: 1.7;
         }
 
-
-        /* =========================================================
-           LOCAL STATUS
-        ========================================================= */
-
         .local-status {
-            position: relative;
-
             display: inline-flex;
-
             align-items: center;
-
             gap: 8px;
 
-            padding:
-                7px 13px;
+            padding: 8px 13px;
 
-            border:
-                1px solid rgba(57, 255, 136, 0.17);
-
+            border: 1px solid rgba(57, 255, 136, 0.16);
             border-radius: 999px;
 
-            background:
-                rgba(57, 255, 136, 0.035);
+            background: rgba(8, 15, 11, 0.62);
 
-            color:
-                rgba(57, 255, 136, 0.80);
+            color: #c7d7ce;
+            font-size: 12px;
+            font-weight: 600;
 
-            font-size: 10px;
-
-            font-weight: 800;
-
-            letter-spacing: 0.13em;
-
-            text-transform: uppercase;
+            box-shadow:
+                0 0 20px rgba(57, 255, 136, 0.035);
         }
 
         .local-dot {
-            width: 6px;
-            height: 6px;
-
-            flex-shrink: 0;
-
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-
             background: var(--green);
 
             box-shadow:
-                0 0 8px rgba(57, 255, 136, 0.85);
+                0 0 8px rgba(57, 255, 136, 0.7);
         }
 
-
         /* =========================================================
-           SECTIONS
+           SECTION HEADERS
         ========================================================= */
 
         .section {
-            margin-top: 25px;
+            margin-top: 20px;
         }
 
-        .section-header {
-            display: flex;
+        .section + .section {
+            margin-top: 58px;
+        }
 
-            align-items: center;
-
-            margin-bottom: 18px;
-
-            padding: 0 4px;
+        .section-heading {
+            margin-bottom: 20px;
         }
 
         .section-title {
-            flex-shrink: 0;
-
-            color: #ffffff;
+            margin: 0;
 
             font-size: 13px;
-
             font-weight: 800;
-
-            letter-spacing: 0.16em;
-
+            letter-spacing: 0.18em;
             text-transform: uppercase;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .section-line {
+        .section-title::after {
+            content: "";
             flex: 1;
-
             height: 1px;
-
-            margin-left: 20px;
 
             background:
                 linear-gradient(
                     90deg,
-                    rgba(155, 92, 255, 0.40),
+                    rgba(155, 92, 255, 0.35),
+                    rgba(57, 255, 136, 0.08),
                     transparent
                 );
         }
 
-
-        /* =========================================================
-           GRIDS
-        ========================================================= */
-
-        .featured-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, minmax(0, 1fr));
-
-            gap: 20px;
+        .section-title .purple {
+            color: var(--purple-bright);
         }
 
-        .tool-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 20px;
+        .section-title .green {
+            color: var(--green);
         }
 
+        .section-subtitle {
+            margin: 7px 0 0;
+
+            color: #777582;
+            font-size: 12px;
+        }
 
         /* =========================================================
-           TOOL CARD
+           CORE TOOLS
         ========================================================= */
 
-        .tool-card {
+        .core-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .core-card {
             position: relative;
+            min-height: 275px;
+
+            padding: 26px;
 
             display: flex;
-
             flex-direction: column;
+            justify-content: space-between;
 
-            min-height: 285px;
+            overflow: hidden;
 
-            padding: 25px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius:
-                var(--radius);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
 
             background:
                 linear-gradient(
                     145deg,
-                    rgba(15, 16, 22, 0.94),
-                    rgba(5, 6, 9, 0.96)
+                    rgba(20, 19, 29, 0.86),
+                    rgba(7, 8, 11, 0.88)
                 );
 
-            text-decoration: none;
-
-            overflow: hidden;
+            box-shadow:
+                0 18px 50px rgba(0, 0, 0, 0.24);
 
             transition:
-                transform 180ms ease,
-                border-color 180ms ease,
-                box-shadow 180ms ease,
-                background 180ms ease;
+                transform 220ms ease,
+                border-color 220ms ease,
+                box-shadow 220ms ease,
+                background 220ms ease;
+        }
+
+        .core-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--accent),
+                    transparent
+                );
+
+            opacity: 0.5;
+        }
+
+        .core-card::after {
+            content: "";
+            position: absolute;
+
+            width: 180px;
+            height: 180px;
+
+            right: -80px;
+            bottom: -90px;
+
+            border-radius: 50%;
+
+            background: var(--accent);
+            opacity: 0.045;
+            filter: blur(40px);
+
+            transition: opacity 220ms ease;
+        }
+
+        .core-card:hover {
+            transform: translateY(-6px);
+
+            border-color: color-mix(
+                in srgb,
+                var(--accent) 35%,
+                rgba(255,255,255,0.12)
+            );
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(22, 21, 31, 0.94),
+                    rgba(8, 9, 13, 0.94)
+                );
+
+            box-shadow:
+                0 20px 55px rgba(0, 0, 0, 0.34),
+                0 0 35px color-mix(
+                    in srgb,
+                    var(--accent) 9%,
+                    transparent
+                );
+        }
+
+        .core-card:hover::after {
+            opacity: 0.09;
+        }
+
+        .accent-purple {
+            --accent: var(--purple);
+        }
+
+        .accent-green {
+            --accent: var(--green);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .tool-icon {
+            width: 72px;
+            height: 72px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,0.06),
+                    rgba(255,255,255,0.018)
+                );
+
+            border: 1px solid rgba(255,255,255,0.07);
+
+            box-shadow:
+                inset 0 1px rgba(255,255,255,0.04);
+
+            overflow: hidden;
+        }
+
+        .tool-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .symbols-icon {
+            font-size: 29px;
+            letter-spacing: -5px;
+            color: var(--green);
+
+            text-shadow:
+                0 0 16px rgba(57, 255, 136, 0.45);
+        }
+
+        .primary-label {
+            padding: 6px 9px;
+
+            border-radius: 999px;
+
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+
+            color: var(--accent);
+
+            background:
+                color-mix(
+                    in srgb,
+                    var(--accent) 8%,
+                    transparent
+                );
+
+            border: 1px solid
+                color-mix(
+                    in srgb,
+                    var(--accent) 17%,
+                    transparent
+                );
+        }
+
+        .core-card h3 {
+            margin: 22px 0 8px;
+
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .core-card p {
+            margin: 0;
+
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .open-tool {
+            margin-top: 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            color: var(--accent);
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .arrow {
+            transition: transform 180ms ease;
+        }
+
+        .core-card:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        /* =========================================================
+           SECONDARY TOOLS
+        ========================================================= */
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .tool-card {
+            position: relative;
+
+            min-height: 112px;
+            padding: 18px;
+
+            display: flex;
+            align-items: center;
+            gap: 17px;
+
+            border: 1px solid var(--border);
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(12, 13, 18, 0.82),
+                    rgba(6, 7, 10, 0.88)
+                );
+
+            transition:
+                transform 200ms ease,
+                border-color 200ms ease,
+                background 200ms ease,
+                box-shadow 200ms ease;
+
+            overflow: hidden;
         }
 
         .tool-card::before {
             content: "";
 
             position: absolute;
+            left: 0;
+            top: 18px;
+            bottom: 18px;
 
-            width: 200px;
-            height: 200px;
+            width: 2px;
 
-            top: -110px;
-            right: -80px;
+            background: var(--accent);
 
-            border-radius: 50%;
+            box-shadow:
+                0 0 12px var(--accent);
 
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(155, 92, 255, 0.13),
-                    transparent 70%
-                );
-
-            pointer-events: none;
+            opacity: 0.65;
         }
 
         .tool-card:hover {
-            transform:
-                translateY(-5px);
+            transform: translateY(-3px);
 
             border-color:
-                rgba(155, 92, 255, 0.42);
+                color-mix(
+                    in srgb,
+                    var(--accent) 25%,
+                    rgba(255,255,255,0.08)
+                );
 
             background:
                 linear-gradient(
                     145deg,
-                    rgba(17, 17, 25, 0.97),
-                    rgba(5, 6, 9, 0.98)
+                    rgba(17, 18, 24, 0.92),
+                    rgba(7, 8, 11, 0.94)
                 );
 
             box-shadow:
-                0 18px 50px rgba(0, 0, 0, 0.45),
-                0 0 35px rgba(155, 92, 255, 0.08);
+                0 12px 35px rgba(0,0,0,0.25),
+                0 0 24px
+                    color-mix(
+                        in srgb,
+                        var(--accent) 5%,
+                        transparent
+                    );
         }
 
-
-        /* =========================================================
-           FEATURED CARDS
-        ========================================================= */
-
-        .featured-card {
-            min-height: 345px;
-
-            padding: 28px;
+        .tool-card .tool-icon {
+            flex: 0 0 60px;
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
         }
 
-        .featured-card:nth-child(2)::before {
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(57, 255, 136, 0.11),
-                    transparent 70%
-                );
+        .tool-info {
+            min-width: 0;
+            flex: 1;
         }
 
-        .featured-card:nth-child(3)::before {
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(155, 92, 255, 0.16),
-                    transparent 70%
-                );
+        .tool-info h3 {
+            margin: 0 0 5px;
+
+            font-size: 15px;
+            font-weight: 700;
         }
 
+        .tool-info p {
+            margin: 0;
 
-        /* =========================================================
-           PRIMARY LABEL
-        ========================================================= */
-
-        .featured-label {
-            position: absolute;
-
-            top: 22px;
-            right: 22px;
-
-            padding:
-                6px 10px;
-
-            border:
-                1px solid rgba(57, 255, 136, 0.22);
-
-            border-radius: 999px;
-
-            background:
-                rgba(57, 255, 136, 0.045);
-
-            color:
-                var(--green);
-
-            font-size: 9px;
-
-            font-weight: 800;
-
-            letter-spacing: 0.13em;
-
-            text-transform: uppercase;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
         }
-
-
-        /* =========================================================
-           TOOL ICON
-        ========================================================= */
-
-        .tool-icon {
-            position: relative;
-
-            width: 76px;
-            height: 76px;
-
-            flex-shrink: 0;
-
-            margin-bottom: 25px;
-
-            border:
-                1px solid rgba(155, 92, 255, 0.25);
-
-            border-radius: 16px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(155, 92, 255, 0.12),
-                    rgba(5, 6, 9, 0.96)
-                );
-
-            overflow: hidden;
-
-            box-shadow:
-                inset 0 0 25px
-                rgba(155, 92, 255, 0.04);
-
-            transition:
-                border-color 180ms ease,
-                box-shadow 180ms ease;
-        }
-
-        .tool-card:hover .tool-icon {
-            border-color:
-                rgba(155, 92, 255, 0.50);
-
-            box-shadow:
-                0 0 25px
-                rgba(155, 92, 255, 0.12);
-        }
-
-        .tool-icon img {
-            display: block;
-
-            width: 100%;
-            height: 100%;
-
-            object-fit: cover;
-        }
-
-
-        /* =========================================================
-           TEXT SYMBOLS ICON
-        ========================================================= */
-
-        .symbols-icon {
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            font-family:
-                "Times New Roman",
-                serif;
-
-            font-size: 38px;
-
-            color:
-                var(--purple);
-
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(155, 92, 255, 0.20),
-                    rgba(6, 7, 10, 0.98) 70%
-                );
-
-            text-shadow:
-                0 0 8px rgba(155, 92, 255, 0.85),
-                0 0 22px rgba(155, 92, 255, 0.35);
-        }
-
-        .symbols-icon span {
-            transform:
-                translateY(-2px);
-
-            letter-spacing:
-                -4px;
-        }
-
-        .tool-card:hover .symbols-icon {
-            color:
-                var(--green);
-
-            border-color:
-                rgba(57, 255, 136, 0.45);
-
-            text-shadow:
-                0 0 8px rgba(57, 255, 136, 0.85),
-                0 0 22px rgba(57, 255, 136, 0.30);
-        }
-
-
-        /* =========================================================
-           CARD TEXT
-        ========================================================= */
-
-        .tool-name {
-            position: relative;
-
-            color:
-                #ffffff;
-
-            font-size:
-                21px;
-
-            font-weight:
-                800;
-
-            line-height:
-                1.2;
-        }
-
-        .featured-card .tool-name {
-            font-size:
-                24px;
-        }
-
-        .tool-description {
-            position: relative;
-
-            max-width:
-                520px;
-
-            margin-top:
-                11px;
-
-            color:
-                #a2a1ab;
-
-            font-size:
-                14px;
-
-            line-height:
-                1.65;
-        }
-
-
-        /* =========================================================
-           CARD ARROW
-        ========================================================= */
 
         .tool-arrow {
-            position: absolute;
-
-            right: 24px;
-            bottom: 22px;
-
-            color:
-                #62616c;
-
-            font-size:
-                20px;
+            color: #65636e;
+            font-size: 18px;
 
             transition:
                 color 180ms ease,
@@ -803,206 +710,134 @@
         }
 
         .tool-card:hover .tool-arrow {
-            color:
-                var(--green);
-
-            transform:
-                translateX(4px);
+            color: var(--accent);
+            transform: translateX(3px);
         }
-
 
         /* =========================================================
            ADVANCED
         ========================================================= */
 
         .advanced-card {
-            min-height:
-                240px;
+            max-width: 580px;
         }
-
-        .advanced-card::before {
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(57, 255, 136, 0.08),
-                    transparent 70%
-                );
-        }
-
-        .advanced-card:hover {
-            border-color:
-                rgba(57, 255, 136, 0.35);
-
-            box-shadow:
-                0 18px 50px rgba(0, 0, 0, 0.45),
-                0 0 30px rgba(57, 255, 136, 0.06);
-        }
-
 
         /* =========================================================
            FOOTER
         ========================================================= */
 
         footer {
-            padding-top:
-                65px;
+            margin-top: 70px;
+            padding: 28px 0 8px;
 
-            text-align:
-                center;
+            border-top: 1px solid rgba(255,255,255,0.06);
 
-            color:
-                #55545d;
-
-            font-size:
-                12px;
-
-            letter-spacing:
-                0.04em;
+            text-align: center;
         }
 
-        footer span {
-            color:
-                var(--purple);
+        .footer-brand {
+            margin-bottom: 7px;
+
+            font-family: "New Rocker", cursive;
+            font-size: 17px;
+            letter-spacing: 0.5px;
         }
 
+        .footer-purple {
+            color: var(--purple-bright);
+        }
+
+        .footer-green {
+            color: var(--green);
+        }
+
+        .footer-text {
+            color: #686671;
+            font-size: 11px;
+        }
+
+        .footer-divider {
+            display: inline-block;
+            margin: 0 7px;
+            color: #3e3d46;
+        }
 
         /* =========================================================
            RESPONSIVE
         ========================================================= */
 
         @media (max-width: 850px) {
-
-            .featured-grid {
-                grid-template-columns:
-                    1fr;
+            .core-grid {
+                grid-template-columns: 1fr;
             }
 
-            .featured-card {
-                min-height:
-                    280px;
-            }
-
-            .tool-grid {
-                grid-template-columns:
-                    1fr;
+            .core-card {
+                min-height: 235px;
             }
         }
 
-
-        @media (max-width: 600px) {
-
+        @media (max-width: 650px) {
             .page {
-                width:
-                    calc(100% - 26px);
-
-                padding-top:
-                    40px;
+                width: min(100% - 24px, 1180px);
+                padding-top: 45px;
             }
 
             .hero {
-                padding:
-                    30px 10px 45px;
+                padding-bottom: 50px;
             }
 
             .brand {
-                font-size:
-                    49px;
+                font-size: 42px;
+                gap: 6px;
             }
 
             .hero-description {
-                font-size:
-                    14px;
+                font-size: 13px;
             }
 
-            .wolf-background {
-                background-size:
-                    cover,
-                    650px;
+            .tools-grid {
+                grid-template-columns: 1fr;
             }
 
-            .tool-card,
-            .featured-card {
-                min-height:
-                    255px;
-
-                padding:
-                    22px;
+            .section + .section {
+                margin-top: 44px;
             }
 
-            .tool-icon {
-                width:
-                    68px;
-
-                height:
-                    68px;
-            }
-
-            .tool-name {
-                font-size:
-                    19px;
-            }
-
-            .featured-card .tool-name {
-                font-size:
-                    22px;
+            .core-card {
+                padding: 21px;
             }
         }
 
-
-        /* =========================================================
-           REDUCED MOTION
-        ========================================================= */
-
         @media (prefers-reduced-motion: reduce) {
-
             html {
-                scroll-behavior:
-                    auto;
+                scroll-behavior: auto;
             }
 
             *,
             *::before,
             *::after {
-                transition:
-                    none !important;
-
-                animation:
-                    none !important;
+                transition-duration: 0.01ms !important;
             }
 
             .cursor-glow {
-                display:
-                    none;
+                display: none;
             }
         }
-
     </style>
 </head>
 
-
 <body>
 
-    <!-- =========================================================
-         BACKGROUND
-    ========================================================= -->
-
+    <div class="background"></div>
     <div class="wolf-background"></div>
 
     <div class="ambient-purple"></div>
-
     <div class="ambient-green"></div>
-
     <div class="grid-overlay"></div>
 
     <div class="cursor-glow"></div>
 
-
-    <!-- =========================================================
-         PAGE
-    ========================================================= -->
-
     <main class="page">
-
 
         <!-- =====================================================
              HERO
@@ -1010,38 +845,22 @@
 
         <header class="hero">
 
-            <div class="hero-glow"></div>
-
             <h1 class="brand">
-
-                <span class="brand-wolves">
-                    Wolves
-                </span>
-
-                <span class="brand-tools">
-                    Editing Tools
-                </span>
-
+                <span class="brand-wolves">Wolves</span>
+                <span class="brand-tools">Editing Tools</span>
             </h1>
-
 
             <p class="hero-description">
                 A growing collection of tools and references built for
                 Wolves and anyone working with textures, tiles, names,
-                colors, and more.
+                symbols, and more.
             </p>
 
-
             <div class="local-status">
-
                 <span class="local-dot"></span>
-
                 100% Local
-
                 <span>•</span>
-
                 No Uploads
-
             </div>
 
         </header>
@@ -1053,51 +872,59 @@
 
         <section class="section">
 
-            <div class="section-header">
+            <div class="section-heading">
 
-                <div class="section-title">
-                    Core Tools
-                </div>
+                <h2 class="section-title">
+                    <span class="purple">Core Tools</span>
+                </h2>
 
-                <div class="section-line"></div>
+                <p class="section-subtitle">
+                    The tools you'll use most.
+                </p>
 
             </div>
 
 
-            <div class="featured-grid">
-
+            <div class="core-grid">
 
                 <!-- ALBEDO -->
 
                 <a
-                    class="tool-card featured-card"
                     href="albedo.html"
+                    class="core-card accent-purple"
                 >
 
-                    <div class="featured-label">
-                        Primary
+                    <div>
+
+                        <div class="card-top">
+
+                            <div class="tool-icon">
+                                <img
+                                    src="icons/tile.jpg"
+                                    alt=""
+                                >
+                            </div>
+
+                            <span class="primary-label">
+                                Primary
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Albedo Tile Calculator
+                        </h3>
+
+                        <p>
+                            Calculate texture tile dimensions
+                            quickly and accurately.
+                        </p>
+
                     </div>
 
-                    <div class="tool-icon">
-
-                        <img
-                            src="icons/tile.jpg"
-                            alt="Albedo Tile Calculator"
-                        >
-
-                    </div>
-
-                    <div class="tool-name">
-                        Albedo Tile Calculator
-                    </div>
-
-                    <div class="tool-description">
-                        Calculate wall tile dimensions and convert
-                        measurements quickly for your builds.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
+                    <div class="open-tool">
+                        Open Tool
+                        <span class="arrow">→</span>
                     </div>
 
                 </a>
@@ -1106,34 +933,41 @@
                 <!-- TILE PREVIEW -->
 
                 <a
-                    class="tool-card featured-card"
                     href="tilepreview.html"
+                    class="core-card accent-green"
                 >
 
-                    <div class="featured-label">
-                        Primary
+                    <div>
+
+                        <div class="card-top">
+
+                            <div class="tool-icon">
+                                <img
+                                    src="icons/tilepreview.jpg"
+                                    alt=""
+                                >
+                            </div>
+
+                            <span class="primary-label">
+                                Primary
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Tile Previewer
+                        </h3>
+
+                        <p>
+                            Preview how your textures and
+                            tiles repeat before using them.
+                        </p>
+
                     </div>
 
-                    <div class="tool-icon">
-
-                        <img
-                            src="icons/tilepreview.jpg"
-                            alt="Tile Previewer"
-                        >
-
-                    </div>
-
-                    <div class="tool-name">
-                        Tile Previewer
-                    </div>
-
-                    <div class="tool-description">
-                        Preview tile layouts and see how textures
-                        and patterns will flow across a surface.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
+                    <div class="open-tool">
+                        Open Tool
+                        <span class="arrow">→</span>
                     </div>
 
                 </a>
@@ -1142,34 +976,41 @@
                 <!-- TEXTURE WORKSHOP -->
 
                 <a
-                    class="tool-card featured-card"
                     href="textures.html"
+                    class="core-card accent-purple"
                 >
 
-                    <div class="featured-label">
-                        Primary
+                    <div>
+
+                        <div class="card-top">
+
+                            <div class="tool-icon">
+                                <img
+                                    src="icons/texture.jpg"
+                                    alt=""
+                                >
+                            </div>
+
+                            <span class="primary-label">
+                                Primary
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Texture Workshop
+                        </h3>
+
+                        <p>
+                            Create, edit, and experiment
+                            with textures in one place.
+                        </p>
+
                     </div>
 
-                    <div class="tool-icon">
-
-                        <img
-                            src="icons/texture.jpg"
-                            alt="Texture Workshop"
-                        >
-
-                    </div>
-
-                    <div class="tool-name">
-                        Texture Workshop
-                    </div>
-
-                    <div class="tool-description">
-                        Work with textures, adjustments, previews,
-                        and useful editing tools in one place.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
+                    <div class="open-tool">
+                        Open Tool
+                        <span class="arrow">→</span>
                     </div>
 
                 </a>
@@ -1185,48 +1026,48 @@
 
         <section class="section">
 
-            <div class="section-header">
+            <div class="section-heading">
 
-                <div class="section-title">
-                    Build &amp; Edit
-                </div>
+                <h2 class="section-title">
+                    <span class="green">Build &amp; Edit</span>
+                </h2>
 
-                <div class="section-line"></div>
+                <p class="section-subtitle">
+                    Create, customize, and refine your work.
+                </p>
 
             </div>
 
 
-            <div class="tool-grid">
+            <div class="tools-grid">
 
-
-                <!-- NAME TAG GRADIENTS -->
+                <!-- NAME TAGS -->
 
                 <a
-                    class="tool-card"
                     href="nametags.html"
+                    class="tool-card accent-green"
                 >
 
                     <div class="tool-icon">
-
                         <img
                             src="icons/tag.jpg"
-                            alt="Name Tag Gradients"
+                            alt=""
                         >
+                    </div>
+
+                    <div class="tool-info">
+
+                        <h3>
+                            Name Tag Gradients
+                        </h3>
+
+                        <p>
+                            Create colorful gradient name tags.
+                        </p>
 
                     </div>
 
-                    <div class="tool-name">
-                        Name Tag Gradients
-                    </div>
-
-                    <div class="tool-description">
-                        Create colorful gradient combinations
-                        for names and labels.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
-                    </div>
+                    <span class="tool-arrow">→</span>
 
                 </a>
 
@@ -1234,95 +1075,92 @@
                 <!-- FANCY TEXT -->
 
                 <a
-                    class="tool-card"
                     href="fancy.html"
+                    class="tool-card accent-purple"
                 >
 
                     <div class="tool-icon">
-
                         <img
                             src="icons/fancy.jpg"
-                            alt="Fancy Text Generator"
+                            alt=""
                         >
+                    </div>
+
+                    <div class="tool-info">
+
+                        <h3>
+                            Fancy Text Generator
+                        </h3>
+
+                        <p>
+                            Transform text into different
+                            Unicode styles.
+                        </p>
 
                     </div>
 
-                    <div class="tool-name">
-                        Fancy Text Generator
-                    </div>
-
-                    <div class="tool-description">
-                        Transform normal text into decorative
-                        Unicode styles for names and messages.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
-                    </div>
+                    <span class="tool-arrow">→</span>
 
                 </a>
 
 
-                <!-- TEXT SYMBOLS -->
+                <!-- SYMBOLS -->
 
                 <a
-                    class="tool-card"
                     href="symbols.html"
+                    class="tool-card accent-green"
                 >
 
                     <div class="tool-icon symbols-icon">
+                        <span>✦✧</span>
+                    </div>
 
-                        <span>
-                            ✦✧
-                        </span>
+                    <div class="tool-info">
+
+                        <h3>
+                            Text Symbols
+                        </h3>
+
+                        <p>
+                            Browse and copy symbols,
+                            characters, and decorative text.
+                        </p>
 
                     </div>
 
-                    <div class="tool-name">
-                        Text Symbols
-                    </div>
-
-                    <div class="tool-description">
-                        Browse and copy decorative symbols,
-                        characters, crosses, music, animals,
-                        and more.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
-                    </div>
+                    <span class="tool-arrow">→</span>
 
                 </a>
 
 
-                <!-- COLOR CODES -->
+                <!-- COLORS -->
 
                 <a
-                    class="tool-card"
                     href="colors.html"
+                    class="tool-card accent-purple"
                 >
 
                     <div class="tool-icon">
-
                         <img
                             src="icons/color.jpg"
-                            alt="Color Codes"
+                            alt=""
                         >
+                    </div>
+
+                    <div class="tool-info">
+
+                        <h3>
+                            Color Codes
+                        </h3>
+
+                        <p>
+                            Find and work with useful
+                            color codes and values.
+                        </p>
 
                     </div>
 
-                    <div class="tool-name">
-                        Color Codes
-                    </div>
-
-                    <div class="tool-description">
-                        Find, convert, and copy useful color
-                        values for your projects.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
-                    </div>
+                    <span class="tool-arrow">→</span>
 
                 </a>
 
@@ -1330,31 +1168,31 @@
                 <!-- SUBMESHES -->
 
                 <a
-                    class="tool-card"
                     href="submeshes.html"
+                    class="tool-card accent-green"
                 >
 
                     <div class="tool-icon">
-
                         <img
                             src="icons/mesh.jpg"
-                            alt="Submeshes"
+                            alt=""
                         >
+                    </div>
+
+                    <div class="tool-info">
+
+                        <h3>
+                            Submeshes
+                        </h3>
+
+                        <p>
+                            Helpful references and tools
+                            for working with submeshes.
+                        </p>
 
                     </div>
 
-                    <div class="tool-name">
-                        Submeshes
-                    </div>
-
-                    <div class="tool-description">
-                        Helpful references and tools for working
-                        with submesh-related assets.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
-                    </div>
+                    <span class="tool-arrow">→</span>
 
                 </a>
 
@@ -1369,45 +1207,47 @@
 
         <section class="section">
 
-            <div class="section-header">
+            <div class="section-heading">
 
-                <div class="section-title">
-                    Advanced
-                </div>
+                <h2 class="section-title">
+                    <span class="purple">Advanced</span>
+                </h2>
 
-                <div class="section-line"></div>
+                <p class="section-subtitle">
+                    Less common, more specialized tools.
+                </p>
 
             </div>
 
 
-            <div class="tool-grid">
+            <div class="tools-grid advanced-card">
 
                 <a
-                    class="tool-card advanced-card"
                     href="gridsnap.html"
+                    class="tool-card accent-purple"
                 >
 
                     <div class="tool-icon">
-
                         <img
                             src="icons/gridsnap.jpg"
-                            alt="Grid Snap Calculator"
+                            alt=""
                         >
+                    </div>
+
+                    <div class="tool-info">
+
+                        <h3>
+                            Grid Snap Calculator
+                        </h3>
+
+                        <p>
+                            Calculate precise grid snapping
+                            and placement values.
+                        </p>
 
                     </div>
 
-                    <div class="tool-name">
-                        Grid Snap Calculator
-                    </div>
-
-                    <div class="tool-description">
-                        Advanced grid and snapping calculations
-                        for more precise editing workflows.
-                    </div>
-
-                    <div class="tool-arrow">
-                        →
-                    </div>
+                    <span class="tool-arrow">→</span>
 
                 </a>
 
@@ -1421,38 +1261,43 @@
         ====================================================== -->
 
         <footer>
-            Built for <span>Wolves</span> · Wolves Editing Tools
+
+            <div class="footer-brand">
+                <span class="footer-purple">Wolves</span>
+                <span class="footer-green">Editing Tools</span>
+            </div>
+
+            <div class="footer-text">
+                Built for Wolves
+                <span class="footer-divider">•</span>
+                100% Local
+                <span class="footer-divider">•</span>
+                No Uploads
+            </div>
+
         </footer>
 
     </main>
 
 
     <!-- =========================================================
-         CURSOR SCRIPT
-    ========================================================= -->
+         CURSOR
+    ========================================================== -->
 
     <script>
+        const cursorGlow = document.querySelector(".cursor-glow");
 
-        const cursorGlow =
-            document.querySelector(".cursor-glow");
+        document.addEventListener("mousemove", (event) => {
+            document.documentElement.style.setProperty(
+                "--mouse-x",
+                event.clientX + "px"
+            );
 
-        document.addEventListener(
-            "mousemove",
-            (event) => {
-
-                document.documentElement.style.setProperty(
-                    "--mouse-x",
-                    event.clientX + "px"
-                );
-
-                document.documentElement.style.setProperty(
-                    "--mouse-y",
-                    event.clientY + "px"
-                );
-
-            }
-        );
-
+            document.documentElement.style.setProperty(
+                "--mouse-y",
+                event.clientY + "px"
+            );
+        });
     </script>
 
 </body>
