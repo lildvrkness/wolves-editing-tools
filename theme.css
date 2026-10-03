@@ -230,3 +230,38 @@ body.no-fx .watermark {
     transform: none !important;
     will-change: auto;
 }
+/* =========================================================
+   TEXT SYMBOLS ICON
+   ========================================================= */
+
+.symbol-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #9b5cff;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(155,92,255,.14),
+            rgba(8,7,11,1) 70%
+        );
+
+    font-size: 28px;
+    font-weight: 400;
+
+    text-shadow:
+        0 0 8px rgba(155,92,255,.8),
+        0 0 20px rgba(155,92,255,.3);
+}
+
+.tool-card:hover .symbol-icon {
+    color: #39ff88;
+
+    border-color: rgba(57,255,136,.5);
+
+    text-shadow:
+        0 0 8px rgba(57,255,136,.8),
+        0 0 20px rgba(57,255,136,.3);
+}
