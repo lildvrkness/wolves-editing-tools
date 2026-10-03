@@ -5,41 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Wolves Editing Tools</title>
+    <meta name="description" content="Browser-based tools for building, editing, texturing and styling Wolves worlds.">
 
-    <meta
-        name="description"
-        content="Wolves editing tool hub — Calculators, Texture Workshop, Text Tools, Submeshes, and more."
-    >
-
-    <link
-        rel="icon"
-        href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
-    >
-
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=New+Rocker&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="theme.css">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        purple: "#9b5cff",
-                        green: "#39ff88"
-                    }
-                }
-            }
-        }
-    </script>
 
     <style>
         :root {
@@ -55,66 +29,50 @@
         html {
             min-height: 100%;
             background: var(--ink);
-        }
-
-        ::selection {
-            background: rgba(155, 92, 255, .35);
-            color: #fff;
+            scroll-behavior: smooth;
         }
 
         body {
             margin: 0;
             min-height: 100vh;
             font-family: Inter, sans-serif;
-
+            color: #e5e7eb;
             background:
                 radial-gradient(
-                    ellipse 720px 560px at 50% 42%,
-                    rgba(155, 92, 255, .16),
-                    transparent 62%
+                    ellipse 800px 600px at 50% 18%,
+                    rgba(155,92,255,.13),
+                    transparent 66%
                 ),
                 radial-gradient(
-                    ellipse 620px 480px at 50% 58%,
-                    rgba(57, 255, 136, .10),
-                    transparent 64%
+                    ellipse 700px 520px at 50% 78%,
+                    rgba(57,255,136,.07),
+                    transparent 68%
                 ),
                 #030405;
 
-            color: #e5e7eb;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            padding: 36px 18px 48px;
-
-            position: relative;
+            padding: 28px 18px 60px;
             overflow-x: hidden;
-
-            cursor: none;
         }
 
-        /* --------------------------------------------------
-           Background
-        -------------------------------------------------- */
+        ::selection {
+            background: rgba(155,92,255,.35);
+            color: #fff;
+        }
+
+        /* ---------------------------------------------------------
+           BACKGROUND
+        --------------------------------------------------------- */
 
         .background-grid {
             position: fixed;
             inset: 0;
             pointer-events: none;
-            opacity: .028;
             z-index: 0;
+            opacity: .022;
 
             background-image:
-                linear-gradient(
-                    rgba(255,255,255,.55) 1px,
-                    transparent 1px
-                ),
-                linear-gradient(
-                    90deg,
-                    rgba(255,255,255,.55) 1px,
-                    transparent 1px
-                );
+                linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px);
 
             background-size: 42px 42px;
         }
@@ -124,453 +82,791 @@
             inset: 0;
             pointer-events: none;
             z-index: 1;
-            opacity: .035;
+            opacity: .025;
 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
         .wolf-bg {
             position: fixed;
             left: 50%;
-            top: 46%;
+            top: 45%;
+            width: min(720px, 88vw);
 
             transform: translate(-50%, -50%);
 
-            width: min(720px, 88vw);
-
-            opacity: .16;
-
+            opacity: .105;
             pointer-events: none;
-            z-index: 0;
             user-select: none;
+            z-index: 0;
 
             filter:
-                drop-shadow(0 0 28px rgba(155,92,255,.35))
-                drop-shadow(0 0 48px rgba(57,255,136,.18));
+                drop-shadow(0 0 28px rgba(155,92,255,.28))
+                drop-shadow(0 0 48px rgba(57,255,136,.12));
 
-            transition: transform .08s linear;
+            animation: wolfBreath 8s ease-in-out infinite;
         }
 
-        /* --------------------------------------------------
-           Floating hearts
-        -------------------------------------------------- */
-
-        .heart-field {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 1;
-            overflow: hidden;
-        }
-
-        .heart {
-            position: absolute;
-            opacity: .11;
-
-            filter: drop-shadow(0 0 10px currentColor);
-
-            animation:
-                heartDrift 18s ease-in-out infinite;
-        }
-
-        .heart svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .heart.purple {
-            color: #9b5cff;
-        }
-
-        .heart.green {
-            color: #39ff88;
-        }
-
-        .heart.h1 {
-            width: 86px;
-            left: 6%;
-            top: 14%;
-        }
-
-        .heart.h2 {
-            width: 42px;
-            right: 10%;
-            top: 22%;
-            animation-delay: -5s;
-        }
-
-        .heart.h3 {
-            width: 64px;
-            left: 12%;
-            bottom: 16%;
-            animation-delay: -9s;
-        }
-
-        .heart.h4 {
-            width: 28px;
-            right: 16%;
-            bottom: 22%;
-            animation-delay: -13s;
-        }
-
-        @keyframes heartDrift {
-            0%, 100% {
-                transform:
-                    translateY(0)
-                    rotate(-8deg)
-                    scale(1);
+        @keyframes wolfBreath {
+            0%,100% {
+                opacity: .085;
+                filter: drop-shadow(0 0 22px rgba(155,92,255,.2));
             }
 
             50% {
-                transform:
-                    translateY(-18px)
-                    rotate(8deg)
-                    scale(1.06);
+                opacity: .125;
+                filter:
+                    drop-shadow(0 0 32px rgba(155,92,255,.3))
+                    drop-shadow(0 0 42px rgba(57,255,136,.12));
             }
         }
 
-        /* --------------------------------------------------
-           Title
-        -------------------------------------------------- */
-
-        .wolves-title {
-            font-family: "New Rocker", cursive;
-            font-weight: 400;
-            letter-spacing: .025em;
-            line-height: 1.02;
-        }
-
-        .title-wolves {
-            color: #39ff88;
-            display: inline-block;
-
-            text-shadow:
-                0 0 10px rgba(57,255,136,.55),
-                0 0 24px rgba(57,255,136,.28),
-                0 0 42px rgba(57,255,136,.12);
-
-            animation: wolvesPulse 2.8s ease-in-out infinite;
-        }
-
-        .title-rest {
-            color: #9b5cff;
-            display: inline-block;
-
-            text-shadow:
-                0 0 12px rgba(155,92,255,.6),
-                0 0 28px rgba(155,92,255,.28);
-
-            animation: albedoShimmer 4.2s ease-in-out infinite;
-        }
-
-        @keyframes wolvesPulse {
-            0%, 100% {
-                text-shadow:
-                    0 0 8px rgba(57,255,136,.4),
-                    0 0 18px rgba(57,255,136,.18);
-
-                filter: brightness(1);
-            }
-
-            50% {
-                text-shadow:
-                    0 0 16px rgba(57,255,136,.85),
-                    0 0 32px rgba(57,255,136,.4),
-                    0 0 54px rgba(57,255,136,.18);
-
-                filter: brightness(1.12);
-            }
-        }
-
-        @keyframes albedoShimmer {
-            0%, 100% {
-                text-shadow:
-                    0 0 10px rgba(155,92,255,.45),
-                    0 0 22px rgba(155,92,255,.2);
-            }
-
-            50% {
-                text-shadow:
-                    0 0 18px rgba(155,92,255,.85),
-                    0 0 36px rgba(155,92,255,.35),
-                    0 0 20px rgba(57,255,136,.12);
-            }
-        }
-
-        /* --------------------------------------------------
-           Main hub
-        -------------------------------------------------- */
+        /* ---------------------------------------------------------
+           LAYOUT
+        --------------------------------------------------------- */
 
         .hub {
             position: relative;
             z-index: 10;
-
             width: 100%;
-            max-width: 760px;
+            max-width: 980px;
+            margin: 0 auto;
+        }
 
+        /* ---------------------------------------------------------
+           HEADER
+        --------------------------------------------------------- */
+
+        .hero {
             text-align: center;
+            padding: 28px 10px 24px;
         }
 
-        .tool-grid {
-            display: grid;
-            grid-template-columns: 1fr;
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
 
-            gap: 14px;
-
-            perspective: 900px;
+            color: #737987;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .24em;
+            text-transform: uppercase;
         }
 
-        @media (min-width: 680px) {
-            .tool-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+        .eyebrow::before,
+        .eyebrow::after {
+            content: "";
+            width: 24px;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(155,92,255,.65)
+            );
         }
 
-        /* --------------------------------------------------
-           Tool cards
-        -------------------------------------------------- */
+        .eyebrow::after {
+            background: linear-gradient(
+                90deg,
+                rgba(57,255,136,.65),
+                transparent
+            );
+        }
 
-        .tool-card {
-            position: relative;
-            overflow: hidden;
+        .wolves-title {
+            margin: 10px 0 0;
 
+            font-family: "New Rocker", cursive;
+            font-size: clamp(44px, 7vw, 72px);
+            font-weight: 400;
+            letter-spacing: .015em;
+            line-height: 1;
+        }
+
+        .title-wolves {
+            color: var(--green);
+
+            text-shadow:
+                0 0 10px rgba(57,255,136,.5),
+                0 0 26px rgba(57,255,136,.22);
+        }
+
+        .title-rest {
+            color: var(--purple);
+
+            text-shadow:
+                0 0 12px rgba(155,92,255,.5),
+                0 0 28px rgba(155,92,255,.22);
+        }
+
+        .hero-description {
+            max-width: 590px;
+            margin: 17px auto 0;
+
+            color: #a9afbb;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 19px;
+        }
+
+        .status {
+            padding: 6px 10px;
+
+            border: 1px solid #24262e;
+            border-radius: 999px;
+
+            background: rgba(8,9,11,.55);
+
+            color: #727987;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .status strong {
+            color: #dfe4ec;
+        }
+
+        /* ---------------------------------------------------------
+           TOOLBAR
+        --------------------------------------------------------- */
+
+        .toolbar {
             display: flex;
             align-items: center;
+            gap: 10px;
 
-            gap: 14px;
+            margin: 8px 0 30px;
+        }
 
-            text-align: left;
+        .search-wrap {
+            position: relative;
+            flex: 1;
+        }
 
-            padding: 12px 14px;
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
 
-            border-radius: 16px;
+            transform: translateY(-50%);
 
-            border: 1px solid #262830;
+            color: #626976;
+            pointer-events: none;
+            font-size: 15px;
+        }
+
+        #toolSearch {
+            width: 100%;
+            height: 44px;
+
+            padding: 0 42px;
+
+            border: 1px solid #252830;
+            border-radius: 12px;
+
+            outline: none;
+
+            background: rgba(8,9,11,.82);
+
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+        #toolSearch::placeholder {
+            color: #5d6370;
+        }
+
+        #toolSearch:hover {
+            border-color: rgba(155,92,255,.38);
+        }
+
+        #toolSearch:focus {
+            border-color: rgba(155,92,255,.72);
+
+            background: rgba(10,11,15,.95);
+
+            box-shadow:
+                0 0 0 3px rgba(155,92,255,.1),
+                0 0 24px rgba(155,92,255,.12);
+        }
+
+        .search-shortcut {
+            position: absolute;
+            right: 11px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            padding: 3px 6px;
+
+            border: 1px solid #292c34;
+            border-radius: 5px;
+
+            color: #555b67;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .favorite-filter {
+            height: 44px;
+            padding: 0 15px;
+
+            border: 1px solid #292c34;
+            border-radius: 12px;
+
+            background: rgba(8,9,11,.82);
+
+            color: #858b97;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+
+            cursor: pointer;
+
+            transition:
+                border-color .2s ease,
+                color .2s ease,
+                background .2s ease;
+        }
+
+        .favorite-filter:hover,
+        .favorite-filter.active {
+            color: #fff;
+            border-color: rgba(57,255,136,.45);
+            background: rgba(57,255,136,.06);
+        }
+
+        /* ---------------------------------------------------------
+           SECTIONS
+        --------------------------------------------------------- */
+
+        .section {
+            margin-top: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            color: #e9edf4;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .19em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+
+            background: linear-gradient(
+                90deg,
+                rgba(155,92,255,.3),
+                rgba(57,255,136,.08),
+                transparent
+            );
+        }
+
+        .section-note {
+            color: #535965;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        /* ---------------------------------------------------------
+           FEATURED TOOLS
+        --------------------------------------------------------- */
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 13px;
+        }
+
+        .featured-card {
+            position: relative;
+            min-height: 214px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+
+            overflow: hidden;
+
+            padding: 20px;
+
+            border: 1px solid #292b34;
+            border-radius: 18px;
 
             background:
                 linear-gradient(
                     145deg,
-                    rgba(17,18,22,.9),
-                    rgba(8,9,11,.92)
+                    rgba(18,19,24,.96),
+                    rgba(7,8,10,.97)
                 );
 
-            text-decoration: none;
             color: inherit;
+            text-decoration: none;
+
+            isolation: isolate;
 
             transition:
+                transform .28s ease,
                 border-color .25s ease,
                 box-shadow .3s ease;
-
-            backdrop-filter: blur(12px);
-
-            animation:
-                cardIn .6s ease both;
-
-            transform-style: preserve-3d;
-
-            will-change: transform;
         }
 
-        .tool-card:nth-child(1) {
-            animation-delay: .04s;
-        }
-
-        .tool-card:nth-child(2) {
-            animation-delay: .08s;
-        }
-
-        .tool-card:nth-child(3) {
-            animation-delay: .12s;
-        }
-
-        .tool-card:nth-child(4) {
-            animation-delay: .16s;
-        }
-
-        .tool-card:nth-child(5) {
-            animation-delay: .20s;
-        }
-
-        .tool-card:nth-child(6) {
-            animation-delay: .24s;
-        }
-
-        .tool-card:nth-child(7) {
-            animation-delay: .28s;
-        }
-
-        .tool-card:nth-child(8) {
-            animation-delay: .32s;
-        }
-
-        .tool-card:nth-child(9) {
-            animation-delay: .36s;
-        }
-
-        @keyframes cardIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: none;
-            }
-        }
-
-        .tool-card::after {
+        .featured-card::before {
             content: "";
 
             position: absolute;
             inset: 0;
 
-            pointer-events: none;
+            z-index: -2;
+
+            background:
+                radial-gradient(
+                    circle at 20% 15%,
+                    rgba(155,92,255,.18),
+                    transparent 48%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(57,255,136,.07),
+                    transparent 45%
+                );
+
+            opacity: .8;
+        }
+
+        .featured-card::after {
+            content: "";
+
+            position: absolute;
+            inset: -1px;
+
+            z-index: -1;
 
             background:
                 linear-gradient(
-                    115deg,
-                    transparent 35%,
+                    120deg,
+                    transparent 25%,
                     rgba(255,255,255,.07) 50%,
-                    transparent 65%
+                    transparent 75%
                 );
 
-            transform: translateX(-140%);
+            transform: translateX(-130%);
         }
 
-        .tool-card:hover::after {
-            animation: shine .7s ease;
+        .featured-card:hover {
+            transform: translateY(-4px);
+
+            border-color: rgba(155,92,255,.62);
+
+            box-shadow:
+                0 0 0 1px rgba(155,92,255,.16),
+                0 20px 48px rgba(0,0,0,.42),
+                0 0 36px rgba(155,92,255,.16);
+        }
+
+        .featured-card:hover::after {
+            animation: shine .75s ease;
+        }
+
+        .featured-card.green:hover {
+            border-color: rgba(57,255,136,.58);
+
+            box-shadow:
+                0 0 0 1px rgba(57,255,136,.13),
+                0 20px 48px rgba(0,0,0,.42),
+                0 0 36px rgba(57,255,136,.12);
         }
 
         @keyframes shine {
             to {
-                transform: translateX(140%);
+                transform: translateX(130%);
             }
         }
 
-        /* Purple cards */
+        .featured-icon {
+            width: 62px;
+            height: 62px;
 
-        .tool-card.purple:hover {
-            border-color: rgba(155,92,255,.6);
-
-            box-shadow:
-                0 0 0 1px rgba(155,92,255,.22),
-                0 12px 32px rgba(155,92,255,.22),
-                0 0 28px rgba(155,92,255,.16);
-        }
-
-        /* Green cards */
-
-        .tool-card.green:hover {
-            border-color: rgba(57,255,136,.55);
-
-            box-shadow:
-                0 0 0 1px rgba(57,255,136,.2),
-                0 12px 32px rgba(57,255,136,.18),
-                0 0 28px rgba(57,255,136,.12);
-        }
-
-        /* Icon hover */
-
-        .tool-card.purple:hover .icon {
-            box-shadow:
-                0 0 22px rgba(155,92,255,.35);
-
-            border-color:
-                rgba(155,92,255,.55);
-        }
-
-        .tool-card.green:hover .icon {
-            box-shadow:
-                0 0 22px rgba(57,255,136,.3);
-
-            border-color:
-                rgba(57,255,136,.5);
-        }
-
-        /* --------------------------------------------------
-           Icons
-        -------------------------------------------------- */
-
-        .icon {
-            width: 72px;
-            height: 72px;
-
-            border-radius: 16px;
+            margin-bottom: auto;
 
             overflow: hidden;
 
-            flex-shrink: 0;
-
-            border:
-                1px solid rgba(155,92,255,.28);
-
-            box-shadow:
-                0 0 18px rgba(155,92,255,.16);
+            border: 1px solid rgba(155,92,255,.38);
+            border-radius: 15px;
 
             background: #08070b;
-        }
-
-        .tool-card.green .icon {
-            border-color:
-                rgba(57,255,136,.28);
 
             box-shadow:
-                0 0 18px rgba(57,255,136,.14);
+                0 0 22px rgba(155,92,255,.14);
         }
 
-        .icon img {
+        .featured-card.green .featured-icon {
+            border-color: rgba(57,255,136,.34);
+
+            box-shadow:
+                0 0 22px rgba(57,255,136,.12);
+        }
+
+        .featured-icon img {
             width: 100%;
             height: 100%;
 
             object-fit: cover;
-            object-position: center 42%;
 
             display: block;
         }
 
-        .meta {
-            text-align: left;
-            min-width: 0;
+        .featured-label {
+            margin-top: 20px;
+
+            color: var(--purple);
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: .16em;
+            text-transform: uppercase;
         }
 
-        /* --------------------------------------------------
-           Wolf cursor
-        -------------------------------------------------- */
+        .featured-card.green .featured-label {
+            color: var(--green);
+        }
 
-        .wolf-cursor {
-            position: fixed;
+        .featured-name {
+            margin-top: 5px;
 
-            width: 44px;
-            height: 44px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
 
-            pointer-events: none;
+        .featured-description {
+            margin-top: 7px;
 
-            z-index: 80;
+            color: #858b97;
+            font-size: 11px;
+            line-height: 1.5;
+        }
 
-            transform:
-                translate(-30%, -30%);
+        /* ---------------------------------------------------------
+           STANDARD TOOLS
+        --------------------------------------------------------- */
 
-            filter:
-                drop-shadow(
-                    0 0 8px rgba(155,92,255,.55)
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 11px;
+        }
+
+        .tool-card {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            min-width: 0;
+
+            padding: 12px;
+
+            border: 1px solid #252830;
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(14,15,19,.92),
+                    rgba(7,8,10,.94)
                 );
 
-            display: none;
+            color: inherit;
+            text-decoration: none;
+
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                box-shadow .25s ease;
         }
 
-        /* --------------------------------------------------
-           Mobile
-        -------------------------------------------------- */
+        .tool-card:hover {
+            transform: translateY(-2px);
 
-        @media (max-width: 800px) {
+            border-color: rgba(155,92,255,.48);
+
+            box-shadow:
+                0 0 0 1px rgba(155,92,255,.1),
+                0 12px 30px rgba(0,0,0,.28);
+        }
+
+        .tool-card.green:hover {
+            border-color: rgba(57,255,136,.45);
+
+            box-shadow:
+                0 0 0 1px rgba(57,255,136,.09),
+                0 12px 30px rgba(0,0,0,.28);
+        }
+
+        .tool-icon {
+            width: 58px;
+            height: 58px;
+
+            flex: 0 0 58px;
+
+            overflow: hidden;
+
+            border: 1px solid rgba(155,92,255,.25);
+            border-radius: 13px;
+
+            background: #08070b;
+        }
+
+        .tool-card.green .tool-icon {
+            border-color: rgba(57,255,136,.25);
+        }
+
+        .tool-icon img {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+        }
+
+        .tool-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .tool-category {
+            color: var(--purple);
+
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+
+        .tool-card.green .tool-category {
+            color: var(--green);
+        }
+
+        .tool-name {
+            margin-top: 4px;
+
+            color: #f4f6f9;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .tool-description {
+            margin-top: 3px;
+
+            color: #737987;
+            font-size: 10px;
+            line-height: 1.45;
+        }
+
+        /* ---------------------------------------------------------
+           FAVORITE BUTTON
+        --------------------------------------------------------- */
+
+        .favorite {
+            position: absolute;
+            top: 9px;
+            right: 9px;
+
+            width: 27px;
+            height: 27px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid #292c34;
+            border-radius: 8px;
+
+            background: rgba(0,0,0,.32);
+
+            color: #505662;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            transition:
+                color .18s ease,
+                border-color .18s ease,
+                background .18s ease,
+                transform .18s ease;
+        }
+
+        .favorite:hover {
+            color: #fff;
+            border-color: rgba(155,92,255,.45);
+            background: rgba(155,92,255,.08);
+            transform: scale(1.06);
+        }
+
+        .favorite.active {
+            color: var(--green);
+            border-color: rgba(57,255,136,.4);
+            background: rgba(57,255,136,.07);
+        }
+
+        /* ---------------------------------------------------------
+           ADVANCED
+        --------------------------------------------------------- */
+
+        .advanced {
+            opacity: .92;
+        }
+
+        .advanced .tool-card {
+            border-style: dashed;
+        }
+
+        .advanced-badge {
+            padding: 4px 7px;
+
+            border: 1px solid rgba(155,92,255,.25);
+            border-radius: 999px;
+
+            color: #777d89;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        /* ---------------------------------------------------------
+           EMPTY SEARCH
+        --------------------------------------------------------- */
+
+        .empty-state {
+            display: none;
+
+            padding: 32px 20px;
+
+            border: 1px dashed #292c34;
+            border-radius: 14px;
+
+            color: #666c78;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .empty-state strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #a8adb7;
+        }
+
+        /* ---------------------------------------------------------
+           FOOTER
+        --------------------------------------------------------- */
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+
+            margin-top: 38px;
+
+            color: #464b56;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .footer-dot {
+            color: #777d88;
+        }
+
+        /* ---------------------------------------------------------
+           RESPONSIVE
+        --------------------------------------------------------- */
+
+        @media (max-width: 760px) {
             body {
-                cursor: auto;
+                padding: 18px 12px 42px;
             }
 
-            .wolf-cursor {
-                display: none !important;
+            .hero {
+                padding-top: 18px;
+            }
+
+            .featured-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-card {
+                min-height: 175px;
+            }
+
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .favorite-filter {
+                width: 100%;
+            }
+
+            .wolf-bg {
+                width: 110vw;
+                opacity: .06;
+            }
+
+            .section-note {
+                display: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
             }
         }
     </style>
@@ -578,490 +874,844 @@
 
 <body>
 
-    <!-- Background -->
+<div class="background-grid"></div>
+<div class="noise"></div>
 
-    <div class="background-grid"></div>
+<img
+    class="wolf-bg"
+    id="wolfBg"
+    src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
+    alt=""
+    aria-hidden="true"
+>
 
-    <img
-        class="pack-wolf a"
-        data-parallax="16"
-        src="wolfcutout1.png"
-        alt=""
-        aria-hidden="true"
-    >
+<img class="pack-wolf a" data-parallax="16" src="wolfcutout1.png" alt="" aria-hidden="true">
+<img class="pack-wolf b" data-parallax="26" src="wolfcutout2.png" alt="" aria-hidden="true">
+<img class="pack-wolf c" data-parallax="12" src="wolfcutout3.png" alt="" aria-hidden="true">
 
-    <img
-        class="pack-wolf b"
-        data-parallax="26"
-        src="wolfcutout2.png"
-        alt=""
-        aria-hidden="true"
-    >
+<main class="hub">
 
-    <img
-        class="pack-wolf c"
-        data-parallax="12"
-        src="wolfcutout3.png"
-        alt=""
-        aria-hidden="true"
-    >
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
 
-    <div class="noise"></div>
+    <header class="hero">
 
-    <img
-        class="wolf-cursor"
-        id="wolfCursor"
-        src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
-        alt=""
-    >
-
-    <img
-        class="wolf-bg"
-        src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
-        alt=""
-        aria-hidden="true"
-    >
-
-    <!-- Floating hearts -->
-
-    <div class="heart-field" aria-hidden="true">
-
-        <div class="heart purple h1">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/>
-            </svg>
+        <div class="eyebrow">
+            Wolves Utility Suite
         </div>
 
-        <div class="heart green h2">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                <path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/>
-            </svg>
-        </div>
-
-        <div class="heart purple h3">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-                <path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/>
-            </svg>
-        </div>
-
-        <div class="heart green h4">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21s-6.7-4.35-9.33-8.02C.7 10.3 1.2 6.8 4.05 5.4 6.2 4.35 8.55 5.1 12 8.2c3.45-3.1 5.8-3.85 7.95-2.8 2.85 1.4 3.35 4.9 1.38 7.58C18.7 16.65 12 21 12 21z"/>
-            </svg>
-        </div>
-
-    </div>
-
-
-    <!-- Main -->
-
-    <main class="hub">
-
-        <div class="text-[9px] uppercase tracking-[0.28em] font-bold text-slate-500 mb-3">
-            Welcome to
-        </div>
-
-        <h1 class="wolves-title text-5xl md:text-6xl mb-3">
+        <h1 class="wolves-title">
             <span class="title-wolves">Wolves</span>
             <span class="title-rest">Editing Tools</span>
         </h1>
 
-        <p class="text-[15px] text-slate-300 max-w-md mx-auto mb-8 leading-relaxed">
-            A growing set of tools and references built for Wolves and others.
-            Pick a tool to start.
+        <p class="hero-description">
+            Browser-based tools for building, editing, texturing and styling
+            Wolves worlds — all in one place.
         </p>
 
+        <div class="status-row">
+            <div class="status">
+                <strong>9</strong>&nbsp; Tools
+            </div>
 
-        <!-- Tool Grid -->
+            <div class="status">
+                <strong>100%</strong>&nbsp; Local
+            </div>
 
-        <div class="tool-grid">
+            <div class="status">
+                No Accounts
+            </div>
 
-            <!-- Grid Snap -->
+            <div class="status">
+                Files Stay Local
+            </div>
+        </div>
 
-            <a class="tool-card purple" href="gridsnap.html">
-
-                <div class="icon">
-                    <img src="icons/gridsnap.jpg" alt="">
-                </div>
-
-                <div class="meta">
-
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">
-                        Placement
-                    </div>
-
-                    <div class="text-base font-bold text-white">
-                        Grid Snap Calculator
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Snap walls together with half-size math.
-                    </div>
-
-                </div>
-
-            </a>
+    </header>
 
 
-            <!-- Tile Preview -->
+    <!-- =====================================================
+         SEARCH
+    ====================================================== -->
 
-            <a class="tool-card purple" href="tilepreview.html">
+    <div class="toolbar">
 
-                <div class="icon">
-                    <img src="icons/tilepreview.jpg" alt="">
-                </div>
+        <div class="search-wrap">
 
-                <div class="meta">
+            <span class="search-icon">⌕</span>
 
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">
-                        Tiling
-                    </div>
+            <input
+                id="toolSearch"
+                type="search"
+                placeholder="Search tools..."
+                autocomplete="off"
+                spellcheck="false"
+            >
 
-                    <div class="text-base font-bold text-white">
-                        Tile Preview
-                    </div>
+            <span class="search-shortcut">/</span>
 
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Live texture wrap on a custom wall size.
-                    </div>
+        </div>
 
-                </div>
+        <button
+            id="favoriteFilter"
+            class="favorite-filter"
+            type="button"
+        >
+            ★ Favorites
+        </button>
 
-            </a>
+    </div>
 
 
-            <!-- Albedo -->
+    <!-- =====================================================
+         FEATURED
+    ====================================================== -->
 
-            <a class="tool-card purple" href="albedo.html">
+    <section
+        class="section"
+        data-section="featured"
+    >
 
-                <div class="icon">
+        <div class="section-header">
+            <div class="section-title">
+                Featured Tools
+            </div>
+
+            <div class="section-line"></div>
+
+            <div class="section-note">
+                Most useful
+            </div>
+        </div>
+
+
+        <div class="featured-grid">
+
+            <!-- ALBEDO -->
+
+            <a
+                class="featured-card"
+                href="albedo.html"
+                data-tool
+                data-name="albedo tile calculator"
+                data-category="tiling"
+                data-id="albedo"
+            >
+
+                <div class="featured-icon">
                     <img src="icons/tile.jpg" alt="">
                 </div>
 
-                <div class="meta">
-
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">
-                        Tiling
-                    </div>
-
-                    <div class="text-base font-bold text-white">
-                        Albedo Tile Calculator
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Convert wall size into albedo tile X and Y.
-                    </div>
-
+                <div class="featured-label">
+                    Tiling
                 </div>
+
+                <div class="featured-name">
+                    Albedo Tile Calculator
+                </div>
+
+                <div class="featured-description">
+                    Convert wall dimensions into matching albedo tile values.
+                </div>
+
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Albedo Tile Calculator"
+                    data-favorite="albedo"
+                >☆</button>
 
             </a>
 
 
-            <!-- Texture Workshop -->
+            <!-- TILE PREVIEW -->
 
-            <a class="tool-card purple" href="textures.html">
+            <a
+                class="featured-card"
+                href="tilepreview.html"
+                data-tool
+                data-name="tile preview texture preview"
+                data-category="tiling"
+                data-id="tilepreview"
+            >
 
-                <div class="icon">
+                <div class="featured-icon">
+                    <img src="icons/tilepreview.jpg" alt="">
+                </div>
+
+                <div class="featured-label">
+                    Tiling
+                </div>
+
+                <div class="featured-name">
+                    Tile Preview
+                </div>
+
+                <div class="featured-description">
+                    Preview exactly how a texture wraps across a custom wall.
+                </div>
+
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Tile Preview"
+                    data-favorite="tilepreview"
+                >☆</button>
+
+            </a>
+
+
+            <!-- TEXTURE WORKSHOP -->
+
+            <a
+                class="featured-card green"
+                href="textures.html"
+                data-tool
+                data-name="texture workshop resize convert normal map image"
+                data-category="textures"
+                data-id="textures"
+            >
+
+                <div class="featured-icon">
                     <img src="icons/texture.jpg" alt="">
                 </div>
 
-                <div class="meta">
-
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">
-                        Textures
-                    </div>
-
-                    <div class="text-base font-bold text-white">
-                        Texture Workshop
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Resize images, convert image file type,
-                        normals mapping with live preview.
-                    </div>
-
+                <div class="featured-label">
+                    Textures
                 </div>
 
-            </a>
-
-
-            <!-- Name Tags -->
-
-            <a class="tool-card purple" href="nametags.html">
-
-                <div class="icon">
-                    <img src="icons/tag.jpg" alt="">
+                <div class="featured-name">
+                    Texture Workshop
                 </div>
 
-                <div class="meta">
-
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">
-                        Names
-                    </div>
-
-                    <div class="text-base font-bold text-white">
-                        Name Tag Gradients
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Smooth [color] codes for custom tags.
-                    </div>
-
+                <div class="featured-description">
+                    Resize, convert, preview and create texture maps directly in your browser.
                 </div>
 
-            </a>
-
-
-            <!-- Fancy Text -->
-
-            <a class="tool-card purple" href="fancy.html">
-
-                <div class="icon">
-                    <img src="icons/fancy.jpg" alt="">
-                </div>
-
-                <div class="meta">
-
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-purple mb-1">
-                        Text
-                    </div>
-
-                    <div class="text-base font-bold text-white">
-                        Fancy Text Generator
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Turn text into dozens of copyable Unicode styles.
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <!-- Text Symbols -->
-
-            <a class="tool-card green" href="symbols.html">
-
-                <div class="icon">
-                    <img src="icons/fancy.jpg" alt="">
-                </div>
-
-                <div class="meta">
-
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-green mb-1">
-                        Symbols
-                    </div>
-
-                    <div class="text-base font-bold text-white">
-                        Text Symbols
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Browse hundreds of symbols, decorations,
-                        faces and more.
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <!-- Colors -->
-
-            <a class="tool-card green" href="colors.html">
-
-                <div class="icon">
-                    <img src="icons/color.jpg" alt="">
-                </div>
-
-                <div class="meta">
-
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-green mb-1">
-                        Reference
-                    </div>
-
-                    <div class="text-base font-bold text-white">
-                        Color Codes
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Color picker with hex, RGB, HSL,
-                        and tag copy.
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <!-- Submeshes -->
-
-            <a class="tool-card green" href="submeshes.html">
-
-                <div class="icon">
-                    <img src="icons/mesh.jpg" alt="">
-                </div>
-
-                <div class="meta">
-
-                    <div class="text-[9px] uppercase tracking-[0.18em] font-bold text-green mb-1">
-                        Reference
-                    </div>
-
-                    <div class="text-base font-bold text-white">
-                        Submeshes
-                    </div>
-
-                    <div class="text-xs text-slate-400 mt-0.5">
-                        Search available submeshes for props.
-                    </div>
-
-                </div>
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Texture Workshop"
+                    data-favorite="textures"
+                >☆</button>
 
             </a>
 
         </div>
 
-    </main>
+    </section>
 
 
-    <!-- Cursor / Parallax -->
+    <!-- =====================================================
+         TEXTURE / TILING
+    ====================================================== -->
 
-    <script>
+    <section
+        class="section"
+        data-section="tools"
+    >
 
-        const wolfCursor =
-            document.getElementById('wolfCursor');
+        <div class="section-header">
+            <div class="section-title">
+                Build & Edit
+            </div>
 
-        const wolfBg =
-            document.querySelector('.wolf-bg');
+            <div class="section-line"></div>
 
-        const reduce =
-            window.matchMedia(
-                '(prefers-reduced-motion: reduce)'
-            ).matches;
-
-        const canTilt =
-            window.matchMedia(
-                '(pointer:fine)'
-            ).matches && !reduce;
-
-
-        window.addEventListener('pointermove', (e) => {
-
-            if (e.pointerType !== 'mouse') return;
+            <div class="section-note">
+                Everyday tools
+            </div>
+        </div>
 
 
-            wolfCursor.style.display = 'block';
+        <div class="tool-grid">
 
-            wolfCursor.style.left =
-                e.clientX + 'px';
+            <a
+                class="tool-card"
+                href="nametags.html"
+                data-tool
+                data-name="name tag gradients names color tags"
+                data-category="names"
+                data-id="nametags"
+            >
 
-            wolfCursor.style.top =
-                e.clientY + 'px';
+                <div class="tool-icon">
+                    <img src="icons/tag.jpg" alt="">
+                </div>
+
+                <div class="tool-info">
+                    <div class="tool-category">
+                        Names
+                    </div>
+
+                    <div class="tool-name">
+                        Name Tag Gradients
+                    </div>
+
+                    <div class="tool-description">
+                        Build smooth [color] codes for custom in-game name tags.
+                    </div>
+                </div>
+
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Name Tag Gradients"
+                    data-favorite="nametags"
+                >☆</button>
+
+            </a>
 
 
-            const nx =
-                e.clientX / window.innerWidth - 0.5;
+            <a
+                class="tool-card"
+                href="fancy.html"
+                data-tool
+                data-name="fancy text unicode font text generator"
+                data-category="text"
+                data-id="fancy"
+            >
 
-            const ny =
-                e.clientY / window.innerHeight - 0.5;
+                <div class="tool-icon">
+                    <img src="icons/fancy.jpg" alt="">
+                </div>
+
+                <div class="tool-info">
+                    <div class="tool-category">
+                        Text
+                    </div>
+
+                    <div class="tool-name">
+                        Fancy Text Generator
+                    </div>
+
+                    <div class="tool-description">
+                        Turn normal text into copyable Unicode styles.
+                    </div>
+                </div>
+
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Fancy Text Generator"
+                    data-favorite="fancy"
+                >☆</button>
+
+            </a>
 
 
-            /* Wolf background parallax */
+            <a
+                class="tool-card"
+                href="symbols.html"
+                data-tool
+                data-name="text symbols symbols decorations faces animals music crosses"
+                data-category="text symbols"
+                data-id="symbols"
+            >
 
-            if (canTilt && wolfBg) {
+                <div
+                    class="tool-icon symbol-icon"
+                    aria-hidden="true"
+                >
+                    ✦
+                </div>
 
-                wolfBg.style.transform =
-                    'translate(calc(-50% + ' +
-                    (nx * 24) +
-                    'px), calc(-50% + ' +
-                    (ny * 16) +
-                    'px))';
+                <div class="tool-info">
+                    <div class="tool-category">
+                        Symbols
+                    </div>
 
+                    <div class="tool-name">
+                        Text Symbols
+                    </div>
+
+                    <div class="tool-description">
+                        Browse hundreds of symbols, decorations, faces, animals and more.
+                    </div>
+                </div>
+
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Text Symbols"
+                    data-favorite="symbols"
+                >☆</button>
+
+            </a>
+
+
+            <a
+                class="tool-card"
+                href="colors.html"
+                data-tool
+                data-name="color codes color picker hex rgb hsl unity"
+                data-category="reference colors"
+                data-id="colors"
+            >
+
+                <div class="tool-icon">
+                    <img src="icons/color.jpg" alt="">
+                </div>
+
+                <div class="tool-info">
+                    <div class="tool-category">
+                        Reference
+                    </div>
+
+                    <div class="tool-name">
+                        Color Codes
+                    </div>
+
+                    <div class="tool-description">
+                        Convert colors between hex, RGB, HSL, Unity and tag formats.
+                    </div>
+                </div>
+
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Color Codes"
+                    data-favorite="colors"
+                >☆</button>
+
+            </a>
+
+
+            <a
+                class="tool-card"
+                href="submeshes.html"
+                data-tool
+                data-name="submeshes props editor shop texture reference"
+                data-category="reference"
+                data-id="submeshes"
+            >
+
+                <div class="tool-icon">
+                    <img src="icons/mesh.jpg" alt="">
+                </div>
+
+                <div class="tool-info">
+                    <div class="tool-category">
+                        Reference
+                    </div>
+
+                    <div class="tool-name">
+                        Submeshes
+                    </div>
+
+                    <div class="tool-description">
+                        Search available shop, editor, prop and texture references.
+                    </div>
+                </div>
+
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Submeshes"
+                    data-favorite="submeshes"
+                >☆</button>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ADVANCED
+    ====================================================== -->
+
+    <section
+        class="section advanced"
+        data-section="advanced"
+    >
+
+        <div class="section-header">
+            <div class="section-title">
+                Advanced
+            </div>
+
+            <div class="section-line"></div>
+
+            <div class="advanced-badge">
+                Power Users
+            </div>
+        </div>
+
+
+        <div class="tool-grid">
+
+            <a
+                class="tool-card"
+                href="gridsnap.html"
+                data-tool
+                data-name="grid snap calculator wall placement advanced unity"
+                data-category="advanced placement"
+                data-id="gridsnap"
+            >
+
+                <div class="tool-icon">
+                    <img src="icons/gridsnap.jpg" alt="">
+                </div>
+
+                <div class="tool-info">
+                    <div class="tool-category">
+                        Advanced Placement
+                    </div>
+
+                    <div class="tool-name">
+                        Grid Snap Calculator
+                    </div>
+
+                    <div class="tool-description">
+                        Snap modular walls together using center positions and half-size math.
+                    </div>
+                </div>
+
+                <button
+                    class="favorite"
+                    type="button"
+                    aria-label="Favorite Grid Snap Calculator"
+                    data-favorite="gridsnap"
+                >☆</button>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         EMPTY SEARCH
+    ====================================================== -->
+
+    <div
+        id="emptyState"
+        class="empty-state"
+    >
+        <strong>No tools found</strong>
+        Try another search term.
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="footer">
+        <span>Wolves Editing Tools</span>
+        <span class="footer-dot">•</span>
+        <span>Runs locally in your browser</span>
+    </footer>
+
+</main>
+
+
+<script>
+
+    /* =========================================================
+       TOOL SEARCH
+    ========================================================= */
+
+    const search = document.getElementById("toolSearch");
+    const favoriteFilter = document.getElementById("favoriteFilter");
+    const emptyState = document.getElementById("emptyState");
+
+    let favoritesOnly = false;
+
+    const tools = [...document.querySelectorAll("[data-tool]")];
+
+    function getFavorites() {
+        try {
+            return JSON.parse(
+                localStorage.getItem("wolves-tool-favorites") || "[]"
+            );
+        } catch {
+            return [];
+        }
+    }
+
+    function setFavorites(list) {
+        localStorage.setItem(
+            "wolves-tool-favorites",
+            JSON.stringify(list)
+        );
+    }
+
+    function updateFavoriteButtons() {
+
+        const favorites = getFavorites();
+
+        document.querySelectorAll("[data-favorite]").forEach(button => {
+
+            const id = button.dataset.favorite;
+
+            const active = favorites.includes(id);
+
+            button.classList.toggle("active", active);
+            button.textContent = active ? "★" : "☆";
+
+        });
+    }
+
+    function filterTools() {
+
+        const query = search.value
+            .trim()
+            .toLowerCase();
+
+        let visible = 0;
+
+        tools.forEach(tool => {
+
+            const text = (
+                tool.dataset.name +
+                " " +
+                tool.dataset.category
+            ).toLowerCase();
+
+            const matchesSearch =
+                !query ||
+                text.includes(query);
+
+            const matchesFavorites =
+                !favoritesOnly ||
+                getFavorites().includes(tool.dataset.id);
+
+            const show =
+                matchesSearch &&
+                matchesFavorites;
+
+            tool.style.display = show ? "" : "none";
+
+            if (show) {
+                visible++;
             }
-
-
-            /* Pack wolf parallax */
-
-            document
-                .querySelectorAll('.pack-wolf')
-                .forEach((el) => {
-
-                    const s =
-                        parseFloat(
-                            el.getAttribute(
-                                'data-parallax'
-                            ) || '18'
-                        );
-
-                    el.style.transform =
-                        'translate(' +
-                        (nx * s) +
-                        'px, ' +
-                        (ny * s * 0.7) +
-                        'px)';
-
-                });
 
         });
 
+        emptyState.style.display =
+            visible === 0 ? "block" : "none";
 
-        /* Card tilt */
+        document.querySelectorAll(".section").forEach(section => {
 
-        if (canTilt) {
+            const visibleTools =
+                section.querySelectorAll(
+                    "[data-tool]:not([style*='display: none'])"
+                );
 
-            document
-                .querySelectorAll('.tool-card')
-                .forEach((card) => {
+            section.style.display =
+                visibleTools.length ? "" : "none";
 
-                    card.addEventListener(
-                        'pointermove',
-                        (e) => {
-
-                            const r =
-                                card.getBoundingClientRect();
-
-                            const px =
-                                (e.clientX - r.left) /
-                                r.width;
-
-                            const py =
-                                (e.clientY - r.top) /
-                                r.height;
-
-                            const rx =
-                                (0.5 - py) * 11;
-
-                            const ry =
-                                (px - 0.5) * 14;
+        });
+    }
 
 
-                            card.style.transform =
-                                'rotateX(' +
-                                rx +
-                                'deg) rotateY(' +
-                                ry +
-                                'deg) translateZ(10px)';
+    /* =========================================================
+       FAVORITES
+    ========================================================= */
 
-                        }
-                    );
+    document.querySelectorAll("[data-favorite]").forEach(button => {
+
+        button.addEventListener("click", event => {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const id = button.dataset.favorite;
+
+            let favorites = getFavorites();
+
+            if (favorites.includes(id)) {
+
+                favorites =
+                    favorites.filter(item => item !== id);
+
+            } else {
+
+                favorites.push(id);
+
+            }
+
+            setFavorites(favorites);
+
+            updateFavoriteButtons();
+            filterTools();
+
+        });
+
+    });
 
 
-                    card.addEventListener(
-                        'pointerleave',
-                        () => {
+    favoriteFilter.addEventListener("click", () => {
 
-                            card.style.transform = '';
+        favoritesOnly = !favoritesOnly;
 
-                        }
-                    );
+        favoriteFilter.classList.toggle(
+            "active",
+            favoritesOnly
+        );
 
-                });
+        filterTools();
+
+    });
+
+
+    /* =========================================================
+       SEARCH
+    ========================================================= */
+
+    search.addEventListener("input", filterTools);
+
+    document.addEventListener("keydown", event => {
+
+        if (
+            event.key === "/" &&
+            document.activeElement !== search
+        ) {
+
+            event.preventDefault();
+
+            search.focus();
 
         }
 
-    </script>
+        if (
+            event.key === "Escape" &&
+            document.activeElement === search
+        ) {
+
+            search.value = "";
+
+            filterTools();
+
+            search.blur();
+
+        }
+
+    });
+
+
+    /* =========================================================
+       RECENTLY USED
+    ========================================================= */
+
+    tools.forEach(tool => {
+
+        tool.addEventListener("click", () => {
+
+            const id = tool.dataset.id;
+
+            let recent = [];
+
+            try {
+                recent = JSON.parse(
+                    localStorage.getItem(
+                        "wolves-tool-recent"
+                    ) || "[]"
+                );
+            } catch {}
+
+            recent =
+                recent.filter(item => item !== id);
+
+            recent.unshift(id);
+
+            recent = recent.slice(0, 5);
+
+            localStorage.setItem(
+                "wolves-tool-recent",
+                JSON.stringify(recent)
+            );
+
+        });
+
+    });
+
+
+    /* =========================================================
+       WOLF PARALLAX
+    ========================================================= */
+
+    const wolfBg =
+        document.getElementById("wolfBg");
+
+    const reduce =
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+    const canTilt =
+        window.matchMedia(
+            "(pointer:fine)"
+        ).matches && !reduce;
+
+    if (canTilt) {
+
+        window.addEventListener(
+            "pointermove",
+            event => {
+
+                if (event.pointerType !== "mouse")
+                    return;
+
+                const nx =
+                    event.clientX /
+                    window.innerWidth -
+                    0.5;
+
+                const ny =
+                    event.clientY /
+                    window.innerHeight -
+                    0.5;
+
+                if (wolfBg) {
+
+                    wolfBg.style.transform =
+                        "translate(calc(-50% + " +
+                        nx * 22 +
+                        "px), calc(-50% + " +
+                        ny * 15 +
+                        "px))";
+
+                }
+
+                document
+                    .querySelectorAll(".pack-wolf")
+                    .forEach(el => {
+
+                        const strength =
+                            parseFloat(
+                                el.dataset.parallax || 18
+                            );
+
+                        el.style.transform =
+                            "translate(" +
+                            nx * strength +
+                            "px, " +
+                            ny * strength * .7 +
+                            "px)";
+
+                    });
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       INITIALIZE
+    ========================================================= */
+
+    updateFavoriteButtons();
+    filterTools();
+
+</script>
 
 </body>
 </html>
