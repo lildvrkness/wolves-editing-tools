@@ -1,4 +1,4 @@
-<!html>
+<html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,211 +15,182 @@
             --purple-bright: #b783ff;
             --green: #39ff88;
             --black: #030405;
-            --white: #f5f3fa;
-            --muted: #9b99a6;
+            --white: #f7f5fb;
+            --muted: #b7b4c2;
         }
         * { box-sizing: border-box; }
-        html, body { height: 100%; }
         body {
             margin: 0;
             min-height: 100vh;
             background: var(--black);
             color: var(--white);
             font-family: Inter, sans-serif;
-            overflow-x: hidden;
         }
         a { color: inherit; text-decoration: none; }
         .bg {
             position: fixed; inset: 0; z-index: -20; pointer-events: none;
             background:
-                radial-gradient(circle at 50% 0%, rgba(155,92,255,.08), transparent 42%),
+                radial-gradient(circle at 50% 0%, rgba(155,92,255,.1), transparent 40%),
                 #030405;
         }
         .wolf {
-            position: fixed; inset: 0; z-index: -10; pointer-events: none; opacity: .28;
+            position: fixed; inset: 0; z-index: -10; pointer-events: none; opacity: .22;
             background:
-                linear-gradient(to bottom, rgba(3,4,5,.35), rgba(3,4,5,.78) 60%, rgba(3,4,5,.96)),
-                url("https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png") center 20px / min(760px, 62vw) no-repeat;
+                linear-gradient(to bottom, rgba(3,4,5,.4), rgba(3,4,5,.82) 55%, rgba(3,4,5,.97)),
+                url("https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png") center 30px / min(820px, 70vw) no-repeat;
             filter: contrast(1.08) saturate(1.25);
             mix-blend-mode: screen;
         }
-        .grid {
+        .gridline {
             position: fixed; inset: 0; z-index: -4; pointer-events: none;
             background-image:
-                linear-gradient(rgba(255,255,255,.016) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,.016) 1px, transparent 1px);
-            background-size: 64px 64px;
-            mask-image: linear-gradient(to bottom, black, transparent 80%);
+                linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+            background-size: 70px 70px;
+            mask-image: linear-gradient(to bottom, black, transparent 78%);
         }
-        .app {
-            width: min(1180px, calc(100% - 32px));
-            min-height: 100vh;
+        .page {
+            width: min(1180px, calc(100% - 36px));
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            padding: 22px 0 18px;
+            padding: 36px 0 28px;
         }
-        .top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 18px;
-        }
+        .hero { text-align: center; margin-bottom: 28px; }
         .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 0;
-        }
-        .mark {
-            width: 46px; height: 46px; border-radius: 14px; padding: 2px; flex: 0 0 46px;
-            background: linear-gradient(145deg, rgba(155,92,255,.9), rgba(57,255,136,.55));
-            box-shadow: 0 0 18px rgba(155,92,255,.28);
-        }
-        .mark img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block; background: #0b0c10; }
-        .title {
             margin: 0;
             font-family: "New Rocker", cursive;
-            font-size: clamp(28px, 4vw, 40px);
+            font-size: clamp(42px, 6vw, 68px);
             line-height: .95;
-            letter-spacing: .4px;
+            letter-spacing: 1px;
         }
-        .title .wolves { color: var(--purple-bright); }
-        .title .tools { color: var(--green); }
-        .sub { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+        .brand .wolves {
+            color: var(--green);
+            text-shadow: 0 0 18px rgba(57,255,136,.35);
+        }
+        .brand .rest {
+            color: var(--purple-bright);
+            text-shadow: 0 0 18px rgba(155,92,255,.3);
+        }
+        .hero p {
+            max-width: 560px;
+            margin: 14px auto 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.5;
+        }
         .status {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 7px 12px; border-radius: 999px;
-            border: 1px solid rgba(57,255,136,.18);
-            background: rgba(8,15,11,.6); color: #c7d7ce;
-            font-size: 12px; font-weight: 600; white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 7px 13px;
+            border-radius: 999px;
+            border: 1px solid rgba(57,255,136,.2);
+            background: rgba(8,15,11,.65);
+            color: #d5e7dc;
+            font-size: 12px;
+            font-weight: 600;
         }
         .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px rgba(57,255,136,.7); }
         .board {
-            flex: 1;
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            grid-auto-rows: minmax(132px, 1fr);
-            gap: 12px;
-            align-content: start;
+            gap: 14px;
         }
         .card {
-            position: relative;
-            min-height: 132px;
-            padding: 14px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            border: 1px solid rgba(255,255,255,.08);
+            gap: 12px;
+            min-height: 0;
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,.1);
             border-radius: 16px;
-            background: linear-gradient(145deg, rgba(16,16,24,.88), rgba(7,8,11,.9));
-            overflow: hidden;
-            transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-        }
-        .card::before {
-            content: "";
-            position: absolute; left: 14px; right: 14px; top: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: .55;
+            background: linear-gradient(160deg, rgba(28,26,38,.92), rgba(12,12,16,.94));
+            box-shadow: 0 10px 28px rgba(0,0,0,.28);
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
         }
         .card:hover {
             transform: translateY(-4px);
-            border-color: color-mix(in srgb, var(--accent) 40%, rgba(255,255,255,.1));
-            box-shadow: 0 14px 34px rgba(0,0,0,.35), 0 0 22px color-mix(in srgb, var(--accent) 14%, transparent);
+            border-color: color-mix(in srgb, var(--accent) 55%, rgba(255,255,255,.12));
+            box-shadow: 0 16px 36px rgba(0,0,0,.4), 0 0 24px color-mix(in srgb, var(--accent) 18%, transparent);
         }
         .purple { --accent: var(--purple); }
         .green { --accent: var(--green); }
-        .row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+        .top { display: flex; align-items: center; justify-content: space-between; }
         .icon {
-            width: 52px; height: 52px; border-radius: 14px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,.07);
+            width: 54px; height: 54px; border-radius: 14px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,.1);
             background: #0b0c10;
             display: grid; place-items: center;
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
         }
         .icon img { width: 100%; height: 100%; object-fit: cover; object-position: center 32%; display: block; }
-        .glyph { font-size: 22px; letter-spacing: -3px; color: var(--green); text-shadow: 0 0 14px rgba(57,255,136,.4); }
-        .name { margin: 12px 0 0; font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
-        .desc { margin: 4px 0 0; color: #8f8d99; font-size: 12px; line-height: 1.35; }
-        .go { color: var(--accent); font-size: 13px; font-weight: 800; }
+        .glyph { font-size: 22px; letter-spacing: -3px; color: var(--green); text-shadow: 0 0 12px rgba(57,255,136,.45); }
+        .go { color: var(--accent); font-weight: 800; font-size: 16px; }
+        .name { margin: 0; font-size: 16px; font-weight: 700; color: #fff; }
+        .desc { margin: 4px 0 0; color: #a7a4b2; font-size: 13px; line-height: 1.35; }
         footer {
-            margin-top: 14px;
-            color: #5d5c66;
+            margin-top: 22px;
+            color: #6d6b76;
             font-size: 12px;
             display: flex;
             justify-content: space-between;
-            gap: 10px;
         }
-        @media (max-width: 1100px) {
-            .board { grid-template-columns: repeat(3, 1fr); }
-            html, body { height: auto; }
-        }
-        @media (max-width: 720px) {
-            .board { grid-template-columns: repeat(2, 1fr); }
-            .top { flex-direction: column; align-items: flex-start; }
-            .sub { display: none; }
-        }
-        @media (max-width: 480px) {
-            .board { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 1100px) { .board { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 720px) { .board { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .board { grid-template-columns: 1fr; } .brand { font-size: 40px; } }
     </style>
 </head>
 <body>
     <div class="bg"></div>
     <div class="wolf"></div>
-    <div class="grid"></div>
+    <div class="gridline"></div>
 
-    <main class="app">
-        <header class="top">
-            <div class="brand">
-                <div class="mark"><img src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt=""></div>
-                <div>
-                    <h1 class="title"><span class="wolves">Wolves</span> <span class="tools">Editing Tools</span></h1>
-                    <p class="sub">Tiles, textures, names, and references. All local.</p>
-                </div>
-            </div>
+    <main class="page">
+        <header class="hero">
+            <h1 class="brand"><span class="wolves">Wolves</span> <span class="rest">Editing Tools</span></h1>
+            <p>Tiles, textures, names, and references for Wolves worlds.</p>
             <div class="status"><span class="dot"></span> 100% Local · No Uploads</div>
         </header>
 
         <section class="board">
             <a class="card purple" href="albedo.html">
-                <div class="row"><div class="icon"><img src="icons/tile.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/tile.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Albedo Tiles</div><div class="desc">Wall size to tile X / Y.</div></div>
             </a>
             <a class="card green" href="tilepreview.html">
-                <div class="row"><div class="icon"><img src="icons/tilepreview.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/tilepreview.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Tile Preview</div><div class="desc">Live wrap on a wall.</div></div>
             </a>
             <a class="card purple" href="image.html">
-                <div class="row"><div class="icon"><img src="icons/texture.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/texture.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Image Editor</div><div class="desc">Resize, convert, simple edits.</div></div>
             </a>
             <a class="card green" href="normal.html">
-                <div class="row"><div class="icon"><img src="icons/texture.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/texture.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Normal Map</div><div class="desc">Bake + 2D / 3D preview.</div></div>
             </a>
             <a class="card purple" href="gridsnap.html">
-                <div class="row"><div class="icon"><img src="icons/gridsnap.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/gridsnap.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Grid Snap</div><div class="desc">Wall snap positions.</div></div>
             </a>
             <a class="card green" href="nametags.html">
-                <div class="row"><div class="icon"><img src="icons/tag.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/tag.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Name Tags</div><div class="desc">Gradient [color] codes.</div></div>
             </a>
             <a class="card purple" href="fancy.html">
-                <div class="row"><div class="icon"><img src="icons/fancy.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/fancy.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Fancy Text</div><div class="desc">Unicode font styles.</div></div>
             </a>
             <a class="card green" href="symbols.html">
-                <div class="row"><div class="icon"><span class="glyph">✦✧</span></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><span class="glyph">✦✧</span></div><span class="go">→</span></div>
                 <div><div class="name">Symbols</div><div class="desc">Click-to-copy text.</div></div>
             </a>
             <a class="card purple" href="colors.html">
-                <div class="row"><div class="icon"><img src="icons/color.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/color.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Color Codes</div><div class="desc">Hex, RGB, HSL, Unity.</div></div>
             </a>
             <a class="card green" href="submeshes.html">
-                <div class="row"><div class="icon"><img src="icons/mesh.jpg" alt=""></div><span class="go">→</span></div>
+                <div class="top"><div class="icon"><img src="icons/mesh.jpg" alt=""></div><span class="go">→</span></div>
                 <div><div class="name">Submeshes</div><div class="desc">Shop and mesh reference.</div></div>
             </a>
         </section>
