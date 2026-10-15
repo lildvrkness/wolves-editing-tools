@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,75 +8,296 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=New+Rocker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="theme.css">
-    <script>tailwind.config={theme:{extend:{colors:{purple:"#9b5cff",green:"#39ff88"}}}}</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        purple: "#9b5cff",
+                        green: "#39ff88"
+                    }
+                }
+            }
+        };
+    </script>
     <style>
-        body { margin:0; min-height:100vh; font-family:Inter,sans-serif; color:#e5e7eb;
-            background:radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%), radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%), #030405;
-            padding:28px 16px 48px; }
-        .background-grid { position:fixed; inset:0; pointer-events:none; opacity:.028; z-index:0;
-            background-image:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px); background-size:42px 42px; }
-        .wolves-title { font-family:"New Rocker",cursive; letter-spacing:.025em; line-height:1.02; }
-        .title-wolves { color:#39ff88; text-shadow:0 0 10px rgba(57,255,136,.55); }
-        .title-rest { color:#9b5cff; text-shadow:0 0 12px rgba(155,92,255,.55); }
-        .card { background:linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97)); border:1px solid #202229; border-radius:14px; }
-        .input, select.input { width:100%; height:44px; background:rgba(3,4,5,.88); border:1px solid #292c34; border-radius:8px; padding:9px 12px; color:white; font-size:15px; outline:none; }
-        .label { font-size:14px; color:#e2e8f0; font-weight:600; display:block; margin-bottom:6px; }
-        .panel-title { font-size:15px; letter-spacing:.12em; text-transform:uppercase; font-weight:800; margin-bottom:12px; }
-        .btn { height:44px; padding:0 12px; border-radius:8px; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; border:0; }
-        .btn-green { background:#39ff88; color:#000; }
-        .btn-ghost { background:rgba(0,0,0,.28); color:#e2e8f0; border:1px solid #2a2d35; }
-        .chip { height:34px; padding:0 12px; border-radius:999px; border:1px solid #2a2d35; background:rgba(0,0,0,.35); color:#e2e8f0; font-size:12px; font-weight:700; cursor:pointer; }
-        .chip:hover { border-color:rgba(155,92,255,.7); color:#fff; }
-        .drop { border:1px dashed #343845; border-radius:12px; background:rgba(0,0,0,.28); min-height:140px; display:flex; align-items:center; justify-content:center; text-align:center; cursor:pointer; }
-        .drop:hover, .drop.drag { border-color:rgba(155,92,255,.7); box-shadow:0 0 20px rgba(155,92,255,.15); }
-        .preview-frame { background:#0a0b0e; border:1px solid #262830; border-radius:10px; min-height:360px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-        .preview-frame canvas { max-width:100%; max-height:520px; display:block; }
-        input[type=range] { width:100%; accent-color:#39ff88; }
-        .note { font-size:14px; color:#cbd5e1; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, sans-serif;
+            color: #e5e7eb;
+            background:
+                radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%),
+                radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%),
+                #030405;
+            padding: 28px 16px 48px;
+        }
+        .background-grid {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .028;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
+            background-size: 42px 42px;
+        }
+        .wolves-title {
+            font-family: "New Rocker", cursive;
+            letter-spacing: .025em;
+            line-height: 1.02;
+        }
+        .title-wolves {
+            color: #39ff88;
+            text-shadow: 0 0 10px rgba(57,255,136,.55);
+        }
+        .title-rest {
+            color: #9b5cff;
+            text-shadow: 0 0 12px rgba(155,92,255,.55);
+        }
+        .card {
+            background: linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97));
+            border: 1px solid #202229;
+            border-radius: 14px;
+        }
+        .input, select.input {
+            width: 100%;
+            height: 44px;
+            background: rgba(3,4,5,.88);
+            border: 1px solid #292c34;
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+        .label {
+            font-size: 14px;
+            color: #e2e8f0;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .panel-title {
+            font-size: 15px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        .btn {
+            min-height: 44px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: 0;
+        }
+        .btn-green {
+            background: #39ff88;
+            color: #000;
+        }
+        .btn-purple {
+            background: #9b5cff;
+            color: #fff;
+        }
+        .btn-ghost {
+            background: rgba(0,0,0,.28);
+            color: #e2e8f0;
+            border: 1px solid #2a2d35;
+        }
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+        .chip {
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            border: 1px solid #2a2d35;
+            background: rgba(0,0,0,.35);
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .chip:hover {
+            border-color: rgba(155,92,255,.7);
+            color: #fff;
+        }
+        .drop {
+            border: 1px dashed #343845;
+            border-radius: 12px;
+            background: rgba(0,0,0,.28);
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+        }
+        .drop:hover, .drop.drag {
+            border-color: rgba(155,92,255,.7);
+            box-shadow: 0 0 20px rgba(155,92,255,.15);
+        }
+        .preview-frame {
+            background: #0a0b0e;
+            border: 1px solid #262830;
+            border-radius: 10px;
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 12px;
+        }
+        .preview-frame canvas,
+        .preview-frame img {
+            max-width: 100%;
+            max-height: 520px;
+            display: block;
+            object-fit: contain;
+        }
+        input[type=range] {
+            width: 100%;
+            accent-color: #39ff88;
+        }
+        .note {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .status {
+            min-height: 24px;
+            overflow-wrap: anywhere;
+        }
+        .result-image {
+            width: 100%;
+            max-height: 560px;
+            object-fit: contain;
+        }
+        .back-link {
+            color: #c4b5fd;
+            font-size: 13px;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
     </style>
 </head>
+
 <body class="no-fx no-tilt">
     <div class="background-grid"></div>
-    <img class="watermark" src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt="">
+    <img
+        class="watermark"
+        src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
+        alt=""
+    >
+
     <main class="relative z-10 w-full max-w-6xl mx-auto">
-        <div class="card shell overflow-hidden">
+        <div class="card overflow-hidden">
             <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
                 <div class="flex items-start gap-4">
-                    <div class="logo-ring"><img src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png" alt=""></div>
+                    <div class="logo-ring">
+                        <img
+                            src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
+                            alt="Wolves emblem"
+                        >
+                    </div>
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 mb-2">
                             <a href="index.html" class="back-link">← Tools</a>
                             <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Textures</span>
                         </div>
-                        <h1 class="wolves-title text-4xl md:text-5xl"><span class="title-wolves">Wolves</span> <span class="title-rest">Image Editor</span></h1>
-                        <p class="text-sm text-slate-300 mt-3">Resize, convert PNG / JPEG / WebP, and apply simple edits. File stays in the browser.</p>
+                        <h1 class="wolves-title text-4xl md:text-5xl">
+                            <span class="title-wolves">Wolves</span>
+                            <span class="title-rest">Image Editor</span>
+                        </h1>
+                        <p class="text-sm text-slate-300 mt-3">
+                            Resize, convert, adjust, and upscale images.
+                            Your files stay in your browser until you choose to send one to Bigger.pics.
+                        </p>
                     </div>
                 </div>
             </header>
+
             <section class="p-4 md:p-6 grid grid-cols-1 xl:grid-cols-[340px_1fr] gap-5">
                 <div class="space-y-4">
-                    <div id="drop" class="drop"><div><div class="text-base font-bold text-white">Drop an image</div><div class="note mt-1">PNG, JPG, or WebP</div></div></div>
-                    <input id="file" type="file" accept="image/*" class="hidden">
-                    <div id="meta" class="note">No image loaded.</div>
-                    <div class="card p-4">
-                        <div class="panel-title text-purple">Resize</div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div><label class="label">Width</label><input id="w" class="input" type="number" min="1" value="1024"></div>
-                            <div><label class="label">Height</label><input id="h" class="input" type="number" min="1" value="1024"></div>
-                        </div>
-                        <label class="flex items-center gap-2 mt-3 text-sm"><input id="lock" type="checkbox" checked> Lock aspect</label>
-                        <div class="flex flex-wrap gap-2 mt-3">
-                            <button class="chip" data-size="512">512</button>
-                            <button class="chip" data-size="1024">1024</button>
-                            <button class="chip" data-size="2048">2048</button>
-                            <button class="chip" data-size="4096">4096</button>
+                    <div id="drop" class="drop">
+                        <div>
+                            <div class="text-base font-bold text-white">Drop an image</div>
+                            <div class="note mt-1">PNG, JPG, or WebP</div>
+                            <div class="note mt-2">Or click to choose a file</div>
                         </div>
                     </div>
-                    <div class="card p-4 space-y-2">
+
+                    <input
+                        id="file"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"
+                        class="hidden"
+                    >
+
+                    <div id="meta" class="note">No image loaded.</div>
+
+                    <div class="card p-4">
+                        <div class="panel-title text-purple">Resize</div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="label" for="w">Width</label>
+                                <input id="w" class="input" type="number" min="1" value="1024">
+                            </div>
+                            <div>
+                                <label class="label" for="h">Height</label>
+                                <input id="h" class="input" type="number" min="1" value="1024">
+                            </div>
+                        </div>
+
+                        <label class="flex items-center gap-2 mt-3 text-sm">
+                            <input id="lock" type="checkbox" checked>
+                            Lock aspect
+                        </label>
+
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <button class="chip" data-size="512" type="button">512</button>
+                            <button class="chip" data-size="1024" type="button">1024</button>
+                            <button class="chip" data-size="2048" type="button">2048</button>
+                            <button class="chip" data-size="4096" type="button">4096</button>
+                        </div>
+                    </div>
+
+                    <div class="card p-4 space-y-3">
                         <div class="panel-title text-green">Adjust</div>
-                        <div><div class="flex justify-between label"><span>Brightness</span><span id="brLabel">0</span></div><input id="bright" type="range" min="-100" max="100" step="1" value="0"></div>
-                        <div><div class="flex justify-between label"><span>Contrast</span><span id="ctLabel">0</span></div><input id="contrast" type="range" min="-100" max="100" step="1" value="0"></div>
-                        <div><div class="flex justify-between label"><span>Saturation</span><span id="saLabel">0</span></div><input id="sat" type="range" min="-100" max="100" step="1" value="0"></div>
+
+                        <div>
+                            <div class="flex justify-between label">
+                                <span>Brightness</span>
+                                <span id="brLabel">0</span>
+                            </div>
+                            <input id="bright" type="range" min="-100" max="100" step="1" value="0">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between label">
+                                <span>Contrast</span>
+                                <span id="ctLabel">0</span>
+                            </div>
+                            <input id="contrast" type="range" min="-100" max="100" step="1" value="0">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between label">
+                                <span>Saturation</span>
+                                <span id="saLabel">0</span>
+                            </div>
+                            <input id="sat" type="range" min="-100" max="100" step="1" value="0">
+                        </div>
+
                         <div class="flex flex-wrap gap-2 pt-1">
                             <button id="rotL" class="btn btn-ghost" type="button">Rotate left</button>
                             <button id="rotR" class="btn btn-ghost" type="button">Rotate right</button>
@@ -86,127 +307,643 @@
                             <button id="reset" class="btn btn-ghost" type="button">Reset edits</button>
                         </div>
                     </div>
+
                     <div class="card p-4">
                         <div class="panel-title text-green">Export</div>
-                        <label class="label">Format</label>
+
+                        <label class="label" for="fmt">Format</label>
                         <select id="fmt" class="input">
                             <option value="image/png">PNG</option>
                             <option value="image/jpeg">JPEG</option>
                             <option value="image/webp">WebP</option>
                         </select>
-                        <div class="mt-3"><div class="flex justify-between label"><span>Quality</span><span id="qLabel">0.92</span></div><input id="quality" type="range" min="0.4" max="1" step="0.01" value="0.92"></div>
-                        <button id="exportBtn" class="btn btn-green w-full mt-4">Export image</button>
+
+                        <div class="mt-3">
+                            <div class="flex justify-between label">
+                                <span>Quality</span>
+                                <span id="qLabel">0.92</span>
+                            </div>
+                            <input id="quality" type="range" min="0.4" max="1" step="0.01" value="0.92">
+                        </div>
+
+                        <button id="exportBtn" class="btn btn-green w-full mt-4" type="button">
+                            Export image
+                        </button>
+                    </div>
+
+                    <div class="card p-4">
+                        <div class="panel-title text-purple">AI Upscaler</div>
+                        <p class="note mb-3">
+                            Send your selected image to Bigger.pics for upscaling,
+                            then return the finished image here.
+                        </p>
+
+                        <button
+                            id="upscaleBtn"
+                            class="btn btn-purple w-full"
+                            type="button"
+                            disabled
+                        >
+                            Upscale with bigger.pics
+                        </button>
+
+                        <p id="upscaleStatus" class="note status mt-3" role="status" aria-live="polite">
+                            Choose an image first.
+                        </p>
+
+                        <button
+                            id="retryUpscaleBtn"
+                            class="btn btn-ghost w-full mt-2"
+                            type="button"
+                            hidden
+                        >
+                            Try again
+                        </button>
                     </div>
                 </div>
-                <div>
-                    <div class="label">Preview</div>
-                    <div class="preview-frame" id="preview"><span class="note">Drop an image to start</span></div>
+
+                <div class="space-y-4">
+                    <div>
+                        <div class="label">Image editor preview</div>
+                        <div class="preview-frame" id="preview">
+                            <span class="note">Drop an image to start</span>
+                        </div>
+                    </div>
+
+                    <section id="upscaleResultWrap" class="card p-4" hidden>
+                        <div class="panel-title text-green">Upscaled result</div>
+
+                        <div class="preview-frame">
+                            <img id="upscaleResult" class="result-image" alt="Upscaled image preview">
+                        </div>
+
+                        <p id="upscaleDimensions" class="note mt-3"></p>
+
+                        <a
+                            id="downloadUpscaled"
+                            class="btn btn-green inline-flex items-center justify-center mt-3"
+                            href="#"
+                            download="upscaled-picture.png"
+                        >
+                            Download upscaled image
+                        </a>
+                    </section>
                 </div>
             </section>
         </div>
     </main>
+
 <script>
-const $ = id => document.getElementById(id);
-let source = null, sourceFile = null, aspect = 1, updating = false;
-let rot = 0, flipX = 1, flipY = 1, invertOn = false;
+(() => {
+    "use strict";
 
-function load(file) {
-    sourceFile = file;
-    const img = new Image();
-    img.onload = () => {
-        source = img; aspect = img.naturalWidth / img.naturalHeight;
-        updating = true; $('w').value = img.naturalWidth; $('h').value = img.naturalHeight; updating = false;
-        resetEdits(false);
-        $('meta').textContent = file.name + ' · ' + img.naturalWidth + '×' + img.naturalHeight + ' · ' + (file.size/1024).toFixed(1) + ' KB';
-        draw();
-    };
-    img.src = URL.createObjectURL(file);
-}
-const drop = $('drop'), file = $('file');
-drop.onclick = () => file.click();
-drop.ondragover = e => { e.preventDefault(); drop.classList.add('drag'); };
-drop.ondragleave = () => drop.classList.remove('drag');
-drop.ondrop = e => { e.preventDefault(); drop.classList.remove('drag'); if (e.dataTransfer.files[0]) load(e.dataTransfer.files[0]); };
-file.onchange = () => { if (file.files[0]) load(file.files[0]); };
+    const $ = id => document.getElementById(id);
+    const BIGGER_ORIGIN = "https://app.bigger.pics";
+    const SITE_NAME = "lildvrkness.github.io/wolves-editing-tools";
 
-function resetEdits(redraw=true) {
-    rot = 0; flipX = 1; flipY = 1; invertOn = false;
-    $('bright').value = 0; $('contrast').value = 0; $('sat').value = 0;
-    if (redraw) draw();
-}
-function renderCanvas() {
-    if (!source) return null;
-    let w = Math.max(1, Number($('w').value) || source.naturalWidth);
-    let h = Math.max(1, Number($('h').value) || source.naturalHeight);
-    const swapped = rot % 180 !== 0;
-    const c = document.createElement('canvas');
-    c.width = swapped ? h : w;
-    c.height = swapped ? w : h;
-    const ctx = c.getContext('2d');
-    ctx.translate(c.width/2, c.height/2);
-    ctx.rotate(rot * Math.PI / 180);
-    ctx.scale(flipX, flipY);
-    ctx.drawImage(source, -w/2, -h/2, w, h);
-    ctx.setTransform(1,0,0,1,0,0);
-    const img = ctx.getImageData(0, 0, c.width, c.height);
-    const d = img.data;
-    const br = Number($('bright').value);
-    const ct = Number($('contrast').value) / 100;
-    const sa = Number($('sat').value) / 100;
-    const cf = (259 * (ct + 1)) / (255 * (1 - ct) || 1);
-    for (let i = 0; i < d.length; i += 4) {
-        let r = d[i], g = d[i+1], b = d[i+2];
-        r = cf * (r - 128) + 128 + br;
-        g = cf * (g - 128) + 128 + br;
-        b = cf * (b - 128) + 128 + br;
-        const gray = 0.299*r + 0.587*g + 0.114*b;
-        r = gray + (r - gray) * (1 + sa);
-        g = gray + (g - gray) * (1 + sa);
-        b = gray + (b - gray) * (1 + sa);
-        if (invertOn) { r = 255 - r; g = 255 - g; b = 255 - b; }
-        d[i] = Math.max(0, Math.min(255, r));
-        d[i+1] = Math.max(0, Math.min(255, g));
-        d[i+2] = Math.max(0, Math.min(255, b));
+    let source = null;
+    let sourceFile = null;
+    let aspect = 1;
+    let updating = false;
+    let rot = 0;
+    let flipX = 1;
+    let flipY = 1;
+    let invertOn = false;
+
+    let popup = null;
+    let popupReadySource = null;
+    let imageData = null;
+    let contextId = null;
+    let sent = false;
+    let resultReceived = false;
+    let pollId = null;
+    let resultUrl = null;
+
+    function setUpscaleStatus(message) {
+        $("upscaleStatus").textContent = message;
     }
-    ctx.putImageData(img, 0, 0);
-    return c;
-}
-function draw() {
-    if (!source) return;
-    const c = renderCanvas();
-    $('preview').innerHTML = '';
-    c.style.maxWidth = '100%'; c.style.maxHeight = '520px';
-    $('preview').appendChild(c);
-    $('brLabel').textContent = $('bright').value;
-    $('ctLabel').textContent = $('contrast').value;
-    $('saLabel').textContent = $('sat').value;
-    $('qLabel').textContent = Number($('quality').value).toFixed(2);
-}
-$('w').oninput = () => { if (updating || !$('lock').checked) return draw(); updating = true; $('h').value = Math.max(1, Math.round(Number($('w').value)/aspect)); updating = false; draw(); };
-$('h').oninput = () => { if (updating || !$('lock').checked) return draw(); updating = true; $('w').value = Math.max(1, Math.round(Number($('h').value)*aspect)); updating = false; draw(); };
-document.querySelectorAll('[data-size]').forEach(btn => btn.onclick = () => {
-    const n = Number(btn.dataset.size);
-    updating = true; $('w').value = n; $('h').value = $('lock').checked ? Math.max(1, Math.round(n/aspect)) : n; updating = false; draw();
-});
-['bright','contrast','sat','quality'].forEach(id => $(id).addEventListener('input', draw));
-$('rotL').onclick = () => { rot = (rot + 270) % 360; draw(); };
-$('rotR').onclick = () => { rot = (rot + 90) % 360; draw(); };
-$('flipH').onclick = () => { flipX *= -1; draw(); };
-$('flipV').onclick = () => { flipY *= -1; draw(); };
-$('invert').onclick = () => { invertOn = !invertOn; draw(); };
-$('reset').onclick = () => resetEdits(true);
-function extFor(type) { return type.includes('jpeg') ? 'jpg' : type.includes('webp') ? 'webp' : 'png'; }
-$('exportBtn').onclick = () => {
-    if (!source) return alert('Drop an image first.');
-    const c = renderCanvas();
-    const type = $('fmt').value;
-    c.toBlob(blob => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = (sourceFile?.name || 'image').replace(/\.[^.]+$/, '') + '-' + c.width + 'x' + c.height + '.' + extFor(type);
-        a.click();
-    }, type, Number($('quality').value));
-};
+
+    function stopPopupPolling() {
+        if (pollId !== null) {
+            clearInterval(pollId);
+            pollId = null;
+        }
+    }
+
+    function clearUpscaleResult() {
+        if (resultUrl) {
+            URL.revokeObjectURL(resultUrl);
+            resultUrl = null;
+        }
+
+        $("upscaleResult").removeAttribute("src");
+        $("downloadUpscaled").removeAttribute("href");
+        $("upscaleDimensions").textContent = "";
+        $("upscaleResultWrap").hidden = true;
+    }
+
+    function resetUpscaleSession(closePopup = false) {
+        stopPopupPolling();
+
+        if (closePopup && popup && !popup.closed) {
+            popup.close();
+        }
+
+        popup = null;
+        popupReadySource = null;
+        imageData = null;
+        contextId = null;
+        sent = false;
+        resultReceived = false;
+    }
+
+    function sendImageToBiggerPics() {
+        if (
+            !popup ||
+            popup.closed ||
+            !popupReadySource ||
+            !imageData ||
+            !sourceFile ||
+            sent
+        ) {
+            return;
+        }
+
+        try {
+            popupReadySource.postMessage({
+                type: "bigger-pics-image",
+                url: imageData,
+                name: sourceFile.name || "picture.png",
+                site: SITE_NAME,
+                format: "png",
+                context: contextId
+            }, BIGGER_ORIGIN);
+
+            sent = true;
+            $("upscaleBtn").disabled = false;
+            $("retryUpscaleBtn").hidden = true;
+
+            setUpscaleStatus(
+                "Image sent! Finish upscaling in Bigger.pics, then click its Send this back button."
+            );
+        } catch (error) {
+            $("upscaleBtn").disabled = false;
+            $("retryUpscaleBtn").hidden = false;
+
+            setUpscaleStatus(
+                "The image could not be sent. Close the Bigger.pics popup and try again."
+            );
+        }
+    }
+
+    function load(file) {
+        if (!file) return;
+
+        if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+            alert("Please choose a PNG, JPG, or WebP image.");
+            return;
+        }
+
+        resetUpscaleSession(true);
+        clearUpscaleResult();
+
+        sourceFile = file;
+        $("upscaleBtn").disabled = false;
+        $("retryUpscaleBtn").hidden = true;
+        setUpscaleStatus("Image selected. Ready to upscale.");
+
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
+
+        img.onload = () => {
+            if (source && source._objectUrl) {
+                URL.revokeObjectURL(source._objectUrl);
+            }
+
+            img._objectUrl = objectUrl;
+            source = img;
+            aspect = img.naturalWidth / img.naturalHeight;
+
+            updating = true;
+            $("w").value = img.naturalWidth;
+            $("h").value = img.naturalHeight;
+            updating = false;
+
+            resetEdits(false);
+
+            $("meta").textContent =
+                file.name + " · " +
+                img.naturalWidth + "×" + img.naturalHeight + " · " +
+                (file.size / 1024).toFixed(1) + " KB";
+
+            draw();
+        };
+
+        img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            alert("That image could not be opened.");
+        };
+
+        img.src = objectUrl;
+    }
+
+    const drop = $("drop");
+    const file = $("file");
+
+    drop.addEventListener("click", () => file.click());
+
+    drop.addEventListener("dragover", event => {
+        event.preventDefault();
+        drop.classList.add("drag");
+    });
+
+    drop.addEventListener("dragleave", () => {
+        drop.classList.remove("drag");
+    });
+
+    drop.addEventListener("drop", event => {
+        event.preventDefault();
+        drop.classList.remove("drag");
+
+        if (event.dataTransfer.files[0]) {
+            load(event.dataTransfer.files[0]);
+        }
+    });
+
+    file.addEventListener("change", () => {
+        if (file.files[0]) {
+            load(file.files[0]);
+        }
+    });
+
+    function resetEdits(redraw = true) {
+        rot = 0;
+        flipX = 1;
+        flipY = 1;
+        invertOn = false;
+
+        $("bright").value = 0;
+        $("contrast").value = 0;
+        $("sat").value = 0;
+
+        if (redraw) draw();
+    }
+
+    function renderCanvas() {
+        if (!source) return null;
+
+        const w = Math.max(1, Number($("w").value) || source.naturalWidth);
+        const h = Math.max(1, Number($("h").value) || source.naturalHeight);
+        const swapped = rot % 180 !== 0;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = swapped ? h : w;
+        canvas.height = swapped ? w : h;
+
+        const ctx = canvas.getContext("2d");
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate(rot * Math.PI / 180);
+        ctx.scale(flipX, flipY);
+        ctx.drawImage(source, -w / 2, -h / 2, w, h);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = image.data;
+
+        const brightness = Number($("bright").value);
+        const contrast = Number($("contrast").value) / 100;
+        const saturation = Number($("sat").value) / 100;
+        const factor = (259 * (contrast + 1)) / (255 * (1 - contrast) || 1);
+
+        for (let i = 0; i < pixels.length; i += 4) {
+            let r = pixels[i];
+            let g = pixels[i + 1];
+            let b = pixels[i + 2];
+
+            r = factor * (r - 128) + 128 + brightness;
+            g = factor * (g - 128) + 128 + brightness;
+            b = factor * (b - 128) + 128 + brightness;
+
+            const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+
+            r = gray + (r - gray) * (1 + saturation);
+            g = gray + (g - gray) * (1 + saturation);
+            b = gray + (b - gray) * (1 + saturation);
+
+            if (invertOn) {
+                r = 255 - r;
+                g = 255 - g;
+                b = 255 - b;
+            }
+
+            pixels[i] = Math.max(0, Math.min(255, r));
+            pixels[i + 1] = Math.max(0, Math.min(255, g));
+            pixels[i + 2] = Math.max(0, Math.min(255, b));
+        }
+
+        ctx.putImageData(image, 0, 0);
+        return canvas;
+    }
+
+    function draw() {
+        if (!source) return;
+
+        const canvas = renderCanvas();
+        $("preview").innerHTML = "";
+
+        canvas.style.maxWidth = "100%";
+        canvas.style.maxHeight = "520px";
+        $("preview").appendChild(canvas);
+
+        $("brLabel").textContent = $("bright").value;
+        $("ctLabel").textContent = $("contrast").value;
+        $("saLabel").textContent = $("sat").value;
+        $("qLabel").textContent = Number($("quality").value).toFixed(2);
+    }
+
+    $("w").addEventListener("input", () => {
+        if (updating || !$("lock").checked) {
+            draw();
+            return;
+        }
+
+        updating = true;
+        $("h").value = Math.max(
+            1,
+            Math.round(Number($("w").value) / aspect)
+        );
+        updating = false;
+        draw();
+    });
+
+    $("h").addEventListener("input", () => {
+        if (updating || !$("lock").checked) {
+            draw();
+            return;
+        }
+
+        updating = true;
+        $("w").value = Math.max(
+            1,
+            Math.round(Number($("h").value) * aspect)
+        );
+        updating = false;
+        draw();
+    });
+
+    document.querySelectorAll("[data-size]").forEach(button => {
+        button.addEventListener("click", () => {
+            const n = Number(button.dataset.size);
+
+            updating = true;
+            $("w").value = n;
+            $("h").value = $("lock").checked
+                ? Math.max(1, Math.round(n / aspect))
+                : n;
+            updating = false;
+
+            draw();
+        });
+    });
+
+    ["bright", "contrast", "sat", "quality"].forEach(id => {
+        $(id).addEventListener("input", draw);
+    });
+
+    $("rotL").addEventListener("click", () => {
+        rot = (rot + 270) % 360;
+        draw();
+    });
+
+    $("rotR").addEventListener("click", () => {
+        rot = (rot + 90) % 360;
+        draw();
+    });
+
+    $("flipH").addEventListener("click", () => {
+        flipX *= -1;
+        draw();
+    });
+
+    $("flipV").addEventListener("click", () => {
+        flipY *= -1;
+        draw();
+    });
+
+    $("invert").addEventListener("click", () => {
+        invertOn = !invertOn;
+        draw();
+    });
+
+    $("reset").addEventListener("click", () => resetEdits(true));
+
+    function extensionFor(type) {
+        return type.includes("jpeg")
+            ? "jpg"
+            : type.includes("webp")
+                ? "webp"
+                : "png";
+    }
+
+    $("exportBtn").addEventListener("click", () => {
+        if (!source) {
+            alert("Drop an image first.");
+            return;
+        }
+
+        const canvas = renderCanvas();
+        const type = $("fmt").value;
+
+        canvas.toBlob(blob => {
+            if (!blob) {
+                alert("Could not export this image.");
+                return;
+            }
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download =
+                (sourceFile?.name || "image").replace(/\.[^.]+$/, "") +
+                "-" + canvas.width + "x" + canvas.height +
+                "." + extensionFor(type);
+
+            link.click();
+
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }, type, Number($("quality").value));
+    });
+
+    // BIGGER.PICS INTEGRATION
+    // The popup must be opened directly inside the user's button click.
+    $("upscaleBtn").addEventListener("click", () => {
+        if (!sourceFile) {
+            setUpscaleStatus("Choose an image first.");
+            return;
+        }
+
+        if (popup && !popup.closed) {
+            setUpscaleStatus(
+                sent
+                    ? "Finish upscaling in Bigger.pics, then click Send this back."
+                    : "Bigger.pics is open. Waiting for it to become ready."
+            );
+            return;
+        }
+
+        resetUpscaleSession(false);
+        clearUpscaleResult();
+
+        contextId =
+            typeof crypto.randomUUID === "function"
+                ? crypto.randomUUID()
+                : Date.now() + "-" + Math.random().toString(36).slice(2);
+
+        // Do not use "noopener": Bigger.pics needs to message its opener.
+        popup = window.open("https://bigger.pics/", "_blank");
+
+        if (!popup) {
+            setUpscaleStatus(
+                "Popup blocked. Allow popups for this site, then try again."
+            );
+            return;
+        }
+
+        const thisPopup = popup;
+
+        $("upscaleBtn").disabled = true;
+        $("retryUpscaleBtn").hidden = true;
+        setUpscaleStatus("Preparing your image and waiting for Bigger.pics…");
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            if (popup !== thisPopup || thisPopup.closed) {
+                $("upscaleBtn").disabled = false;
+                setUpscaleStatus("Bigger.pics closed before the image was sent.");
+                return;
+            }
+
+            imageData = reader.result;
+            sendImageToBiggerPics();
+        };
+
+        reader.onerror = () => {
+            $("upscaleBtn").disabled = false;
+            $("retryUpscaleBtn").hidden = false;
+            setUpscaleStatus("Could not read the image. Please try again.");
+        };
+
+        reader.readAsDataURL(sourceFile);
+
+        stopPopupPolling();
+
+        pollId = setInterval(() => {
+            if (
+                popup === thisPopup &&
+                thisPopup.closed &&
+                !resultReceived
+            ) {
+                stopPopupPolling();
+                popup = null;
+                popupReadySource = null;
+                $("upscaleBtn").disabled = false;
+                $("retryUpscaleBtn").hidden = false;
+
+                setUpscaleStatus(
+                    "Bigger.pics closed without returning an image. You can try again."
+                );
+            }
+        }, 500);
+    });
+
+    $("retryUpscaleBtn").addEventListener("click", () => {
+        if (sourceFile) {
+            $("upscaleBtn").click();
+        }
+    });
+
+    // Listen only to messages from Bigger.pics and the popup we opened.
+    window.addEventListener("message", event => {
+        if (event.origin !== BIGGER_ORIGIN) return;
+        if (!popup || event.source !== popup) return;
+
+        const data = event.data;
+
+        if (!data || typeof data !== "object") return;
+
+        if (data.type === "bigger-pics-ready") {
+            popupReadySource = event.source;
+            setUpscaleStatus("Bigger.pics is ready. Sending your image…");
+            sendImageToBiggerPics();
+            return;
+        }
+
+        if (data.type !== "bigger-pics-result") return;
+        if (!sent || data.context !== contextId) return;
+        if (!(data.blob instanceof Blob)) return;
+
+        if (
+            data.blob.type &&
+            !["image/png", "image/jpeg"].includes(data.blob.type)
+        ) {
+            setUpscaleStatus("The returned image format is not supported.");
+            return;
+        }
+
+        resultReceived = true;
+        stopPopupPolling();
+
+        if (resultUrl) {
+            URL.revokeObjectURL(resultUrl);
+        }
+
+        resultUrl = URL.createObjectURL(data.blob);
+
+        $("upscaleResult").src = resultUrl;
+
+        $("upscaleDimensions").textContent =
+            data.width && data.height
+                ? `${data.width} × ${data.height} pixels`
+                : "Your upscaled image is ready.";
+
+        const safeName = (
+            data.name || "upscaled-picture.png"
+        ).replace(/[\\/:*?"<>|]/g, "_");
+
+        const download = $("downloadUpscaled");
+        download.href = resultUrl;
+        download.download = safeName;
+        download.textContent = "Download " + safeName;
+
+        $("upscaleResultWrap").hidden = false;
+        $("upscaleBtn").disabled = false;
+        $("retryUpscaleBtn").hidden = true;
+
+        setUpscaleStatus("Upscaling complete! Your image is ready to download.");
+
+        popup = null;
+        popupReadySource = null;
+
+        $("upscaleResultWrap").scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+    });
+
+    window.addEventListener("beforeunload", () => {
+        stopPopupPolling();
+
+        if (resultUrl) {
+            URL.revokeObjectURL(resultUrl);
+        }
+
+        if (source && source._objectUrl) {
+            URL.revokeObjectURL(source._objectUrl);
+        }
+    });
+})();
 </script>
 </body>
 </html>
