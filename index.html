@@ -3,947 +3,1059 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Editor — Wolves Editing Tools</title>
+    <title>Wolves Editing Tools</title>
+    <meta name="description" content="Texture tools, tile previews, text utilities, and image upscaling for Wolves.">
+
     <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=New+Rocker&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="theme.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        purple: "#9b5cff",
-                        green: "#39ff88"
-                    }
-                }
-            }
-        };
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=New+Rocker&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --purple: #9b5cff;
+            --purple-bright: #b783ff;
+            --green: #39ff88;
+            --black: #030405;
+            --white: #f5f3fa;
+            --muted: #9997a4;
+            --border: rgba(255,255,255,.08);
+            --radius: 20px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
         body {
             margin: 0;
             min-height: 100vh;
+            background: var(--black);
+            color: var(--white);
             font-family: Inter, sans-serif;
-            color: #e5e7eb;
-            background:
-                radial-gradient(ellipse 720px 560px at 8% 8%, rgba(155,92,255,.18), transparent 68%),
-                radial-gradient(ellipse 720px 560px at 94% 92%, rgba(57,255,136,.12), transparent 68%),
-                #030405;
-            padding: 28px 16px 48px;
+            overflow-x: hidden;
         }
-        .background-grid {
+
+        a { color: inherit; text-decoration: none; }
+        button, input { font: inherit; }
+
+        .background {
             position: fixed;
             inset: 0;
+            z-index: -20;
             pointer-events: none;
-            opacity: .028;
-            z-index: 0;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(155,92,255,.08), transparent 42%),
+                #030405;
+        }
+
+        /* Existing stationary wolf background — original colors retained */
+        .wolf-background {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            pointer-events: none;
             background-image:
-                linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px),
-                linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px);
-            background-size: 42px 42px;
+                linear-gradient(
+                    to bottom,
+                    rgba(3,4,5,.34),
+                    rgba(3,4,5,.70) 55%,
+                    rgba(3,4,5,.97) 100%
+                ),
+                url("https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png");
+            background-repeat: no-repeat;
+            background-position: center, center 25px;
+            background-size: cover, min(900px, 78vw);
+            opacity: .35;
+            filter: contrast(1.08) saturate(1.25);
+            mix-blend-mode: screen;
         }
-        .wolves-title {
+
+        .ambient-purple, .ambient-green {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -5;
+            filter: blur(100px);
+        }
+
+        .ambient-purple {
+            width: 500px;
+            height: 500px;
+            top: -220px;
+            left: -180px;
+            background: rgba(155,92,255,.09);
+        }
+
+        .ambient-green {
+            width: 450px;
+            height: 450px;
+            right: -180px;
+            top: 30%;
+            background: rgba(57,255,136,.045);
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+            background-size: 70px 70px;
+            mask-image: linear-gradient(to bottom, black, transparent 75%);
+        }
+
+        .cursor-glow {
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transform: translate(
+                calc(var(--mouse-x, -400px) - 140px),
+                calc(var(--mouse-y, -400px) - 140px)
+            );
+            background: radial-gradient(
+                circle,
+                rgba(155,92,255,.10) 0%,
+                rgba(155,92,255,.035) 32%,
+                transparent 72%
+            );
+            filter: blur(4px);
+            transition: transform 70ms linear;
+            mix-blend-mode: screen;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 72px 0 40px;
+        }
+
+        .hero {
+            position: relative;
+            text-align: center;
+            padding: 18px 20px 70px;
+        }
+
+        .brand {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 12px;
             font-family: "New Rocker", cursive;
-            letter-spacing: .025em;
-            line-height: 1.02;
+            font-size: clamp(42px, 7vw, 76px);
+            line-height: .95;
+            letter-spacing: 1px;
+            text-shadow:
+                0 0 25px rgba(155,92,255,.16),
+                0 0 45px rgba(57,255,136,.05);
         }
-        .title-wolves {
-            color: #39ff88;
-            text-shadow: 0 0 10px rgba(57,255,136,.55);
-        }
-        .title-rest {
-            color: #9b5cff;
-            text-shadow: 0 0 12px rgba(155,92,255,.55);
-        }
-        .card {
-            background: linear-gradient(145deg, rgba(17,18,22,.96), rgba(8,9,11,.97));
-            border: 1px solid #202229;
-            border-radius: 14px;
-        }
-        .input, select.input {
-            width: 100%;
-            height: 44px;
-            background: rgba(3,4,5,.88);
-            border: 1px solid #292c34;
-            border-radius: 8px;
-            padding: 9px 12px;
-            color: white;
+
+        .brand-wolves, .footer-purple { color: var(--purple-bright); }
+        .brand-tools, .footer-green { color: var(--green); }
+
+        .hero-description {
+            max-width: 650px;
+            margin: 24px auto 22px;
+            color: var(--muted);
             font-size: 15px;
-            outline: none;
+            line-height: 1.7;
         }
-        .label {
-            font-size: 14px;
-            color: #e2e8f0;
+
+        .local-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 13px;
+            border: 1px solid rgba(57,255,136,.16);
+            border-radius: 999px;
+            background: rgba(8,15,11,.62);
+            color: #c7d7ce;
+            font-size: 12px;
             font-weight: 600;
-            display: block;
-            margin-bottom: 6px;
         }
-        .panel-title {
-            font-size: 15px;
+
+        .local-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(57,255,136,.7);
+        }
+
+        .section { margin-top: 20px; }
+        .section + .section { margin-top: 58px; }
+        .section-heading { margin-bottom: 20px; }
+
+        .section-title {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                rgba(155,92,255,.35),
+                rgba(57,255,136,.08),
+                transparent
+            );
+        }
+
+        .section-title .purple { color: var(--purple-bright); }
+        .section-title .green { color: var(--green); }
+
+        .section-subtitle {
+            margin: 7px 0 0;
+            color: #777582;
+            font-size: 12px;
+        }
+
+        .core-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .core-card {
+            position: relative;
+            min-height: 275px;
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: linear-gradient(145deg, rgba(20,19,29,.86), rgba(7,8,11,.88));
+            box-shadow: 0 18px 50px rgba(0,0,0,.24);
+            transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+        }
+
+        .core-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: .5;
+        }
+
+        .core-card::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            right: -80px;
+            bottom: -90px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: .045;
+            filter: blur(40px);
+            pointer-events: none;
+            transition: opacity 220ms ease;
+        }
+
+        .core-card:hover {
+            transform: translateY(-6px);
+            border-color: color-mix(in srgb, var(--accent) 35%, rgba(255,255,255,.12));
+            box-shadow: 0 20px 55px rgba(0,0,0,.34), 0 0 35px color-mix(in srgb, var(--accent) 9%, transparent);
+        }
+
+        .core-card:hover::after { opacity: .09; }
+        .accent-purple { --accent: var(--purple); }
+        .accent-green { --accent: var(--green); }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .tool-icon {
+            width: 72px;
+            height: 72px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.018));
+            border: 1px solid rgba(255,255,255,.07);
+            overflow: hidden;
+        }
+
+        .tool-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .symbols-icon {
+            font-size: 29px;
+            letter-spacing: -5px;
+            color: var(--green);
+            text-shadow: 0 0 16px rgba(57,255,136,.45);
+        }
+
+        .primary-label {
+            padding: 6px 9px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 800;
             letter-spacing: .12em;
             text-transform: uppercase;
-            font-weight: 800;
-            margin-bottom: 12px;
+            color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 8%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 17%, transparent);
         }
-        .btn {
-            min-height: 44px;
-            padding: 10px 12px;
-            border-radius: 8px;
+
+        .core-card h3 {
+            margin: 22px 0 8px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -.02em;
+        }
+
+        .core-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .open-tool {
+            margin-top: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--accent);
             font-size: 12px;
-            font-weight: 800;
-            letter-spacing: .08em;
-            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .arrow { transition: transform 180ms ease; }
+        .core-card:hover .arrow { transform: translateX(5px); }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .tool-card {
+            position: relative;
+            min-height: 112px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: linear-gradient(145deg, rgba(12,13,18,.82), rgba(6,7,10,.88));
+            transition: transform 200ms ease, border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 18px;
+            bottom: 18px;
+            width: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent);
+            opacity: .65;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-3px);
+            border-color: color-mix(in srgb, var(--accent) 25%, rgba(255,255,255,.08));
+            background: linear-gradient(145deg, rgba(17,18,24,.92), rgba(7,8,11,.94));
+            box-shadow: 0 12px 35px rgba(0,0,0,.25), 0 0 24px color-mix(in srgb, var(--accent) 5%, transparent);
+        }
+
+        .tool-card .tool-icon {
+            flex: 0 0 60px;
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+        }
+
+        .tool-info { min-width: 0; flex: 1; }
+
+        .tool-info h3 {
+            margin: 0 0 5px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .tool-info p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .tool-arrow {
+            color: #65636e;
+            font-size: 18px;
+            transition: color 180ms ease, transform 180ms ease;
+        }
+
+        .tool-card:hover .tool-arrow {
+            color: var(--accent);
+            transform: translateX(3px);
+        }
+
+        /* Upscaler card button uses the same styling as other tools */
+        .upscale-card {
+            width: 100%;
+            color: inherit;
+            text-align: left;
+            font: inherit;
             cursor: pointer;
+        }
+
+        .upscale-card:focus-visible,
+        .tool-card:focus-visible,
+        .core-card:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 4px;
+        }
+
+        .advanced-card { max-width: 580px; }
+
+        footer {
+            margin-top: 70px;
+            padding: 28px 0 8px;
+            border-top: 1px solid rgba(255,255,255,.06);
+            text-align: center;
+        }
+
+        .footer-brand {
+            margin-bottom: 7px;
+            font-family: "New Rocker", cursive;
+            font-size: 17px;
+            letter-spacing: .5px;
+        }
+
+        .footer-text {
+            color: #686671;
+            font-size: 11px;
+        }
+
+        .footer-divider {
+            display: inline-block;
+            margin: 0 7px;
+            color: #3e3d46;
+        }
+
+        /* Bigger.pics image picker and result preview */
+        .upscale-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            background: rgba(0,0,0,.84);
+            backdrop-filter: blur(12px);
+        }
+
+        .upscale-overlay[hidden],
+        #upscaleResult[hidden] {
+            display: none !important;
+        }
+
+        .upscale-panel {
+            position: relative;
+            width: min(560px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 28px;
+            border: 1px solid rgba(155,92,255,.35);
+            border-radius: 20px;
+            background: #0b0b11;
+            box-shadow: 0 0 45px rgba(155,92,255,.13);
+        }
+
+        .upscale-panel h2 {
+            margin: 0 36px 10px 0;
+            color: var(--purple-bright);
+            font-size: 25px;
+        }
+
+        .upscale-panel h3 {
+            margin-top: 24px;
+            color: var(--green);
+        }
+
+        .upscale-muted {
+            color: #aaa6b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .upscale-close {
+            position: absolute;
+            top: 12px;
+            right: 15px;
             border: 0;
+            background: transparent;
+            color: #fff;
+            font-size: 30px;
+            cursor: pointer;
         }
-        .btn-green {
-            background: #39ff88;
-            color: #000;
+
+        .upscale-file-label {
+            display: block;
+            margin: 20px 0 8px;
+            color: var(--green);
+            font-weight: 700;
         }
-        .btn-purple {
-            background: #9b5cff;
+
+        #upscaleFile {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #34303f;
+            border-radius: 10px;
+            background: #111117;
             color: #fff;
         }
-        .btn-ghost {
-            background: rgba(0,0,0,.28);
-            color: #e2e8f0;
-            border: 1px solid #2a2d35;
+
+        .upscale-action {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            padding: 13px 16px;
+            border: 1px solid rgba(155,92,255,.45);
+            border-radius: 11px;
+            background: linear-gradient(100deg, #7440bd, #49307a);
+            color: #fff;
+            text-align: center;
+            font: inherit;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
         }
-        .btn:disabled {
+
+        .upscale-action:hover {
+            box-shadow: 0 0 24px rgba(155,92,255,.25);
+        }
+
+        .upscale-action:disabled {
             opacity: .45;
             cursor: not-allowed;
         }
-        .chip {
-            height: 34px;
-            padding: 0 12px;
-            border-radius: 999px;
-            border: 1px solid #2a2d35;
-            background: rgba(0,0,0,.35);
-            color: #e2e8f0;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .chip:hover {
-            border-color: rgba(155,92,255,.7);
-            color: #fff;
-        }
-        .drop {
-            border: 1px dashed #343845;
-            border-radius: 12px;
-            background: rgba(0,0,0,.28);
-            min-height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            cursor: pointer;
-        }
-        .drop:hover, .drop.drag {
-            border-color: rgba(155,92,255,.7);
-            box-shadow: 0 0 20px rgba(155,92,255,.15);
-        }
-        .preview-frame {
-            background: #0a0b0e;
-            border: 1px solid #262830;
-            border-radius: 10px;
-            min-height: 240px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            padding: 12px;
-        }
-        .preview-frame canvas,
-        .preview-frame img {
-            max-width: 100%;
-            max-height: 520px;
+
+        #upscalePreview {
             display: block;
+            max-width: 100%;
+            max-height: 45vh;
+            margin: 14px auto;
+            border: 1px solid #302b3d;
+            border-radius: 10px;
             object-fit: contain;
         }
-        input[type=range] {
-            width: 100%;
-            accent-color: #39ff88;
+
+        @media (max-width: 850px) {
+            .core-grid { grid-template-columns: 1fr; }
+            .core-card { min-height: 235px; }
         }
-        .note {
-            font-size: 14px;
-            color: #cbd5e1;
-            line-height: 1.5;
+
+        @media (max-width: 650px) {
+            .page {
+                width: min(100% - 24px, 1180px);
+                padding-top: 45px;
+            }
+
+            .hero { padding-bottom: 50px; }
+            .brand { font-size: 42px; gap: 6px; }
+            .hero-description { font-size: 13px; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .section + .section { margin-top: 44px; }
+            .core-card { padding: 21px; }
+            .upscale-panel { padding: 23px 18px; }
         }
-        .status {
-            min-height: 24px;
-            overflow-wrap: anywhere;
-        }
-        .result-image {
-            width: 100%;
-            max-height: 560px;
-            object-fit: contain;
-        }
-        .back-link {
-            color: #c4b5fd;
-            font-size: 13px;
-        }
-        .back-link:hover {
-            color: #fff;
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: .01ms !important;
+            }
+
+            .cursor-glow { display: none; }
         }
     </style>
 </head>
 
-<body class="no-fx no-tilt">
-    <div class="background-grid"></div>
-    <img
-        class="watermark"
-        src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
-        alt=""
-    >
+<body>
+    <div class="background"></div>
+    <div class="wolf-background"></div>
+    <div class="ambient-purple"></div>
+    <div class="ambient-green"></div>
+    <div class="grid-overlay"></div>
+    <div class="cursor-glow"></div>
 
-    <main class="relative z-10 w-full max-w-6xl mx-auto">
-        <div class="card overflow-hidden">
-            <header class="px-5 md:px-7 pt-6 pb-5 border-b border-[#1c1e24]">
-                <div class="flex items-start gap-4">
-                    <div class="logo-ring">
-                        <img
-                            src="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png"
-                            alt="Wolves emblem"
-                        >
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2 mb-2">
-                            <a href="index.html" class="back-link">← Tools</a>
-                            <span class="text-sm uppercase tracking-[0.16em] font-bold text-purple">Textures</span>
-                        </div>
-                        <h1 class="wolves-title text-4xl md:text-5xl">
-                            <span class="title-wolves">Wolves</span>
-                            <span class="title-rest">Image Editor</span>
-                        </h1>
-                        <p class="text-sm text-slate-300 mt-3">
-                            Resize, convert, adjust, and upscale images.
-                            Your files stay in your browser until you choose to send one to Bigger.pics.
-                        </p>
-                    </div>
-                </div>
-            </header>
+    <main class="page">
+        <header class="hero">
+            <h1 class="brand">
+                <span class="brand-wolves">Wolves</span>
+                <span class="brand-tools">Editing Tools</span>
+            </h1>
 
-            <section class="p-4 md:p-6 grid grid-cols-1 xl:grid-cols-[340px_1fr] gap-5">
-                <div class="space-y-4">
-                    <div id="drop" class="drop">
-                        <div>
-                            <div class="text-base font-bold text-white">Drop an image</div>
-                            <div class="note mt-1">PNG, JPG, or WebP</div>
-                            <div class="note mt-2">Or click to choose a file</div>
-                        </div>
-                    </div>
+            <p class="hero-description">
+                A growing collection of tools and references built for
+                Wolves and anyone working with textures, tiles, names,
+                symbols, and more.
+            </p>
 
-                    <input
-                        id="file"
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"
-                        class="hidden"
-                    >
+            <div class="local-status">
+                <span class="local-dot"></span>
+                100% Local <span>•</span> No Uploads
+            </div>
+        </header>
 
-                    <div id="meta" class="note">No image loaded.</div>
+        <!-- CORE TOOLS -->
+        <section class="section">
+            <div class="section-heading">
+                <h2 class="section-title"><span class="purple">Core Tools</span></h2>
+                <p class="section-subtitle">The tools you'll use most.</p>
+            </div>
 
-                    <div class="card p-4">
-                        <div class="panel-title text-purple">Resize</div>
-
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="label" for="w">Width</label>
-                                <input id="w" class="input" type="number" min="1" value="1024">
-                            </div>
-                            <div>
-                                <label class="label" for="h">Height</label>
-                                <input id="h" class="input" type="number" min="1" value="1024">
-                            </div>
-                        </div>
-
-                        <label class="flex items-center gap-2 mt-3 text-sm">
-                            <input id="lock" type="checkbox" checked>
-                            Lock aspect
-                        </label>
-
-                        <div class="flex flex-wrap gap-2 mt-3">
-                            <button class="chip" data-size="512" type="button">512</button>
-                            <button class="chip" data-size="1024" type="button">1024</button>
-                            <button class="chip" data-size="2048" type="button">2048</button>
-                            <button class="chip" data-size="4096" type="button">4096</button>
-                        </div>
-                    </div>
-
-                    <div class="card p-4 space-y-3">
-                        <div class="panel-title text-green">Adjust</div>
-
-                        <div>
-                            <div class="flex justify-between label">
-                                <span>Brightness</span>
-                                <span id="brLabel">0</span>
-                            </div>
-                            <input id="bright" type="range" min="-100" max="100" step="1" value="0">
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between label">
-                                <span>Contrast</span>
-                                <span id="ctLabel">0</span>
-                            </div>
-                            <input id="contrast" type="range" min="-100" max="100" step="1" value="0">
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between label">
-                                <span>Saturation</span>
-                                <span id="saLabel">0</span>
-                            </div>
-                            <input id="sat" type="range" min="-100" max="100" step="1" value="0">
-                        </div>
-
-                        <div class="flex flex-wrap gap-2 pt-1">
-                            <button id="rotL" class="btn btn-ghost" type="button">Rotate left</button>
-                            <button id="rotR" class="btn btn-ghost" type="button">Rotate right</button>
-                            <button id="flipH" class="btn btn-ghost" type="button">Flip H</button>
-                            <button id="flipV" class="btn btn-ghost" type="button">Flip V</button>
-                            <button id="invert" class="btn btn-ghost" type="button">Invert</button>
-                            <button id="reset" class="btn btn-ghost" type="button">Reset edits</button>
-                        </div>
-                    </div>
-
-                    <div class="card p-4">
-                        <div class="panel-title text-green">Export</div>
-
-                        <label class="label" for="fmt">Format</label>
-                        <select id="fmt" class="input">
-                            <option value="image/png">PNG</option>
-                            <option value="image/jpeg">JPEG</option>
-                            <option value="image/webp">WebP</option>
-                        </select>
-
-                        <div class="mt-3">
-                            <div class="flex justify-between label">
-                                <span>Quality</span>
-                                <span id="qLabel">0.92</span>
-                            </div>
-                            <input id="quality" type="range" min="0.4" max="1" step="0.01" value="0.92">
-                        </div>
-
-                        <button id="exportBtn" class="btn btn-green w-full mt-4" type="button">
-                            Export image
-                        </button>
-                    </div>
-
-                    <div class="card p-4">
-                        <div class="panel-title text-purple">AI Upscaler</div>
-                        <p class="note mb-3">
-                            Send your selected image to Bigger.pics for upscaling,
-                            then return the finished image here.
-                        </p>
-
-                        <button
-                            id="upscaleBtn"
-                            class="btn btn-purple w-full"
-                            type="button"
-                            disabled
-                        >
-                            Upscale with bigger.pics
-                        </button>
-
-                        <p id="upscaleStatus" class="note status mt-3" role="status" aria-live="polite">
-                            Choose an image first.
-                        </p>
-
-                        <button
-                            id="retryUpscaleBtn"
-                            class="btn btn-ghost w-full mt-2"
-                            type="button"
-                            hidden
-                        >
-                            Try again
-                        </button>
-                    </div>
-                </div>
-
-                <div class="space-y-4">
+            <div class="core-grid">
+                <a href="albedo.html" class="core-card accent-purple">
                     <div>
-                        <div class="label">Image editor preview</div>
-                        <div class="preview-frame" id="preview">
-                            <span class="note">Drop an image to start</span>
+                        <div class="card-top">
+                            <div class="tool-icon"><img src="icons/tile.jpg" alt=""></div>
+                            <span class="primary-label">Primary</span>
                         </div>
+                        <h3>Albedo Tile Calculator</h3>
+                        <p>Calculate texture tile dimensions quickly and accurately.</p>
                     </div>
+                    <div class="open-tool">Open Tool <span class="arrow">→</span></div>
+                </a>
 
-                    <section id="upscaleResultWrap" class="card p-4" hidden>
-                        <div class="panel-title text-green">Upscaled result</div>
-
-                        <div class="preview-frame">
-                            <img id="upscaleResult" class="result-image" alt="Upscaled image preview">
+                <a href="tilepreview.html" class="core-card accent-green">
+                    <div>
+                        <div class="card-top">
+                            <div class="tool-icon"><img src="icons/tilepreview.jpg" alt=""></div>
+                            <span class="primary-label">Primary</span>
                         </div>
+                        <h3>Tile Previewer</h3>
+                        <p>Preview how your textures and tiles repeat before using them.</p>
+                    </div>
+                    <div class="open-tool">Open Tool <span class="arrow">→</span></div>
+                </a>
 
-                        <p id="upscaleDimensions" class="note mt-3"></p>
+                <a href="textures.html" class="core-card accent-purple">
+                    <div>
+                        <div class="card-top">
+                            <div class="tool-icon"><img src="icons/texture.jpg" alt=""></div>
+                            <span class="primary-label">Primary</span>
+                        </div>
+                        <h3>Texture Workshop</h3>
+                        <p>Create, edit, and experiment with textures in one place.</p>
+                    </div>
+                    <div class="open-tool">Open Tool <span class="arrow">→</span></div>
+                </a>
+            </div>
+        </section>
 
-                        <a
-                            id="downloadUpscaled"
-                            class="btn btn-green inline-flex items-center justify-center mt-3"
-                            href="#"
-                            download="upscaled-picture.png"
-                        >
-                            Download upscaled image
-                        </a>
-                    </section>
-                </div>
-            </section>
-        </div>
+        <!-- BUILD & EDIT -->
+        <section class="section">
+            <div class="section-heading">
+                <h2 class="section-title"><span class="green">Build &amp; Edit</span></h2>
+                <p class="section-subtitle">Create, customize, and refine your work.</p>
+            </div>
+
+            <div class="tools-grid">
+                <a href="nametags.html" class="tool-card accent-green">
+                    <div class="tool-icon"><img src="icons/tag.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Name Tag Gradients</h3>
+                        <p>Create colorful gradient name tags.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <a href="fancy.html" class="tool-card accent-purple">
+                    <div class="tool-icon"><img src="icons/fancy.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Fancy Text Generator</h3>
+                        <p>Transform text into different Unicode styles.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <a href="symbols.html" class="tool-card accent-green">
+                    <div class="tool-icon symbols-icon"><span>✦✧</span></div>
+                    <div class="tool-info">
+                        <h3>Text Symbols</h3>
+                        <p>Browse and copy symbols, characters, and decorative text.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <a href="colors.html" class="tool-card accent-purple">
+                    <div class="tool-icon"><img src="icons/color.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Color Codes</h3>
+                        <p>Find and work with useful color codes and values.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <a href="submeshes.html" class="tool-card accent-green">
+                    <div class="tool-icon"><img src="icons/mesh.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Submeshes</h3>
+                        <p>Helpful references and tools for working with submeshes.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <!-- BIGGER.PICS UPSCALER -->
+                <button type="button" id="openUpscaler"
+                        class="tool-card accent-purple upscale-card">
+                    <div class="tool-icon symbols-icon" aria-hidden="true">↗</div>
+                    <div class="tool-info">
+                        <h3>Upscale Image</h3>
+                        <p>Enlarge images up to 4× with bigger.pics. Free to use.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ADVANCED -->
+        <section class="section">
+            <div class="section-heading">
+                <h2 class="section-title"><span class="purple">Advanced</span></h2>
+                <p class="section-subtitle">Less common, more specialized tools.</p>
+            </div>
+
+            <div class="tools-grid advanced-card">
+                <a href="gridsnap.html" class="tool-card accent-purple">
+                    <div class="tool-icon"><img src="icons/gridsnap.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Grid Snap Calculator</h3>
+                        <p>Calculate precise grid snapping and placement values.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-brand">
+                <span class="footer-purple">Wolves</span>
+                <span class="footer-green">Editing Tools</span>
+            </div>
+            <div class="footer-text">
+                Built for Wolves <span class="footer-divider">•</span>
+                100% Local <span class="footer-divider">•</span> No Uploads
+            </div>
+        </footer>
     </main>
 
-<script>
-(() => {
-    "use strict";
+    <!-- BIGGER.PICS PICKER AND RESULT LIGHTBOX -->
+    <div id="upscalePanel" class="upscale-overlay" hidden>
+        <div class="upscale-panel" role="dialog" aria-modal="true" aria-labelledby="upscaleTitle">
+            <button type="button" id="closeUpscaler" class="upscale-close" aria-label="Close">×</button>
 
-    const $ = id => document.getElementById(id);
-    const BIGGER_ORIGIN = "https://app.bigger.pics";
-    const SITE_NAME = "lildvrkness.github.io/wolves-editing-tools";
+            <h2 id="upscaleTitle">Upscale Image</h2>
+            <p class="upscale-muted">
+                Choose an image, send it to bigger.pics, then return your finished upscale here.
+            </p>
 
-    let source = null;
-    let sourceFile = null;
-    let aspect = 1;
-    let updating = false;
-    let rot = 0;
-    let flipX = 1;
-    let flipY = 1;
-    let invertOn = false;
+            <label class="upscale-file-label" for="upscaleFile">Choose an image</label>
+            <input id="upscaleFile" type="file" accept="image/png,image/jpeg,image/webp">
 
-    let popup = null;
-    let popupReadySource = null;
-    let imageData = null;
-    let contextId = null;
-    let sent = false;
-    let resultReceived = false;
-    let pollId = null;
-    let resultUrl = null;
+            <p id="upscaleFileName" class="upscale-muted">PNG, JPG or WebP</p>
 
-    function setUpscaleStatus(message) {
-        $("upscaleStatus").textContent = message;
-    }
+            <button type="button" id="sendToBiggerPics" class="upscale-action" disabled>
+                Open bigger.pics &amp; send image
+            </button>
 
-    function stopPopupPolling() {
-        if (pollId !== null) {
-            clearInterval(pollId);
-            pollId = null;
-        }
-    }
+            <p id="upscaleStatus" class="upscale-muted" aria-live="polite">
+                Your image is read locally. It is sent to bigger.pics only when you choose to upscale it.
+            </p>
 
-    function clearUpscaleResult() {
-        if (resultUrl) {
-            URL.revokeObjectURL(resultUrl);
-            resultUrl = null;
-        }
+            <div id="upscaleResult" hidden>
+                <h3>Your upscaled image</h3>
+                <p id="upscaleDimensions" class="upscale-muted"></p>
+                <img id="upscalePreview" alt="Upscaled image preview">
+                <a id="downloadUpscaled" class="upscale-action" download="upscaled-picture.png">
+                    Download PNG
+                </a>
+            </div>
+        </div>
+    </div>
 
-        $("upscaleResult").removeAttribute("src");
-        $("downloadUpscaled").removeAttribute("href");
-        $("upscaleDimensions").textContent = "";
-        $("upscaleResultWrap").hidden = true;
-    }
+    <script>
+    (() => {
+        "use strict";
 
-    function resetUpscaleSession(closePopup = false) {
-        stopPopupPolling();
+        const ORIGIN = "https://app.bigger.pics";
 
-        if (closePopup && popup && !popup.closed) {
-            popup.close();
-        }
+        const panel = document.getElementById("upscalePanel");
+        const openButton = document.getElementById("openUpscaler");
+        const closeButton = document.getElementById("closeUpscaler");
+        const fileInput = document.getElementById("upscaleFile");
+        const fileName = document.getElementById("upscaleFileName");
+        const sendButton = document.getElementById("sendToBiggerPics");
+        const status = document.getElementById("upscaleStatus");
+        const result = document.getElementById("upscaleResult");
+        const preview = document.getElementById("upscalePreview");
+        const dimensions = document.getElementById("upscaleDimensions");
+        const download = document.getElementById("downloadUpscaled");
 
-        popup = null;
-        popupReadySource = null;
-        imageData = null;
-        contextId = null;
-        sent = false;
-        resultReceived = false;
-    }
+        let popup = null;
+        let pollId = null;
+        let sourceFile = null;
+        let imageData = null;
+        let popupReady = false;
+        let sent = false;
+        let contextId = null;
+        let resultUrl = null;
 
-    function sendImageToBiggerPics() {
-        if (
-            !popup ||
-            popup.closed ||
-            !popupReadySource ||
-            !imageData ||
-            !sourceFile ||
-            sent
-        ) {
-            return;
+        function setStatus(message) {
+            status.textContent = message;
         }
 
-        try {
-            popupReadySource.postMessage({
-                type: "bigger-pics-image",
-                url: imageData,
-                name: sourceFile.name || "picture.png",
-                site: SITE_NAME,
-                format: "png",
-                context: contextId
-            }, BIGGER_ORIGIN);
-
-            sent = true;
-            $("upscaleBtn").disabled = false;
-            $("retryUpscaleBtn").hidden = true;
-
-            setUpscaleStatus(
-                "Image sent! Finish upscaling in Bigger.pics, then click its Send this back button."
-            );
-        } catch (error) {
-            $("upscaleBtn").disabled = false;
-            $("retryUpscaleBtn").hidden = false;
-
-            setUpscaleStatus(
-                "The image could not be sent. Close the Bigger.pics popup and try again."
-            );
-        }
-    }
-
-    function load(file) {
-        if (!file) return;
-
-        if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
-            alert("Please choose a PNG, JPG, or WebP image.");
-            return;
+        function stopPolling() {
+            if (pollId !== null) {
+                clearInterval(pollId);
+                pollId = null;
+            }
         }
 
-        resetUpscaleSession(true);
-        clearUpscaleResult();
-
-        sourceFile = file;
-        $("upscaleBtn").disabled = false;
-        $("retryUpscaleBtn").hidden = true;
-        setUpscaleStatus("Image selected. Ready to upscale.");
-
-        const img = new Image();
-        const objectUrl = URL.createObjectURL(file);
-
-        img.onload = () => {
-            if (source && source._objectUrl) {
-                URL.revokeObjectURL(source._objectUrl);
+        function clearResult() {
+            if (resultUrl) {
+                URL.revokeObjectURL(resultUrl);
+                resultUrl = null;
             }
 
-            img._objectUrl = objectUrl;
-            source = img;
-            aspect = img.naturalWidth / img.naturalHeight;
-
-            updating = true;
-            $("w").value = img.naturalWidth;
-            $("h").value = img.naturalHeight;
-            updating = false;
-
-            resetEdits(false);
-
-            $("meta").textContent =
-                file.name + " · " +
-                img.naturalWidth + "×" + img.naturalHeight + " · " +
-                (file.size / 1024).toFixed(1) + " KB";
-
-            draw();
-        };
-
-        img.onerror = () => {
-            URL.revokeObjectURL(objectUrl);
-            alert("That image could not be opened.");
-        };
-
-        img.src = objectUrl;
-    }
-
-    const drop = $("drop");
-    const file = $("file");
-
-    drop.addEventListener("click", () => file.click());
-
-    drop.addEventListener("dragover", event => {
-        event.preventDefault();
-        drop.classList.add("drag");
-    });
-
-    drop.addEventListener("dragleave", () => {
-        drop.classList.remove("drag");
-    });
-
-    drop.addEventListener("drop", event => {
-        event.preventDefault();
-        drop.classList.remove("drag");
-
-        if (event.dataTransfer.files[0]) {
-            load(event.dataTransfer.files[0]);
+            preview.removeAttribute("src");
+            download.removeAttribute("href");
+            result.hidden = true;
         }
-    });
 
-    file.addEventListener("change", () => {
-        if (file.files[0]) {
-            load(file.files[0]);
-        }
-    });
+        function closePanel() {
+            panel.hidden = true;
+            stopPolling();
 
-    function resetEdits(redraw = true) {
-        rot = 0;
-        flipX = 1;
-        flipY = 1;
-        invertOn = false;
-
-        $("bright").value = 0;
-        $("contrast").value = 0;
-        $("sat").value = 0;
-
-        if (redraw) draw();
-    }
-
-    function renderCanvas() {
-        if (!source) return null;
-
-        const w = Math.max(1, Number($("w").value) || source.naturalWidth);
-        const h = Math.max(1, Number($("h").value) || source.naturalHeight);
-        const swapped = rot % 180 !== 0;
-
-        const canvas = document.createElement("canvas");
-        canvas.width = swapped ? h : w;
-        canvas.height = swapped ? w : h;
-
-        const ctx = canvas.getContext("2d");
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate(rot * Math.PI / 180);
-        ctx.scale(flipX, flipY);
-        ctx.drawImage(source, -w / 2, -h / 2, w, h);
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-        const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const pixels = image.data;
-
-        const brightness = Number($("bright").value);
-        const contrast = Number($("contrast").value) / 100;
-        const saturation = Number($("sat").value) / 100;
-        const factor = (259 * (contrast + 1)) / (255 * (1 - contrast) || 1);
-
-        for (let i = 0; i < pixels.length; i += 4) {
-            let r = pixels[i];
-            let g = pixels[i + 1];
-            let b = pixels[i + 2];
-
-            r = factor * (r - 128) + 128 + brightness;
-            g = factor * (g - 128) + 128 + brightness;
-            b = factor * (b - 128) + 128 + brightness;
-
-            const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-
-            r = gray + (r - gray) * (1 + saturation);
-            g = gray + (g - gray) * (1 + saturation);
-            b = gray + (b - gray) * (1 + saturation);
-
-            if (invertOn) {
-                r = 255 - r;
-                g = 255 - g;
-                b = 255 - b;
+            if (popup && !popup.closed) {
+                popup.close();
             }
 
-            pixels[i] = Math.max(0, Math.min(255, r));
-            pixels[i + 1] = Math.max(0, Math.min(255, g));
-            pixels[i + 2] = Math.max(0, Math.min(255, b));
+            popup = null;
         }
 
-        ctx.putImageData(image, 0, 0);
-        return canvas;
-    }
-
-    function draw() {
-        if (!source) return;
-
-        const canvas = renderCanvas();
-        $("preview").innerHTML = "";
-
-        canvas.style.maxWidth = "100%";
-        canvas.style.maxHeight = "520px";
-        $("preview").appendChild(canvas);
-
-        $("brLabel").textContent = $("bright").value;
-        $("ctLabel").textContent = $("contrast").value;
-        $("saLabel").textContent = $("sat").value;
-        $("qLabel").textContent = Number($("quality").value).toFixed(2);
-    }
-
-    $("w").addEventListener("input", () => {
-        if (updating || !$("lock").checked) {
-            draw();
-            return;
-        }
-
-        updating = true;
-        $("h").value = Math.max(
-            1,
-            Math.round(Number($("w").value) / aspect)
-        );
-        updating = false;
-        draw();
-    });
-
-    $("h").addEventListener("input", () => {
-        if (updating || !$("lock").checked) {
-            draw();
-            return;
-        }
-
-        updating = true;
-        $("w").value = Math.max(
-            1,
-            Math.round(Number($("h").value) * aspect)
-        );
-        updating = false;
-        draw();
-    });
-
-    document.querySelectorAll("[data-size]").forEach(button => {
-        button.addEventListener("click", () => {
-            const n = Number(button.dataset.size);
-
-            updating = true;
-            $("w").value = n;
-            $("h").value = $("lock").checked
-                ? Math.max(1, Math.round(n / aspect))
-                : n;
-            updating = false;
-
-            draw();
+        openButton.addEventListener("click", () => {
+            panel.hidden = false;
+            fileInput.focus();
         });
-    });
 
-    ["bright", "contrast", "sat", "quality"].forEach(id => {
-        $(id).addEventListener("input", draw);
-    });
+        closeButton.addEventListener("click", closePanel);
 
-    $("rotL").addEventListener("click", () => {
-        rot = (rot + 270) % 360;
-        draw();
-    });
+        panel.addEventListener("click", event => {
+            if (event.target === panel) closePanel();
+        });
 
-    $("rotR").addEventListener("click", () => {
-        rot = (rot + 90) % 360;
-        draw();
-    });
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && !panel.hidden) closePanel();
+        });
 
-    $("flipH").addEventListener("click", () => {
-        flipX *= -1;
-        draw();
-    });
+        fileInput.addEventListener("change", () => {
+            sourceFile = fileInput.files[0] || null;
+            imageData = null;
+            popupReady = false;
+            sent = false;
 
-    $("flipV").addEventListener("click", () => {
-        flipY *= -1;
-        draw();
-    });
+            if (popup && !popup.closed) popup.close();
+            popup = null;
+            stopPolling();
+            clearResult();
 
-    $("invert").addEventListener("click", () => {
-        invertOn = !invertOn;
-        draw();
-    });
+            sendButton.disabled = !sourceFile;
 
-    $("reset").addEventListener("click", () => resetEdits(true));
-
-    function extensionFor(type) {
-        return type.includes("jpeg")
-            ? "jpg"
-            : type.includes("webp")
-                ? "webp"
-                : "png";
-    }
-
-    $("exportBtn").addEventListener("click", () => {
-        if (!source) {
-            alert("Drop an image first.");
-            return;
-        }
-
-        const canvas = renderCanvas();
-        const type = $("fmt").value;
-
-        canvas.toBlob(blob => {
-            if (!blob) {
-                alert("Could not export this image.");
+            if (!sourceFile) {
+                fileName.textContent = "PNG, JPG or WebP";
+                setStatus("Choose an image to begin.");
                 return;
             }
 
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
+            if (!["image/png", "image/jpeg", "image/webp"].includes(sourceFile.type)) {
+                sourceFile = null;
+                sendButton.disabled = true;
+                fileName.textContent = "PNG, JPG or WebP";
+                setStatus("Please choose a PNG, JPG or WebP image.");
+                return;
+            }
 
-            link.href = url;
-            link.download =
-                (sourceFile?.name || "image").replace(/\.[^.]+$/, "") +
-                "-" + canvas.width + "x" + canvas.height +
-                "." + extensionFor(type);
+            fileName.textContent = sourceFile.name;
+            setStatus("Image selected. Ready to send when you are.");
+        });
 
-            link.click();
+        function sendIfReady() {
+            if (!popup || popup.closed || !popupReady || !imageData || sent) return;
 
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }, type, Number($("quality").value));
-    });
+            try {
+                popup.postMessage({
+                    type: "bigger-pics-image",
+                    url: imageData,
+                    name: sourceFile.name || "picture.png",
+                    site: "lildvrkness.github.io/wolves-editing-tools",
+                    format: "png",
+                    context: contextId
+                }, ORIGIN);
 
-    // BIGGER.PICS INTEGRATION
-    // The popup must be opened directly inside the user's button click.
-    $("upscaleBtn").addEventListener("click", () => {
-        if (!sourceFile) {
-            setUpscaleStatus("Choose an image first.");
-            return;
+                sent = true;
+                sendButton.disabled = false;
+                setStatus("Image sent! Finish upscaling in the bigger.pics window, then use its Send this back button.");
+            } catch (error) {
+                setStatus("Could not send the image. Close the popup and try again.");
+                sendButton.disabled = false;
+            }
         }
 
-        if (popup && !popup.closed) {
-            setUpscaleStatus(
-                sent
-                    ? "Finish upscaling in Bigger.pics, then click Send this back."
-                    : "Bigger.pics is open. Waiting for it to become ready."
-            );
-            return;
-        }
+        // Open the popup synchronously inside the user's click gesture.
+        sendButton.addEventListener("click", () => {
+            if (!sourceFile) return;
 
-        resetUpscaleSession(false);
-        clearUpscaleResult();
+            if (popup && !popup.closed) {
+                setStatus("The bigger.pics window is already open.");
+                return;
+            }
 
-        contextId =
-            typeof crypto.randomUUID === "function"
+            clearResult();
+            popupReady = false;
+            sent = false;
+            imageData = null;
+            contextId = (crypto.randomUUID)
                 ? crypto.randomUUID()
-                : Date.now() + "-" + Math.random().toString(36).slice(2);
+                : String(Date.now()) + "-" + Math.random();
 
-        // Do not use "noopener": Bigger.pics needs to message its opener.
-        popup = window.open("https://bigger.pics/", "_blank");
+            popup = window.open("https://bigger.pics/", "_blank");
 
-        if (!popup) {
-            setUpscaleStatus(
-                "Popup blocked. Allow popups for this site, then try again."
-            );
-            return;
-        }
-
-        const thisPopup = popup;
-
-        $("upscaleBtn").disabled = true;
-        $("retryUpscaleBtn").hidden = true;
-        setUpscaleStatus("Preparing your image and waiting for Bigger.pics…");
-
-        const reader = new FileReader();
-
-        reader.onload = () => {
-            if (popup !== thisPopup || thisPopup.closed) {
-                $("upscaleBtn").disabled = false;
-                setUpscaleStatus("Bigger.pics closed before the image was sent.");
+            if (!popup) {
+                setStatus("Popup blocked. Allow popups for this site and try again.");
                 return;
             }
 
-            imageData = reader.result;
-            sendImageToBiggerPics();
-        };
+            sendButton.disabled = true;
+            setStatus("Preparing your image and waiting for bigger.pics…");
 
-        reader.onerror = () => {
-            $("upscaleBtn").disabled = false;
-            $("retryUpscaleBtn").hidden = false;
-            setUpscaleStatus("Could not read the image. Please try again.");
-        };
+            const reader = new FileReader();
 
-        reader.readAsDataURL(sourceFile);
+            reader.onload = () => {
+                imageData = reader.result;
+                sendIfReady();
+            };
 
-        stopPopupPolling();
+            reader.onerror = () => {
+                setStatus("Could not read that image. Please choose another file.");
+                sendButton.disabled = false;
+            };
 
-        pollId = setInterval(() => {
-            if (
-                popup === thisPopup &&
-                thisPopup.closed &&
-                !resultReceived
-            ) {
-                stopPopupPolling();
-                popup = null;
-                popupReadySource = null;
-                $("upscaleBtn").disabled = false;
-                $("retryUpscaleBtn").hidden = false;
+            reader.readAsDataURL(sourceFile);
 
-                setUpscaleStatus(
-                    "Bigger.pics closed without returning an image. You can try again."
-                );
-            }
-        }, 500);
-    });
-
-    $("retryUpscaleBtn").addEventListener("click", () => {
-        if (sourceFile) {
-            $("upscaleBtn").click();
-        }
-    });
-
-    // Listen only to messages from Bigger.pics and the popup we opened.
-    window.addEventListener("message", event => {
-        if (event.origin !== BIGGER_ORIGIN) return;
-        if (!popup || event.source !== popup) return;
-
-        const data = event.data;
-
-        if (!data || typeof data !== "object") return;
-
-        if (data.type === "bigger-pics-ready") {
-            popupReadySource = event.source;
-            setUpscaleStatus("Bigger.pics is ready. Sending your image…");
-            sendImageToBiggerPics();
-            return;
-        }
-
-        if (data.type !== "bigger-pics-result") return;
-        if (!sent || data.context !== contextId) return;
-        if (!(data.blob instanceof Blob)) return;
-
-        if (
-            data.blob.type &&
-            !["image/png", "image/jpeg"].includes(data.blob.type)
-        ) {
-            setUpscaleStatus("The returned image format is not supported.");
-            return;
-        }
-
-        resultReceived = true;
-        stopPopupPolling();
-
-        if (resultUrl) {
-            URL.revokeObjectURL(resultUrl);
-        }
-
-        resultUrl = URL.createObjectURL(data.blob);
-
-        $("upscaleResult").src = resultUrl;
-
-        $("upscaleDimensions").textContent =
-            data.width && data.height
-                ? `${data.width} × ${data.height} pixels`
-                : "Your upscaled image is ready.";
-
-        const safeName = (
-            data.name || "upscaled-picture.png"
-        ).replace(/[\\/:*?"<>|]/g, "_");
-
-        const download = $("downloadUpscaled");
-        download.href = resultUrl;
-        download.download = safeName;
-        download.textContent = "Download " + safeName;
-
-        $("upscaleResultWrap").hidden = false;
-        $("upscaleBtn").disabled = false;
-        $("retryUpscaleBtn").hidden = true;
-
-        setUpscaleStatus("Upscaling complete! Your image is ready to download.");
-
-        popup = null;
-        popupReadySource = null;
-
-        $("upscaleResultWrap").scrollIntoView({
-            behavior: "smooth",
-            block: "nearest"
+            stopPolling();
+            pollId = setInterval(() => {
+                if (popup && popup.closed && !sent) {
+                    stopPolling();
+                    popup = null;
+                    sendButton.disabled = !sourceFile;
+                    setStatus("The bigger.pics window closed without returning a result.");
+                }
+            }, 500);
         });
-    });
 
-    window.addEventListener("beforeunload", () => {
-        stopPopupPolling();
+        window.addEventListener("message", event => {
+            // Only accept messages from bigger.pics and its actual popup.
+            if (event.origin !== ORIGIN) return;
+            if (!popup || event.source !== popup) return;
 
-        if (resultUrl) {
-            URL.revokeObjectURL(resultUrl);
-        }
+            const data = event.data;
+            if (!data || typeof data !== "object") return;
 
-        if (source && source._objectUrl) {
-            URL.revokeObjectURL(source._objectUrl);
-        }
-    });
-})();
-</script>
+            if (data.type === "bigger-pics-ready") {
+                popupReady = true;
+                sendIfReady();
+                return;
+            }
+
+            if (data.type !== "bigger-pics-result") return;
+            if (!sent || data.context !== contextId) return;
+            if (!(data.blob instanceof Blob)) return;
+
+            if (data.blob.type &&
+                !["image/png", "image/jpeg"].includes(data.blob.type)) {
+                return;
+            }
+
+            stopPolling();
+
+            resultUrl = URL.createObjectURL(data.blob);
+            preview.src = resultUrl;
+
+            dimensions.textContent =
+                data.width && data.height
+                    ? `${data.width} × ${data.height} pixels`
+                    : "Your upscaled image is ready.";
+
+            const safeName = (data.name || "upscaled-picture.png")
+                .replace(/[\\/:*?"<>|]/g, "_");
+
+            download.href = resultUrl;
+            download.download = safeName;
+            download.textContent = "Download " + safeName;
+
+            result.hidden = false;
+            panel.hidden = false;
+            sendButton.disabled = !sourceFile;
+            setStatus("Upscaling complete! Your image is ready to download.");
+
+            // The result is now in this page; the popup may have closed.
+            popup = null;
+        });
+
+        window.addEventListener("beforeunload", () => {
+            stopPolling();
+            if (resultUrl) URL.revokeObjectURL(resultUrl);
+        });
+
+        // Existing cursor glow.
+        document.addEventListener("mousemove", event => {
+            document.documentElement.style.setProperty("--mouse-x", event.clientX + "px");
+            document.documentElement.style.setProperty("--mouse-y", event.clientY + "px");
+        });
+    })();
+    </script>
 </body>
 </html>
