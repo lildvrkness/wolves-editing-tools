@@ -1,204 +1,1062 @@
+
 <html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wolves Editing Tools</title>
-    <meta name="description" content="A growing set of tools and references built for Wolves and others.">
+    <meta name="description" content="Texture tools, tile previews, text utilities, and image upscaling for Wolves.">
+
     <link rel="icon" href="https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=New+Rocker&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --purple: #9b5cff;
             --purple-bright: #b783ff;
             --green: #39ff88;
             --black: #030405;
-            --white: #f7f5fb;
-            --muted: #b7b4c2;
+            --white: #f5f3fa;
+            --muted: #9997a4;
+            --border: rgba(255,255,255,.08);
+            --radius: 20px;
         }
+
         * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
         body {
             margin: 0;
             min-height: 100vh;
             background: var(--black);
             color: var(--white);
             font-family: Inter, sans-serif;
+            overflow-x: hidden;
         }
+
         a { color: inherit; text-decoration: none; }
-        .bg {
-            position: fixed; inset: 0; z-index: -20; pointer-events: none;
+        button, input { font: inherit; }
+
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: -20;
+            pointer-events: none;
             background:
-                radial-gradient(circle at 50% 0%, rgba(155,92,255,.1), transparent 40%),
+                radial-gradient(circle at 50% 0%, rgba(155,92,255,.08), transparent 42%),
                 #030405;
         }
-        .wolf {
-            position: fixed; inset: 0; z-index: -10; pointer-events: none; opacity: .22;
-            background:
-                linear-gradient(to bottom, rgba(3,4,5,.4), rgba(3,4,5,.82) 55%, rgba(3,4,5,.97)),
-                url("https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png") center 30px / min(820px, 70vw) no-repeat;
+
+        /* Existing stationary wolf background — original colors retained */
+        .wolf-background {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            pointer-events: none;
+            background-image:
+                linear-gradient(
+                    to bottom,
+                    rgba(3,4,5,.34),
+                    rgba(3,4,5,.70) 55%,
+                    rgba(3,4,5,.97) 100%
+                ),
+                url("https://images.guns.lol/16f3e8100b90f74a02cab427aa3aca5b31ff33c5/XqyQY34lHkFWU.png");
+            background-repeat: no-repeat;
+            background-position: center, center 25px;
+            background-size: cover, min(900px, 78vw);
+            opacity: .35;
             filter: contrast(1.08) saturate(1.25);
             mix-blend-mode: screen;
         }
-        .gridline {
-            position: fixed; inset: 0; z-index: -4; pointer-events: none;
+
+        .ambient-purple, .ambient-green {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -5;
+            filter: blur(100px);
+        }
+
+        .ambient-purple {
+            width: 500px;
+            height: 500px;
+            top: -220px;
+            left: -180px;
+            background: rgba(155,92,255,.09);
+        }
+
+        .ambient-green {
+            width: 450px;
+            height: 450px;
+            right: -180px;
+            top: 30%;
+            background: rgba(57,255,136,.045);
+        }
+
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            pointer-events: none;
             background-image:
                 linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
             background-size: 70px 70px;
-            mask-image: linear-gradient(to bottom, black, transparent 78%);
+            mask-image: linear-gradient(to bottom, black, transparent 75%);
         }
+
+        .cursor-glow {
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transform: translate(
+                calc(var(--mouse-x, -400px) - 140px),
+                calc(var(--mouse-y, -400px) - 140px)
+            );
+            background: radial-gradient(
+                circle,
+                rgba(155,92,255,.10) 0%,
+                rgba(155,92,255,.035) 32%,
+                transparent 72%
+            );
+            filter: blur(4px);
+            transition: transform 70ms linear;
+            mix-blend-mode: screen;
+        }
+
         .page {
-            width: min(1180px, calc(100% - 36px));
+            width: min(1180px, calc(100% - 40px));
             margin: 0 auto;
-            padding: 36px 0 28px;
+            padding: 72px 0 40px;
         }
-        .hero { text-align: center; margin-bottom: 28px; }
+
+        .hero {
+            position: relative;
+            text-align: center;
+            padding: 18px 20px 70px;
+        }
+
         .brand {
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 12px;
             font-family: "New Rocker", cursive;
-            font-size: clamp(42px, 6vw, 68px);
+            font-size: clamp(42px, 7vw, 76px);
             line-height: .95;
             letter-spacing: 1px;
+            text-shadow:
+                0 0 25px rgba(155,92,255,.16),
+                0 0 45px rgba(57,255,136,.05);
         }
-        .brand .wolves {
-            color: var(--green);
-            text-shadow: 0 0 18px rgba(57,255,136,.35);
-        }
-        .brand .rest {
-            color: var(--purple-bright);
-            text-shadow: 0 0 18px rgba(155,92,255,.3);
-        }
-        .hero p {
-            max-width: 560px;
-            margin: 14px auto 0;
+
+        .brand-wolves, .footer-purple { color: var(--purple-bright); }
+        .brand-tools, .footer-green { color: var(--green); }
+
+        .hero-description {
+            max-width: 650px;
+            margin: 24px auto 22px;
             color: var(--muted);
             font-size: 15px;
-            line-height: 1.5;
+            line-height: 1.7;
         }
-        .status {
+
+        .local-status {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            margin-top: 14px;
-            padding: 7px 13px;
+            padding: 8px 13px;
+            border: 1px solid rgba(57,255,136,.16);
             border-radius: 999px;
-            border: 1px solid rgba(57,255,136,.2);
-            background: rgba(8,15,11,.65);
-            color: #d5e7dc;
+            background: rgba(8,15,11,.62);
+            color: #c7d7ce;
             font-size: 12px;
             font-weight: 600;
         }
-        .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px rgba(57,255,136,.7); }
-        .board {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 14px;
+
+        .local-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(57,255,136,.7);
         }
-        .card {
+
+        .section { margin-top: 20px; }
+        .section + .section { margin-top: 58px; }
+        .section-heading { margin-bottom: 20px; }
+
+        .section-title {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                rgba(155,92,255,.35),
+                rgba(57,255,136,.08),
+                transparent
+            );
+        }
+
+        .section-title .purple { color: var(--purple-bright); }
+        .section-title .green { color: var(--green); }
+
+        .section-subtitle {
+            margin: 7px 0 0;
+            color: #777582;
+            font-size: 12px;
+        }
+
+        .core-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .core-card {
+            position: relative;
+            min-height: 275px;
+            padding: 26px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            min-height: 0;
-            padding: 16px;
-            border: 1px solid rgba(255,255,255,.1);
-            border-radius: 16px;
-            background: linear-gradient(160deg, rgba(28,26,38,.92), rgba(12,12,16,.94));
-            box-shadow: 0 10px 28px rgba(0,0,0,.28);
-            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: linear-gradient(145deg, rgba(20,19,29,.86), rgba(7,8,11,.88));
+            box-shadow: 0 18px 50px rgba(0,0,0,.24);
+            transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
         }
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: color-mix(in srgb, var(--accent) 55%, rgba(255,255,255,.12));
-            box-shadow: 0 16px 36px rgba(0,0,0,.4), 0 0 24px color-mix(in srgb, var(--accent) 18%, transparent);
+
+        .core-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: .5;
         }
-        .purple { --accent: var(--purple); }
-        .green { --accent: var(--green); }
-        .top { display: flex; align-items: center; justify-content: space-between; }
-        .icon {
-            width: 54px; height: 54px; border-radius: 14px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,.1);
-            background: #0b0c10;
-            display: grid; place-items: center;
-            box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+
+        .core-card::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            right: -80px;
+            bottom: -90px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: .045;
+            filter: blur(40px);
+            pointer-events: none;
+            transition: opacity 220ms ease;
         }
-        .icon img { width: 100%; height: 100%; object-fit: cover; object-position: center 32%; display: block; }
-        .glyph { font-size: 22px; letter-spacing: -3px; color: var(--green); text-shadow: 0 0 12px rgba(57,255,136,.45); }
-        .go { color: var(--accent); font-weight: 800; font-size: 16px; }
-        .name { margin: 0; font-size: 16px; font-weight: 700; color: #fff; }
-        .desc { margin: 4px 0 0; color: #a7a4b2; font-size: 13px; line-height: 1.35; }
-        footer {
-            margin-top: 22px;
-            color: #6d6b76;
-            font-size: 12px;
+
+        .core-card:hover {
+            transform: translateY(-6px);
+            border-color: color-mix(in srgb, var(--accent) 35%, rgba(255,255,255,.12));
+            box-shadow: 0 20px 55px rgba(0,0,0,.34), 0 0 35px color-mix(in srgb, var(--accent) 9%, transparent);
+        }
+
+        .core-card:hover::after { opacity: .09; }
+        .accent-purple { --accent: var(--purple); }
+        .accent-green { --accent: var(--green); }
+
+        .card-top {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
         }
-        @media (max-width: 1100px) { .board { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 720px) { .board { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 480px) { .board { grid-template-columns: 1fr; } .brand { font-size: 40px; } }
+
+        .tool-icon {
+            width: 72px;
+            height: 72px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.018));
+            border: 1px solid rgba(255,255,255,.07);
+            overflow: hidden;
+        }
+
+        .tool-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .symbols-icon {
+            font-size: 29px;
+            letter-spacing: -5px;
+            color: var(--green);
+            text-shadow: 0 0 16px rgba(57,255,136,.45);
+        }
+
+        .primary-label {
+            padding: 6px 9px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 8%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 17%, transparent);
+        }
+
+        .core-card h3 {
+            margin: 22px 0 8px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -.02em;
+        }
+
+        .core-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .open-tool {
+            margin-top: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .arrow { transition: transform 180ms ease; }
+        .core-card:hover .arrow { transform: translateX(5px); }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .tool-card {
+            position: relative;
+            min-height: 112px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: linear-gradient(145deg, rgba(12,13,18,.82), rgba(6,7,10,.88));
+            transition: transform 200ms ease, border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 18px;
+            bottom: 18px;
+            width: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent);
+            opacity: .65;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-3px);
+            border-color: color-mix(in srgb, var(--accent) 25%, rgba(255,255,255,.08));
+            background: linear-gradient(145deg, rgba(17,18,24,.92), rgba(7,8,11,.94));
+            box-shadow: 0 12px 35px rgba(0,0,0,.25), 0 0 24px color-mix(in srgb, var(--accent) 5%, transparent);
+        }
+
+        .tool-card .tool-icon {
+            flex: 0 0 60px;
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+        }
+
+        .tool-info { min-width: 0; flex: 1; }
+
+        .tool-info h3 {
+            margin: 0 0 5px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .tool-info p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .tool-arrow {
+            color: #65636e;
+            font-size: 18px;
+            transition: color 180ms ease, transform 180ms ease;
+        }
+
+        .tool-card:hover .tool-arrow {
+            color: var(--accent);
+            transform: translateX(3px);
+        }
+
+        /* Upscaler card button uses the same styling as other tools */
+        .upscale-card {
+            width: 100%;
+            color: inherit;
+            text-align: left;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .upscale-card:focus-visible,
+        .tool-card:focus-visible,
+        .core-card:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 4px;
+        }
+
+        .advanced-card { max-width: 580px; }
+
+        footer {
+            margin-top: 70px;
+            padding: 28px 0 8px;
+            border-top: 1px solid rgba(255,255,255,.06);
+            text-align: center;
+        }
+
+        .footer-brand {
+            margin-bottom: 7px;
+            font-family: "New Rocker", cursive;
+            font-size: 17px;
+            letter-spacing: .5px;
+        }
+
+        .footer-text {
+            color: #686671;
+            font-size: 11px;
+        }
+
+        .footer-divider {
+            display: inline-block;
+            margin: 0 7px;
+            color: #3e3d46;
+        }
+
+        /* Bigger.pics image picker and result preview */
+        .upscale-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            background: rgba(0,0,0,.84);
+            backdrop-filter: blur(12px);
+        }
+
+        .upscale-overlay[hidden],
+        #upscaleResult[hidden] {
+            display: none !important;
+        }
+
+        .upscale-panel {
+            position: relative;
+            width: min(560px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 28px;
+            border: 1px solid rgba(155,92,255,.35);
+            border-radius: 20px;
+            background: #0b0b11;
+            box-shadow: 0 0 45px rgba(155,92,255,.13);
+        }
+
+        .upscale-panel h2 {
+            margin: 0 36px 10px 0;
+            color: var(--purple-bright);
+            font-size: 25px;
+        }
+
+        .upscale-panel h3 {
+            margin-top: 24px;
+            color: var(--green);
+        }
+
+        .upscale-muted {
+            color: #aaa6b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .upscale-close {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            border: 0;
+            background: transparent;
+            color: #fff;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .upscale-file-label {
+            display: block;
+            margin: 20px 0 8px;
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        #upscaleFile {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #34303f;
+            border-radius: 10px;
+            background: #111117;
+            color: #fff;
+        }
+
+        .upscale-action {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            padding: 13px 16px;
+            border: 1px solid rgba(155,92,255,.45);
+            border-radius: 11px;
+            background: linear-gradient(100deg, #7440bd, #49307a);
+            color: #fff;
+            text-align: center;
+            font: inherit;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .upscale-action:hover {
+            box-shadow: 0 0 24px rgba(155,92,255,.25);
+        }
+
+        .upscale-action:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        #upscalePreview {
+            display: block;
+            max-width: 100%;
+            max-height: 45vh;
+            margin: 14px auto;
+            border: 1px solid #302b3d;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 850px) {
+            .core-grid { grid-template-columns: 1fr; }
+            .core-card { min-height: 235px; }
+        }
+
+        @media (max-width: 650px) {
+            .page {
+                width: min(100% - 24px, 1180px);
+                padding-top: 45px;
+            }
+
+            .hero { padding-bottom: 50px; }
+            .brand { font-size: 42px; gap: 6px; }
+            .hero-description { font-size: 13px; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .section + .section { margin-top: 44px; }
+            .core-card { padding: 21px; }
+            .upscale-panel { padding: 23px 18px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: .01ms !important;
+            }
+
+            .cursor-glow { display: none; }
+        }
     </style>
 </head>
+
 <body>
-    <div class="bg"></div>
-    <div class="wolf"></div>
-    <div class="gridline"></div>
+    <div class="background"></div>
+    <div class="wolf-background"></div>
+    <div class="ambient-purple"></div>
+    <div class="ambient-green"></div>
+    <div class="grid-overlay"></div>
+    <div class="cursor-glow"></div>
 
     <main class="page">
         <header class="hero">
-            <h1 class="brand"><span class="wolves">Wolves</span> <span class="rest">Editing Tools</span></h1>
-            <p>Tiles, textures, names, and references for Wolves worlds.</p>
-            <div class="status"><span class="dot"></span> 100% Local · No Uploads</div>
+            <h1 class="brand">
+                <span class="brand-wolves">Wolves</span>
+                <span class="brand-tools">Editing Tools</span>
+            </h1>
+
+            <p class="hero-description">
+                A growing collection of tools and references built for
+                Wolves and anyone working with textures, tiles, names,
+                symbols, and more.
+            </p>
+
+            <div class="local-status">
+                <span class="local-dot"></span>
+                100% Local <span>•</span> No Uploads
+            </div>
         </header>
 
-        <section class="board">
-            <a class="card purple" href="albedo.html">
-                <div class="top"><div class="icon"><img src="icons/tile.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Albedo Tiles</div><div class="desc">Wall size to tile X / Y.</div></div>
-            </a>
-            <a class="card green" href="tilepreview.html">
-                <div class="top"><div class="icon"><img src="icons/tilepreview.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Tile Preview</div><div class="desc">Live wrap on a wall.</div></div>
-            </a>
-            <a class="card purple" href="image.html">
-                <div class="top"><div class="icon"><img src="icons/texture.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Image Editor</div><div class="desc">Resize, convert, simple edits.</div></div>
-            </a>
-            <a class="card green" href="normal.html">
-                <div class="top"><div class="icon"><img src="icons/texture.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Normal Map</div><div class="desc">Bake + 2D / 3D preview.</div></div>
-            </a>
-            <a class="card purple" href="gridsnap.html">
-                <div class="top"><div class="icon"><img src="icons/gridsnap.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Grid Snap</div><div class="desc">Wall snap positions.</div></div>
-            </a>
-            <a class="card green" href="nametags.html">
-                <div class="top"><div class="icon"><img src="icons/tag.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Name Tags</div><div class="desc">Gradient [color] codes.</div></div>
-            </a>
-            <a class="card purple" href="fancy.html">
-                <div class="top"><div class="icon"><img src="icons/fancy.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Fancy Text</div><div class="desc">Unicode font styles.</div></div>
-            </a>
-            <a class="card green" href="symbols.html">
-                <div class="top"><div class="icon"><span class="glyph">✦✧</span></div><span class="go">→</span></div>
-                <div><div class="name">Symbols</div><div class="desc">Click-to-copy text.</div></div>
-            </a>
-            <a class="card purple" href="colors.html">
-                <div class="top"><div class="icon"><img src="icons/color.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Color Codes</div><div class="desc">Hex, RGB, HSL, Unity.</div></div>
-            </a>
-            <a class="card green" href="submeshes.html">
-                <div class="top"><div class="icon"><img src="icons/mesh.jpg" alt=""></div><span class="go">→</span></div>
-                <div><div class="name">Submeshes</div><div class="desc">Shop and mesh reference.</div></div>
-            </a>
+        <!-- CORE TOOLS -->
+        <section class="section">
+            <div class="section-heading">
+                <h2 class="section-title"><span class="purple">Core Tools</span></h2>
+                <p class="section-subtitle">The tools you'll use most.</p>
+            </div>
+
+            <div class="core-grid">
+                <a href="albedo.html" class="core-card accent-purple">
+                    <div>
+                        <div class="card-top">
+                            <div class="tool-icon"><img src="icons/tile.jpg" alt=""></div>
+                            <span class="primary-label">Primary</span>
+                        </div>
+                        <h3>Albedo Tile Calculator</h3>
+                        <p>Calculate texture tile dimensions quickly and accurately.</p>
+                    </div>
+                    <div class="open-tool">Open Tool <span class="arrow">→</span></div>
+                </a>
+
+                <a href="tilepreview.html" class="core-card accent-green">
+                    <div>
+                        <div class="card-top">
+                            <div class="tool-icon"><img src="icons/tilepreview.jpg" alt=""></div>
+                            <span class="primary-label">Primary</span>
+                        </div>
+                        <h3>Tile Previewer</h3>
+                        <p>Preview how your textures and tiles repeat before using them.</p>
+                    </div>
+                    <div class="open-tool">Open Tool <span class="arrow">→</span></div>
+                </a>
+
+                <a href="textures.html" class="core-card accent-purple">
+                    <div>
+                        <div class="card-top">
+                            <div class="tool-icon"><img src="icons/texture.jpg" alt=""></div>
+                            <span class="primary-label">Primary</span>
+                        </div>
+                        <h3>Texture Workshop</h3>
+                        <p>Create, edit, and experiment with textures in one place.</p>
+                    </div>
+                    <div class="open-tool">Open Tool <span class="arrow">→</span></div>
+                </a>
+            </div>
+        </section>
+
+        <!-- BUILD & EDIT -->
+        <section class="section">
+            <div class="section-heading">
+                <h2 class="section-title"><span class="green">Build &amp; Edit</span></h2>
+                <p class="section-subtitle">Create, customize, and refine your work.</p>
+            </div>
+
+            <div class="tools-grid">
+                <a href="nametags.html" class="tool-card accent-green">
+                    <div class="tool-icon"><img src="icons/tag.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Name Tag Gradients</h3>
+                        <p>Create colorful gradient name tags.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <a href="fancy.html" class="tool-card accent-purple">
+                    <div class="tool-icon"><img src="icons/fancy.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Fancy Text Generator</h3>
+                        <p>Transform text into different Unicode styles.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <a href="symbols.html" class="tool-card accent-green">
+                    <div class="tool-icon symbols-icon"><span>✦✧</span></div>
+                    <div class="tool-info">
+                        <h3>Text Symbols</h3>
+                        <p>Browse and copy symbols, characters, and decorative text.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <a href="colors.html" class="tool-card accent-purple">
+                    <div class="tool-icon"><img src="icons/color.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Color Codes</h3>
+                        <p>Find and work with useful color codes and values.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <a href="submeshes.html" class="tool-card accent-green">
+                    <div class="tool-icon"><img src="icons/mesh.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Submeshes</h3>
+                        <p>Helpful references and tools for working with submeshes.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+
+                <!-- BIGGER.PICS UPSCALER -->
+                <button type="button" id="openUpscaler"
+                        class="tool-card accent-purple upscale-card">
+                    <div class="tool-icon symbols-icon" aria-hidden="true">↗</div>
+                    <div class="tool-info">
+                        <h3>Upscale Image</h3>
+                        <p>Enlarge images up to 4× with bigger.pics. Free to use.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ADVANCED -->
+        <section class="section">
+            <div class="section-heading">
+                <h2 class="section-title"><span class="purple">Advanced</span></h2>
+                <p class="section-subtitle">Less common, more specialized tools.</p>
+            </div>
+
+            <div class="tools-grid advanced-card">
+                <a href="gridsnap.html" class="tool-card accent-purple">
+                    <div class="tool-icon"><img src="icons/gridsnap.jpg" alt=""></div>
+                    <div class="tool-info">
+                        <h3>Grid Snap Calculator</h3>
+                        <p>Calculate precise grid snapping and placement values.</p>
+                    </div>
+                    <span class="tool-arrow">→</span>
+                </a>
+            </div>
         </section>
 
         <footer>
-            <span>Wolves Editing Tools</span>
-            <span>Files stay in your browser</span>
+            <div class="footer-brand">
+                <span class="footer-purple">Wolves</span>
+                <span class="footer-green">Editing Tools</span>
+            </div>
+            <div class="footer-text">
+                Built for Wolves <span class="footer-divider">•</span>
+                100% Local <span class="footer-divider">•</span> No Uploads
+            </div>
         </footer>
     </main>
+
+    <!-- BIGGER.PICS PICKER AND RESULT LIGHTBOX -->
+    <div id="upscalePanel" class="upscale-overlay" hidden>
+        <div class="upscale-panel" role="dialog" aria-modal="true" aria-labelledby="upscaleTitle">
+            <button type="button" id="closeUpscaler" class="upscale-close" aria-label="Close">×</button>
+
+            <h2 id="upscaleTitle">Upscale Image</h2>
+            <p class="upscale-muted">
+                Choose an image, send it to bigger.pics, then return your finished upscale here.
+            </p>
+
+            <label class="upscale-file-label" for="upscaleFile">Choose an image</label>
+            <input id="upscaleFile" type="file" accept="image/png,image/jpeg,image/webp">
+
+            <p id="upscaleFileName" class="upscale-muted">PNG, JPG or WebP</p>
+
+            <button type="button" id="sendToBiggerPics" class="upscale-action" disabled>
+                Open bigger.pics &amp; send image
+            </button>
+
+            <p id="upscaleStatus" class="upscale-muted" aria-live="polite">
+                Your image is read locally. It is sent to bigger.pics only when you choose to upscale it.
+            </p>
+
+            <div id="upscaleResult" hidden>
+                <h3>Your upscaled image</h3>
+                <p id="upscaleDimensions" class="upscale-muted"></p>
+                <img id="upscalePreview" alt="Upscaled image preview">
+                <a id="downloadUpscaled" class="upscale-action" download="upscaled-picture.png">
+                    Download PNG
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (() => {
+        "use strict";
+
+        const ORIGIN = "https://app.bigger.pics";
+
+        const panel = document.getElementById("upscalePanel");
+        const openButton = document.getElementById("openUpscaler");
+        const closeButton = document.getElementById("closeUpscaler");
+        const fileInput = document.getElementById("upscaleFile");
+        const fileName = document.getElementById("upscaleFileName");
+        const sendButton = document.getElementById("sendToBiggerPics");
+        const status = document.getElementById("upscaleStatus");
+        const result = document.getElementById("upscaleResult");
+        const preview = document.getElementById("upscalePreview");
+        const dimensions = document.getElementById("upscaleDimensions");
+        const download = document.getElementById("downloadUpscaled");
+
+        let popup = null;
+        let pollId = null;
+        let sourceFile = null;
+        let imageData = null;
+        let popupReady = false;
+        let sent = false;
+        let contextId = null;
+        let resultUrl = null;
+
+        function setStatus(message) {
+            status.textContent = message;
+        }
+
+        function stopPolling() {
+            if (pollId !== null) {
+                clearInterval(pollId);
+                pollId = null;
+            }
+        }
+
+        function clearResult() {
+            if (resultUrl) {
+                URL.revokeObjectURL(resultUrl);
+                resultUrl = null;
+            }
+
+            preview.removeAttribute("src");
+            download.removeAttribute("href");
+            result.hidden = true;
+        }
+
+        function closePanel() {
+            panel.hidden = true;
+            stopPolling();
+
+            if (popup && !popup.closed) {
+                popup.close();
+            }
+
+            popup = null;
+        }
+
+        openButton.addEventListener("click", () => {
+            panel.hidden = false;
+            fileInput.focus();
+        });
+
+        closeButton.addEventListener("click", closePanel);
+
+        panel.addEventListener("click", event => {
+            if (event.target === panel) closePanel();
+        });
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && !panel.hidden) closePanel();
+        });
+
+        fileInput.addEventListener("change", () => {
+            sourceFile = fileInput.files[0] || null;
+            imageData = null;
+            popupReady = false;
+            sent = false;
+
+            if (popup && !popup.closed) popup.close();
+            popup = null;
+            stopPolling();
+            clearResult();
+
+            sendButton.disabled = !sourceFile;
+
+            if (!sourceFile) {
+                fileName.textContent = "PNG, JPG or WebP";
+                setStatus("Choose an image to begin.");
+                return;
+            }
+
+            if (!["image/png", "image/jpeg", "image/webp"].includes(sourceFile.type)) {
+                sourceFile = null;
+                sendButton.disabled = true;
+                fileName.textContent = "PNG, JPG or WebP";
+                setStatus("Please choose a PNG, JPG or WebP image.");
+                return;
+            }
+
+            fileName.textContent = sourceFile.name;
+            setStatus("Image selected. Ready to send when you are.");
+        });
+
+        function sendIfReady() {
+            if (!popup || popup.closed || !popupReady || !imageData || sent) return;
+
+            try {
+                popup.postMessage({
+                    type: "bigger-pics-image",
+                    url: imageData,
+                    name: sourceFile.name || "picture.png",
+                    site: "lildvrkness.github.io/wolves-editing-tools",
+                    format: "png",
+                    context: contextId
+                }, ORIGIN);
+
+                sent = true;
+                sendButton.disabled = false;
+                setStatus("Image sent! Finish upscaling in the bigger.pics window, then use its Send this back button.");
+            } catch (error) {
+                setStatus("Could not send the image. Close the popup and try again.");
+                sendButton.disabled = false;
+            }
+        }
+
+        // Open the popup synchronously inside the user's click gesture.
+        sendButton.addEventListener("click", () => {
+            if (!sourceFile) return;
+
+            if (popup && !popup.closed) {
+                setStatus("The bigger.pics window is already open.");
+                return;
+            }
+
+            clearResult();
+            popupReady = false;
+            sent = false;
+            imageData = null;
+            contextId = (crypto.randomUUID)
+                ? crypto.randomUUID()
+                : String(Date.now()) + "-" + Math.random();
+
+            popup = window.open("https://bigger.pics/", "_blank");
+
+            if (!popup) {
+                setStatus("Popup blocked. Allow popups for this site and try again.");
+                return;
+            }
+
+            sendButton.disabled = true;
+            setStatus("Preparing your image and waiting for bigger.pics…");
+
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                imageData = reader.result;
+                sendIfReady();
+            };
+
+            reader.onerror = () => {
+                setStatus("Could not read that image. Please choose another file.");
+                sendButton.disabled = false;
+            };
+
+            reader.readAsDataURL(sourceFile);
+
+            stopPolling();
+            pollId = setInterval(() => {
+                if (popup && popup.closed && !sent) {
+                    stopPolling();
+                    popup = null;
+                    sendButton.disabled = !sourceFile;
+                    setStatus("The bigger.pics window closed without returning a result.");
+                }
+            }, 500);
+        });
+
+        window.addEventListener("message", event => {
+            // Only accept messages from bigger.pics and its actual popup.
+            if (event.origin !== ORIGIN) return;
+            if (!popup || event.source !== popup) return;
+
+            const data = event.data;
+            if (!data || typeof data !== "object") return;
+
+            if (data.type === "bigger-pics-ready") {
+                popupReady = true;
+                sendIfReady();
+                return;
+            }
+
+            if (data.type !== "bigger-pics-result") return;
+            if (!sent || data.context !== contextId) return;
+            if (!(data.blob instanceof Blob)) return;
+
+            if (data.blob.type &&
+                !["image/png", "image/jpeg"].includes(data.blob.type)) {
+                return;
+            }
+
+            stopPolling();
+
+            resultUrl = URL.createObjectURL(data.blob);
+            preview.src = resultUrl;
+
+            dimensions.textContent =
+                data.width && data.height
+                    ? `${data.width} × ${data.height} pixels`
+                    : "Your upscaled image is ready.";
+
+            const safeName = (data.name || "upscaled-picture.png")
+                .replace(/[\\/:*?"<>|]/g, "_");
+
+            download.href = resultUrl;
+            download.download = safeName;
+            download.textContent = "Download " + safeName;
+
+            result.hidden = false;
+            panel.hidden = false;
+            sendButton.disabled = !sourceFile;
+            setStatus("Upscaling complete! Your image is ready to download.");
+
+            // The result is now in this page; the popup may have closed.
+            popup = null;
+        });
+
+        window.addEventListener("beforeunload", () => {
+            stopPolling();
+            if (resultUrl) URL.revokeObjectURL(resultUrl);
+        });
+
+        // Existing cursor glow.
+        document.addEventListener("mousemove", event => {
+            document.documentElement.style.setProperty("--mouse-x", event.clientX + "px");
+            document.documentElement.style.setProperty("--mouse-y", event.clientY + "px");
+        });
+    })();
+    </script>
 </body>
 </html>
