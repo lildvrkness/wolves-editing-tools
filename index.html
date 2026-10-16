@@ -821,6 +821,7 @@
         "use strict";
 
         const ORIGIN = "https://app.bigger.pics";
+        const SITE_NAME = window.location.hostname || "example.com";
 
         const panel = document.getElementById("upscalePanel");
         const openButton = document.getElementById("openUpscaler");
@@ -835,11 +836,12 @@
         const download = document.getElementById("downloadUpscaled");
 
         let popup = null;
+        let popupReadySource = null;
         let pollId = null;
         let sourceFile = null;
         let imageData = null;
-        let popupReady = true;
-        let sent = true;
+        let popupReady = false;
+        let sent = false;
         let contextId = null;
         let resultUrl = null;
 
@@ -874,6 +876,21 @@
             }
 
             popup = null;
+            popupReadySource = null;
+            popupReady = false;
+        }
+
+        function resetSession() {
+            stopPolling();
+            if (popup && !popup.closed) {
+                popup.close();
+            }
+            popup = null;
+            popupReadySource = null;
+            popupReady = false;
+            imageData = null;
+            sent = false;
+            resultUrl = null;
         }
 
         openButton.addEventListener("click", () => {
@@ -895,6 +912,7 @@
             sourceFile = fileInput.files[0] || null;
             imageData = null;
             popupReady = false;
+            popupReadySource = null;
             sent = false;
 
             if (popup && !popup.closed) popup.close();
@@ -923,14 +941,14 @@
         });
 
         function sendIfReady() {
-            if (!popup || popup.closed || !popupReady || !imageData || sent) return;
+            if (!popup || popup.closed || !popupReadySource || !imageData || !sourceFile || sent) return;
 
             try {
-                popup.postMessage({
+                popupReadySource.postMessage({
                     type: "bigger-pics-image",
                     url: imageData,
                     name: sourceFile.name || "picture.png",
-                    site: "lildvrkness.github.io/wolves-editing-tools",
+                    site: SITE_NAME,
                     format: "png",
                     context: contextId
                 }, ORIGIN);
@@ -955,6 +973,7 @@
 
             clearResult();
             popupReady = false;
+            popupReadySource = null;
             sent = false;
             imageData = null;
             contextId = (crypto.randomUUID)
@@ -990,6 +1009,7 @@
                 if (popup && popup.closed && !sent) {
                     stopPolling();
                     popup = null;
+                    popupReadySource = null;
                     sendButton.disabled = !sourceFile;
                     setStatus("The bigger.pics window closed without returning a result.");
                 }
@@ -997,7 +1017,6 @@
         });
 
         window.addEventListener("message", event => {
-            // Only accept messages from bigger.pics and its actual popup.
             if (event.origin !== ORIGIN) return;
             if (!popup || event.source !== popup) return;
 
@@ -1006,6 +1025,8 @@
 
             if (data.type === "bigger-pics-ready") {
                 popupReady = true;
+                popupReadySource = event.source;
+                setStatus("bigger.pics is ready. Sending your image…");
                 sendIfReady();
                 return;
             }
@@ -1014,8 +1035,7 @@
             if (!sent || data.context !== contextId) return;
             if (!(data.blob instanceof Blob)) return;
 
-            if (data.blob.type &&
-                !["image/png", "image/jpeg"].includes(data.blob.type)) {
+            if (data.blob.type && !["image/png", "image/jpeg"].includes(data.blob.type)) {
                 return;
             }
 
@@ -1030,7 +1050,7 @@
                     : "Your upscaled image is ready.";
 
             const safeName = (data.name || "upscaled-picture.png")
-                .replace(/[\\/:*?"<>|]/g, "_");
+                .replace(/[\\/:*?\"<>|]/g, "_");
 
             download.href = resultUrl;
             download.download = safeName;
@@ -1041,8 +1061,9 @@
             sendButton.disabled = !sourceFile;
             setStatus("Upscaling complete! Your image is ready to download.");
 
-            // The result is now in this page; the popup may have closed.
             popup = null;
+            popupReady = false;
+            popupReadySource = null;
         });
 
         window.addEventListener("beforeunload", () => {
@@ -1050,7 +1071,6 @@
             if (resultUrl) URL.revokeObjectURL(resultUrl);
         });
 
-        // Existing cursor glow.
         document.addEventListener("mousemove", event => {
             document.documentElement.style.setProperty("--mouse-x", event.clientX + "px");
             document.documentElement.style.setProperty("--mouse-y", event.clientY + "px");
